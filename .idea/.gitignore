@@ -5,5 +5,5 @@
 /dataSources/
 /dataSources.local.xml
 
-*.iml
-*.xml
+/*.iml
+/*.xml
