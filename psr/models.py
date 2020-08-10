@@ -43,35 +43,32 @@ class IdentificationQualifier(projects.models.IdentificationQualifier):
         verbose_name_plural = f"{app_label.upper()} ID Qualifiers"
 
 
-# Locality Class and Subclasses
-class Locality(projects.models.PaleoCoreLocalityBaseClass):
+# Geological Context
+class GeologicalContext(projects.models.PaleoCoreContextBaseClass):
     id = models.CharField(primary_key=True, max_length=255)
     name = models.TextField(null=True, blank=True, max_length=255)
-    find_type = models.CharField(null=True, blank=True, max_length=255)
+    context_type = models.CharField(null=True, blank=True, max_length=255)
+    context_number = models.IntegerField(null=True, blank=True)
     collection_code = models.CharField(null=True, blank=True, max_length=10)
-    locality_number = models.IntegerField(null=True, blank=True)
-    sublocality = models.CharField(null=True, blank=True, max_length=50)
     description = models.TextField(null=True, blank=True, max_length=255)
+
     stratigraphic_section = models.CharField(null=True, blank=True, max_length=50)
+    stratigraphic_formation = models.CharField("Formation", max_length=255, blank=True, null=True)
+    stratigraphic_member = models.CharField("Member", max_length=255, blank=True, null=True)
     upper_limit_in_section = models.DecimalField(max_digits=38, decimal_places=8, null=True, blank=True)
     lower_limit_in_section = models.DecimalField(max_digits=38, decimal_places=8, null=True, blank=True)
-    error_notes = models.CharField(max_length=255, null=True, blank=True)
-    notes = models.CharField(max_length=254, null=True, blank=True)
-    geom = models.PointField(srid=4326, blank=True, null=True)
-    date_last_modified = models.DateTimeField("Date Last Modified", auto_now=True)
-    objects = GeoManager()
+    analytical_unit_1 = models.CharField(max_length=255, blank=True, null=True)
+    analytical_unit_2 = models.CharField(max_length=255, blank=True, null=True)
+    analytical_unit_3 = models.CharField(max_length=255, blank=True, null=True)
+    analytical_unit_found = models.CharField(max_length=255, blank=True, null=True)
+    analytical_unit_likely = models.CharField(max_length=255, blank=True, null=True)
+    analytical_unit_simplified = models.CharField(max_length=255, blank=True, null=True)
+    in_situ = models.BooleanField(default=False)
+    ranked = models.BooleanField(default=False)
+    weathering = models.SmallIntegerField(blank=True, null=True)
+    surface_modification = models.CharField("Surface Mod", max_length=255, blank=True, null=True)
 
-    def __str__(self):
-        nice_name = str(self.collection_code) + " " + str(self.locality_number) + str(self.sublocality)
-        return nice_name.replace("None", "").replace("--", "")
-
-    class Meta:
-        verbose_name = f"{app_label.upper()} Locality"
-        verbose_name_plural = f"{app_label.upper()} Localities"
-        ordering = ("locality_number", "sublocality")
-
-
-class Cave(Locality):
+    #Cave Attributes
     dip = models.DecimalField(max_digits=38, decimal_places=8, null=True, blank=True)
     strike = models.DecimalField(max_digits=38, decimal_places=8, null=True, blank=True)
     color = models.CharField(null=True, blank=True, max_length=255)
@@ -86,15 +83,49 @@ class Cave(Locality):
     rockfall_character = models.TextField(null=True, blank=True, max_length=64000)
     speleothem_character = models.TextField(null=True, blank=True, max_length=64000)
 
+    #Profile Attributes
+
+    context_remarks = models.TextField("Context Remarks", max_length=500, null=True, blank=True)
+    error_notes = models.CharField(max_length=255, null=True, blank=True)
+    notes = models.CharField(max_length=254, null=True, blank=True)
+    geom = models.GeometryField()
+    date_last_modified = models.DateTimeField("Date Last Modified", auto_now=True)
+    objects = GeoManager()
+
+    def __str__(self):
+        nice_name = str(self.collection_code) + " " + str(self.context_number)
+        return nice_name.replace("None", "").replace("--", "")
+
     class Meta:
-        verbose_name = f"{app_label.upper()} Cave/Rockshelter"
-        verbose_name_plural = f"{app_label.upper()} Caves/Rockshelters"
+        verbose_name = f"{app_label.upper()} Geological Context"
+        verbose_name_plural = f"{app_label.upper()} Geological Contexts"
+        ordering = ["context_number"]
+
+
+# class Cave(Locality):
+#     dip = models.DecimalField(max_digits=38, decimal_places=8, null=True, blank=True)
+#     strike = models.DecimalField(max_digits=38, decimal_places=8, null=True, blank=True)
+#     color = models.CharField(null=True, blank=True, max_length=255)
+#     texture = models.CharField(null=True, blank=True, max_length=255)
+#     height = models.DecimalField(max_digits=38, decimal_places=8, null=True, blank=True)
+#     width = models.DecimalField(max_digits=38, decimal_places=8, null=True, blank=True)
+#     depth = models.DecimalField(max_digits=38, decimal_places=8, null=True, blank=True)
+#     slope_character = models.TextField(null=True, blank=True, max_length=64000)
+#     sediment_presence = models.BooleanField(default=False)
+#     sediment_character = models.TextField(null=True, blank=True, max_length=64000)
+#     cave_mouth_character = models.TextField(null=True, blank=True, max_length=64000)
+#     rockfall_character = models.TextField(null=True, blank=True, max_length=64000)
+#     speleothem_character = models.TextField(null=True, blank=True, max_length=64000)
+#
+#     class Meta:
+#         verbose_name = f"{app_label.upper()} Cave/Rockshelter"
+#         verbose_name_plural = f"{app_label.upper()} Caves/Rockshelters"
 
 
 class ExcavationUnit(models.Model):
     unit = models.CharField(max_length=6, blank=False)
     extent = models.GeometryField(dim=3, blank=True, null=True)
-    locality = models.ForeignKey("Locality", null=True, blank=True, on_delete=models.SET_NULL)
+    geological_context = models.ForeignKey("GeologicalContext", null=True, blank=True, on_delete=models.SET_NULL)
     objects = GeoManager()
 
     class Meta:
@@ -127,7 +158,7 @@ class Occurrence(projects.models.PaleoCoreOccurrenceBaseClass):
     collecting_method = models.CharField("Collecting Method", max_length=50,
                                          null=True, blank=True)
 
-    locality = models.ForeignKey("Locality", null=True, blank=True, on_delete=models.SET_NULL)
+    geological_context = models.ForeignKey("GeologicalContext", null=True, blank=True, on_delete=models.SET_NULL)
     unit = models.ForeignKey("ExcavationUnit", null=True, blank=True, on_delete=models.SET_NULL)
     field_id = models.CharField("Field ID", max_length=50, null=True, blank=True)
     suffix = models.IntegerField("Suffix", null=True, blank=True)
@@ -143,21 +174,6 @@ class Occurrence(projects.models.PaleoCoreOccurrenceBaseClass):
     problem = models.BooleanField(default=False)
     problem_remarks = models.TextField(null=True, blank=True, max_length=64000)
 
-    # Geological Context
-    stratigraphic_formation = models.CharField("Formation", max_length=255, blank=True, null=True)
-    stratigraphic_member = models.CharField("Member", max_length=255, blank=True, null=True)
-    analytical_unit_1 = models.CharField(max_length=255, blank=True, null=True)
-    analytical_unit_2 = models.CharField(max_length=255, blank=True, null=True)
-    analytical_unit_3 = models.CharField(max_length=255, blank=True, null=True)
-    analytical_unit_found = models.CharField(max_length=255, blank=True, null=True)
-    analytical_unit_likely = models.CharField(max_length=255, blank=True, null=True)
-    analytical_unit_simplified = models.CharField(max_length=255, blank=True, null=True)
-    in_situ = models.BooleanField(default=False)
-    ranked = models.BooleanField(default=False)
-    weathering = models.SmallIntegerField(blank=True, null=True)
-    surface_modification = models.CharField("Surface Mod", max_length=255, blank=True, null=True)
-    geology_remarks = models.TextField("Geol Remarks", max_length=500, null=True, blank=True)
-
     # Location
     collection_code = models.CharField("Collection Code", max_length=20, blank=True, null=True)
     drainage_region = models.CharField("Drainage Region", null=True, blank=True, max_length=255)
@@ -168,7 +184,7 @@ class Occurrence(projects.models.PaleoCoreOccurrenceBaseClass):
     class Meta:
         verbose_name = f"{app_label.upper()} Occurrence"
         verbose_name_plural = f"{app_label.upper()} Occurrences"
-        ordering = ["collection_code", "locality", "item_number", "item_part"]
+        ordering = ["collection_code", "geological_context", "item_number", "item_part"]
 
     def catalog_number(self):
         """
@@ -186,7 +202,7 @@ class Occurrence(projects.models.PaleoCoreOccurrenceBaseClass):
             else:
                 item_text = ''
 
-            catalog_number_string = str(self.collection_code) + " " + str(self.locality_id) + item_text
+            catalog_number_string = str(self.collection_code) + " " + str(self.geological_context_id) + item_text
             return catalog_number_string.replace('None', '').replace('- ', '')  # replace None with empty string
         else:
             return None

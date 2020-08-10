@@ -79,7 +79,7 @@ class AggregateAdmin(OccurrenceAdmin):
 admin.site.register(Biology, BiologyAdmin)
 admin.site.register(Archaeology, ArchaeologyAdmin)
 admin.site.register(Geology, GeologyAdmin)
-admin.site.register(Locality)
+admin.site.register(GeologicalContext)
 admin.site.register(Occurrence, OccurrenceAdmin)
 admin.site.register(Taxon, projects.admin.TaxonomyAdmin)
 admin.site.register(Aggregate, AggregateAdmin)
