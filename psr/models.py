@@ -84,6 +84,18 @@ class GeologicalContext(projects.models.PaleoCoreContextBaseClass):
     speleothem_character = models.TextField(null=True, blank=True, max_length=64000)
 
     #Profile Attributes
+    size_of_loess = models.CharField(max_length=255, null=True, blank=True)
+    mean_thickness = models.DecimalField(max_digits=38, decimal_places=8, null=True, blank=True)
+    max_thickness = models.DecimalField(max_digits=38, decimal_places=8, null=True, blank=True)
+    landscape_position = models.CharField(max_length=255, null=True, blank=True)
+    surface_inclination = models.CharField(max_length=255, null=True, blank=True)
+    presence_coarse_components = models.BooleanField(default=False)
+    amount_coarse_components = models.DecimalField(max_digits=38, decimal_places=8, null=True, blank=True)
+    number_sediment_layers = models.SmallIntegerField(blank=True, null=True)
+    number_soil_horizons = models.SmallIntegerField(blank=True, null=True)
+    number_cultural_horizons = models.SmallIntegerField(blank=True, null=True)
+    number_coarse_layers = models.SmallIntegerField(blank=True, null=True)
+    presence_vertical_profile = models.BooleanField(default=False)
 
     context_remarks = models.TextField("Context Remarks", max_length=500, null=True, blank=True)
     error_notes = models.CharField(max_length=255, null=True, blank=True)
