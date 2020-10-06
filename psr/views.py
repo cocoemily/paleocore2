@@ -1,4 +1,4 @@
-# External Libraries
+from django.shortcuts import render
 import os
 from fastkml import kml, Placemark, Folder, Document
 from lxml import etree
@@ -22,9 +22,8 @@ from .models import Occurrence, Biology, Archaeology, Geology, Taxon, Identifica
 from .forms import UploadKMLForm, DownloadKMLForm, ChangeXYForm, Occurrence2Biology, DeleteAllForm
 from .utilities import html_escape, get_finds
 from .ontologies import *  # import vocabularies and choice lists
+
 # Create your views here.
-
-
 class ImportKMZ(generic.FormView):
     template_name = 'admin/projects/import_kmz.html'
     form_class = UploadKMLForm
@@ -105,13 +104,13 @@ class ImportKMZ(generic.FormView):
                 item_type = attributes_dict.get("Item Type")
                 occurrence_count += 1
                 # variables imported from .ontologies
-                if item_type in (artifactual, "Artifactual", "Archeology", "Archaeological"):
+                if item_type in (ontologies.artifactual, "Artifactual", "Archeology", "Archaeological"):
                     lgrp_occ = Archaeology()
                     archaeology_count += 1
-                elif item_type in (faunal, "Fauna", "Floral", "Flora"):
+                elif item_type in (ontologies.faunal, "Fauna", "Floral", "Flora"):
                     lgrp_occ = Biology()
                     biology_count += 1
-                elif item_type in (geological, "Geology"):
+                elif item_type in (ontologies.geological, "Geology"):
                     lgrp_occ = Geology()
                     geology_count += 1
 
@@ -127,22 +126,22 @@ class ImportKMZ(generic.FormView):
                 lgrp_occ.verbatim_kml_data = attributes + geom
 
                 # Validate Basis of Record
-                if attributes_dict.get("Basis Of Record") in (fossil_specimen, "Fossil", "Collection"):
+                if attributes_dict.get("Basis Of Record") in (ontologies.fossil_specimen, "Fossil", "Collection"):
                     # TODO update basis_of_record vocab, change Fossil Specimen to Collection
-                    lgrp_occ.basis_of_record = fossil_specimen  # from .ontologies
-                elif attributes_dict.get("Basis Of Record") in (human_observation, "Observation"):
-                    lgrp_occ.basis_of_record = human_observation  # from .ontologies
+                    lgrp_occ.basis_of_record = ontologies.fossil_specimen  # from .ontologies
+                elif attributes_dict.get("Basis Of Record") in (ontologies.human_observation, "Observation"):
+                    lgrp_occ.basis_of_record = ontologies.human_observation  # from .ontologies
 
                 # Validate Item Type
                 item_type = attributes_dict.get("Item Type")
-                if item_type in (artifactual, "Artifact", "Archeology", "Archaeological"):
-                    lgrp_occ.item_type = artifactual
-                elif item_type in (faunal, "Fauna"):
-                    lgrp_occ.item_type = faunal
-                elif item_type in (floral, "Flora"):
-                    lgrp_occ.item_type = floral
-                elif item_type in (geological, "Geology"):
-                    lgrp_occ.item_type = geological
+                if item_type in (ontologies.artifactual, "Artifact", "Archeology", "Archaeological"):
+                    lgrp_occ.item_type = ontologies.artifactual
+                elif item_type in (ontologies.faunal, "Fauna"):
+                    lgrp_occ.item_type = ontologies.faunal
+                elif item_type in (ontologies.floral, "Flora"):
+                    lgrp_occ.item_type = ontologies.floral
+                elif item_type in (ontologies.geological, "Geology"):
+                    lgrp_occ.item_type = ontologies.geological
 
                 # Date Recorded
                 error_string = ''
@@ -164,6 +163,8 @@ class ImportKMZ(generic.FormView):
 
                 # Process point, comes in as well known text string
                 # Assuming point is in GCS WGS84 datum = SRID 4326
+                #GEOSGeometry is generic, this is how to create the point
+                #need to pull in the coordinates, and the correct SRID (need to ask about this)
                 pnt = GEOSGeometry("POINT (" + str(o.geometry.x) + " " + str(o.geometry.y) + ")", 4326)  # WKT
                 lgrp_occ.geom = pnt
 
@@ -259,33 +260,3 @@ class ImportKMZ(generic.FormView):
         messages.add_message(self.request, messages.INFO,
                              'Successfully imported {} occurrences'.format(message_string))
 
-    def form_valid(self, form):
-        # This method is called when valid form data has been POSTed.
-        # It should return an HttpResponse.
-
-        kml_file = self.get_kml_file()
-        # get the top level features object (this is essentially the layers list)
-        level1_elements = list(kml_file.features())
-
-        # Check that the kml file is well-formed with a single document element.
-        if len(level1_elements) == 1 and type(level1_elements[0]) == Document:
-            document = level1_elements[0]
-
-            #  If well-formed document, check if the file has folders, which correspond to layers
-            level2_elements = list(document.features())
-            if len(level2_elements) == 1 and type(level2_elements[0]) == Folder:
-                folder = level2_elements[0]
-
-                #  If a single folder is present import placemarks from that folder
-                #  Get features from the folder
-                level3_elements = list(folder.features())
-                #  Check that the features are Placemarks. If they are, import them
-                if len(level3_elements) >= 1 and type(level3_elements[0]) == Placemark:
-                    placemark_list = level3_elements
-                    self.import_placemarks(placemark_list)
-
-            elif len(level2_elements) >= 1 and type(level2_elements[0]) == Placemark:
-                placemark_list = level2_elements
-                self.import_placemarks(placemark_list)
-
-        return super(ImportKMZ, self).form_valid(form)

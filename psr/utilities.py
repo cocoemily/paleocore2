@@ -9,7 +9,8 @@ from django.contrib.gis.geos import Point
 from django.contrib.gis.measure import Distance
 import calendar
 from datetime import datetime
-import mlp.ontologies
+import psr.ontologies
+import shapefile
 
 
 image_folder_path = "/Users/reedd/Documents/projects/PaleoCore/projects/Omo Mursi/Final_Import/omo_mursi_data/omo_mursi_data/"
@@ -780,6 +781,7 @@ def html_escape(text):
     """
     return "".join(html_escape_table.get(c, c) for c in text)
 
+def import_shapefile(filename):
+    sf = shapefile.Reader(filename)
+    sr = sf.shapeRecords()
 
-def import_shapefile():
-    pass
