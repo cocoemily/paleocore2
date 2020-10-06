@@ -7,10 +7,6 @@ from django.contrib.gis.geos import GEOSGeometry
 from pygeoif import geometry
 from zipfile import ZipFile
 
-#need to decide which one of these to use
-#from mdb_parser import MDBParser, MDBTable
-#from access_parser import AccessParser
-
 # Django Libraries
 from django.conf import settings
 from django.views import generic
@@ -23,10 +19,9 @@ from django.core.files.base import ContentFile
 
 # App Libraries
 from .models import Occurrence, Biology, Archaeology, Geology, Taxon, IdentificationQualifier
-from .forms import *
-from .utilities import *
+from .forms import UploadKMLForm, DownloadKMLForm, ChangeXYForm, Occurrence2Biology, DeleteAllForm
+from .utilities import html_escape, get_finds
 from .ontologies import *  # import vocabularies and choice lists
-
 
 # Create your views here.
 class ImportKMZ(generic.FormView):
@@ -54,7 +49,7 @@ class ImportKMZ(generic.FormView):
         read the form and fetch the kml or kmz file
         :return: return a kml.KML() object
         """
-        # need to parse the kml file more smartly to locate the first placemark and work from there.
+        # TODO parse the kml file more smartly to locate the first placemark and work from there.
         import_file = self.get_import_file()
         #kml_file_upload_name = kml_file_upload.name  # get the file name
         # kml_file_name = kml_file_upload_name[:kml_file_upload_name.rfind('.')]  # get the file name no extension
@@ -132,7 +127,7 @@ class ImportKMZ(generic.FormView):
 
                 # Validate Basis of Record
                 if attributes_dict.get("Basis Of Record") in (ontologies.fossil_specimen, "Fossil", "Collection"):
-                    # need to update basis_of_record vocab, change Fossil Specimen to Collection
+                    # TODO update basis_of_record vocab, change Fossil Specimen to Collection
                     lgrp_occ.basis_of_record = ontologies.fossil_specimen  # from .ontologies
                 elif attributes_dict.get("Basis Of Record") in (ontologies.human_observation, "Observation"):
                     lgrp_occ.basis_of_record = ontologies.human_observation  # from .ontologies
@@ -265,25 +260,3 @@ class ImportKMZ(generic.FormView):
         messages.add_message(self.request, messages.INFO,
                              'Successfully imported {} occurrences'.format(message_string))
 
-
-class ImportShapefile(generic.FormView):
-    template_name = "psr/import_file.html"
-    form_class = UploadShapefile
-    context_object_name = 'upload'
-    success_url = '../?last_import__exact=1'
-
-    #TODO define functions for importing shapefiles --need to do this based on new survey forms
-
-
-class ImportAccessDatabase(generic.FormView):
-    template_name = "psr/import_file.html"
-    form_class = UploadMDB
-    context_object_name = 'upload'
-    success_url = '../?last_import__exact=1'
-
-    def get_import_file(self):
-        return self.request.FILES['mdbUpload']
-
-    def import_excavated_instances(self):
-        file = self.get_import_file()
-        parse_mdb(file.name)
