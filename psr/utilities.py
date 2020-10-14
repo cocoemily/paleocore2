@@ -1,6 +1,6 @@
-__author__ = 'reedd'
+#__author__ = 'reedd'
 
-from .models import Occurrence, Archaeology, Biology, Geology, Taxon, IdentificationQualifier
+from psr.models import Occurrence, Archaeology, Biology, Geology, GeologicalContext, Aggregate, Person, Taxon, IdentificationQualifier
 from django.core.exceptions import MultipleObjectsReturned, ObjectDoesNotExist
 import collections
 
@@ -11,9 +11,10 @@ import calendar
 from datetime import datetime
 import psr.ontologies
 import shapefile
+from django.contrib.gis.geos import GEOSGeometry
 
 
-image_folder_path = "/Users/reedd/Documents/projects/PaleoCore/projects/Omo Mursi/Final_Import/omo_mursi_data/omo_mursi_data/"
+#image_folder_path = "/Users/reedd/Documents/projects/PaleoCore/projects/Omo Mursi/Final_Import/omo_mursi_data/omo_mursi_data/"
 
 
 def duplicate_barcodes():
@@ -722,7 +723,7 @@ def update_biology_identifications(header, data, dry_run=False):
             pass
         except IndexError:
             pass
-        bio.identified_by = mlp.ontologies.denis_geraads
+        bio.identified_by = psr.ontologies.denis_geraads
         print('{} {} {} {} {} {} {}'.format(bio.id, bio.item_description,
                                             bio.item_scientific_name, bio.taxon,
                                             bio.identification_qualifier,
@@ -781,7 +782,91 @@ def html_escape(text):
     """
     return "".join(html_escape_table.get(c, c) for c in text)
 
-def import_shapefile(filename):
+def import_archaeology_shapefile(filename):
     sf = shapefile.Reader(filename)
     sr = sf.shapeRecords()
+    for r in sr: #iterate through each record
+        psr_occ = Occurrence(basis_of_record=r.record["Basis Of R"],
+                             item_count=r.record["Item Count"],
+                             item_type=r.record["Item Type"],
+                             item_description=r.record["Descriptio"],
+                             collector=r.record["Identified"],
+                             finder=r.record["Identified"],
+                             collecting_method=r.record["Collecting"],
+                             #geological_context=r.record["Locality"],
+                             field_id=r.record["Name"],
+                             #recorded_by=r.record["Recorded B"],
+                             collection_remarks=r.record["Remarks"]
+                             )
+        if r.shape.shapeType is 1: #point
+            # TODO create statements for dealing with different kinds of geometries
+            coords = r.shape.points[0]
+            geom = GEOSGeometry("POINT (" + str(coords[0]) + " " + str(coords[1]) + ")", 4326)
+        psr_occ.geom = geom
+
+        #TODO set recorded_by and found_by as Persons
+        #psr_occ.found_by=Person.objects.get_or_create(name=r.record["Identified"])
+        #psr_occ.recorded_by=Person.objects.get_or_create(name=r.record["Recorded B"])
+        #TODO set geological_context
+        #psr_occ.geological_context=GeologicalContext.objects.get_or_create(name=r.record["Locality"])
+        psr_occ.date_collected = datetime.strptime(r.record["Date Recor"], '%d. %b %Y, %H:%M')
+
+        #psr_occ.save() #last step to add it to the database
+
+
+def import_geology_shapefile(filename):
+    sf = shapefile.Reader(filename)
+    sr = sf.shapeRecords()
+    for r in sr:
+        #TODO need to figure out how to discern between geological contexts and geology occurrences
+        psr_gc = GeologicalContext(
+            basis_of_record = r.record["Basis Of R"],
+            collecting_method= r.record["Collecting"],
+            name = r.record["Name"],
+            context_type = r.record["Item Type"],
+            description = r.record["Descriptio"],
+            dip = r.record["Dip"],
+            strike = r.record["Strike"],
+            texture = r.record["Texture"],
+            color = r.record["Color"],
+            height = r.record["Height"],
+            width = r.record["Width"],
+            depth= r.record["Depth"],
+            context_remarks= r.record["Remarks"],
+            rockfall_character = r.record["Rockfall C"],
+            sediment_character = r.record["Sediment C"],
+            slope_character= r.record["Slope Char"],
+            speleothem_character= r.record["Speleothem"],
+            cave_mouth_character= r.record["Cave Mouth"]
+        )
+        if r.shape.shapeType is 1: #point
+            # TODO create statements for dealing with different kinds of geometries
+            coords = r.shape.points[0]
+            geom = GEOSGeometry("POINT (" + str(coords[0]) + " " + str(coords[1]) + ")", 4326)
+        psr_gc.geom = geom
+
+        if r.record["Sediment P"] in ('-None Selected-', 'False', 'No', 'NO', 'no'):
+            psr_gc.sediment_presence = False
+        elif r.record["Sediment P"] in ('True', 'Yes', 'YES', 'yes'):
+            psr_gc.sediment_presence = True
+
+        psr_gc.date_collected = datetime.strptime(r.record["Date Recor"], '%d. %b %Y, %H:%M')
+
+        #TODO how use ontologies??
+        #if psr_gc.collecting_method in ('Exploratory Survey', 'Exploratory survey'):
+            #psr_gc.collection_code =
+        #TODO elif statements for other collection methods
+
+        # TODO set recorded_by as Persons
+        psr_gc.recorded_by=Person.objects.get_or_create(name=r.record["Recorded B"])
+
+        #psr_gc.save()
+
+
+
+
+
+
+
+
 
