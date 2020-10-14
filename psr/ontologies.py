@@ -13,43 +13,39 @@ COLLECTING_METHOD_VOCABULARY = ontologies.COLLECTING_METHOD_VOCABULARY
 SIDE_VOCABULARY = ontologies.SIDE_VOCABULARY
 
 # Collector Vocabulary
-zeresenay_alemseged = 'Zeresenay Alemseged'
-denis_geraads = 'Denis Geraads'
-yared_asseffa = 'Yared Asseffa'
-andrew_barr = 'Andrew Barr'
-rene_bobe = "Rene Bobe"
-tomas_getachew = "Tomas Getachew"
-weldeyared_hailu = "Waldeyared Hailu"
-shannon_mcpherron = "Shannon McPherron"
-denne_reed = "Denne Reed"
-peter_stamos = "Peter Stamos"
-jonathan_wynn = "Jonathan Wynn"
+radu_iovita = 'Radu Iovita'
+patrick_cuthbertson = 'Patrick Cuthbertson'
+abay_namen = 'Abay Namen'
+aris_varis = 'Aris Varis'
+emily_coco = "Emily Coco"
+zhaken_taimagambetov = "Zhaken Taimagambetov"
+talgat_mamirov = "Talgat Mamirov"
 COLLECTOR_CHOICES = (
-    (zeresenay_alemseged, "Zeresenay Alemseged"),
-    (yared_asseffa, "Yared Assefa"),
-    (andrew_barr, "Andrew Barr"),
-    (rene_bobe, "Rene Bobe"),
-    (denis_geraads, "Denis Geraads"),
-    (tomas_getachew, "Tomas Getachew"),
-    (weldeyared_hailu, "Waldeyared Hailu"),
-    (shannon_mcpherron, "Shannon McPherron"),
-    (denne_reed, "Denne Reed"),
-    (peter_stamos, "Peter Stamos"),
-    (jonathan_wynn, "Jonathan Wynn")
+    (radu_iovita, "Radu Iovita"),
+    (patrick_cuthbertson, "Patrick Cuthbertson"),
+    (abay_namen, "Abay Namen"),
+    (aris_varis, "Aris Varis"),
+    (emily_coco, "Emily Coco"),
+    (zhaken_taimagambetov, "Zhaken Taimagambetov"),
+    (talgat_mamirov, "Talgat Mamirov")
 )
 
 # Field Season Vocabulary
-jan2014 = 'January 2014'
-nov2014 = 'Nov 2014'
-nov2015 = 'Nov 2015'
-jan2018 = 'Jan 2018'
-jan2019 = 'Jan 2019'
-jan2020 = 'Jan 2020'
+jun2017 = 'Jun 2017'
+aug2017 = 'Aug 2017'
+may2018 = 'May 2018'
+jun2018 = 'Jun 2018'
+aug2018 = 'Aug 2018'
+may2019 = 'May 2019'
+jun2019 = 'Jun 2019'
+aug2019 = 'Aug 2019'
 FIELD_SEASON_CHOICES = (
-    (jan2014, 'Jan 2014'),
-    (nov2014, 'Nov 2014'),
-    (nov2015, 'Nov 2015'),
-    (jan2018, 'Jan 2018'),
-    (jan2019, 'Jan 2019'),
-    (jan2020, 'Jan 2020')
+    (jun2017, 'Jun 2017'),
+    (aug2017, 'Aug 2017'),
+    (may2018, 'May 2018'),
+    (jun2018, 'Jun 2018'),
+    (aug2018, 'Aug 2018'),
+    (may2019, 'May 2019'),
+    (jun2019, 'Jun 2019'),
+    (aug2019, 'Aug 2019')
 )

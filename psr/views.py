@@ -49,7 +49,7 @@ class ImportKMZ(generic.FormView):
         read the form and fetch the kml or kmz file
         :return: return a kml.KML() object
         """
-        # TODO parse the kml file more smartly to locate the first placemark and work from there.
+        # need to parse the kml file more smartly to locate the first placemark and work from there.
         import_file = self.get_import_file()
         #kml_file_upload_name = kml_file_upload.name  # get the file name
         # kml_file_name = kml_file_upload_name[:kml_file_upload_name.rfind('.')]  # get the file name no extension
@@ -127,7 +127,7 @@ class ImportKMZ(generic.FormView):
 
                 # Validate Basis of Record
                 if attributes_dict.get("Basis Of Record") in (ontologies.fossil_specimen, "Fossil", "Collection"):
-                    # TODO update basis_of_record vocab, change Fossil Specimen to Collection
+                    # need to update basis_of_record vocab, change Fossil Specimen to Collection
                     lgrp_occ.basis_of_record = ontologies.fossil_specimen  # from .ontologies
                 elif attributes_dict.get("Basis Of Record") in (ontologies.human_observation, "Observation"):
                     lgrp_occ.basis_of_record = ontologies.human_observation  # from .ontologies

@@ -49,7 +49,13 @@ class GeologicalContext(projects.models.PaleoCoreContextBaseClass):
     name = models.TextField(null=True, blank=True, max_length=255)
     context_type = models.CharField(null=True, blank=True, max_length=255)
     context_number = models.IntegerField(null=True, blank=True)
+    basis_of_record = models.CharField("Basis of Record", max_length=50, blank=True, null=False,
+                                       help_text='e.g. Observed item or Collected item')
+    collecting_method = models.CharField("Collecting Method", max_length=50,
+                                         null=True, blank=True)
     collection_code = models.CharField(null=True, blank=True, max_length=10)
+    recorded_by = models.ForeignKey("Person", null=True, blank=True, related_name="geo_context_recorded_by",
+                                    on_delete=models.SET_NULL)
     description = models.TextField(null=True, blank=True, max_length=255)
 
     stratigraphic_section = models.CharField(null=True, blank=True, max_length=50)
@@ -101,8 +107,11 @@ class GeologicalContext(projects.models.PaleoCoreContextBaseClass):
     error_notes = models.CharField(max_length=255, null=True, blank=True)
     notes = models.CharField(max_length=254, null=True, blank=True)
     geom = models.GeometryField()
+    date_collected = models.DateTimeField("Date Collected", auto_now=True)
     date_last_modified = models.DateTimeField("Date Last Modified", auto_now=True)
     objects = GeoManager()
+
+    image = models.FileField(max_length=255, blank=True, upload_to="uploads/images/hrp", null=True)
 
     def __str__(self):
         nice_name = str(self.collection_code) + " " + str(self.context_number)
@@ -156,9 +165,7 @@ class Occurrence(projects.models.PaleoCoreOccurrenceBaseClass):
                                        help_text='e.g. Observed item or Collected item')
     item_number = models.IntegerField("Item #", null=True, blank=True)
     item_type = models.CharField("Item Type", max_length=255, blank=True, null=False)  # code
-    # TODO merge with taxon
     # item_scientific_name = models.CharField("Sci Name", max_length=255, null=True, blank=True)
-    # TODO merge with element
     item_description = models.CharField("Description", max_length=255, blank=True, null=True)
     item_count = models.IntegerField("Item Count", blank=True, null=True, default=1)
     collector = models.CharField("Collector", max_length=50, blank=True, null=True)
@@ -183,6 +190,7 @@ class Occurrence(projects.models.PaleoCoreOccurrenceBaseClass):
     disposition = models.CharField("Disposition", max_length=255, blank=True, null=True)
     preparation_status = models.CharField("Prep Status", max_length=50, blank=True, null=True)
     collection_remarks = models.TextField("Collection Remarks", null=True, blank=True, max_length=255)
+    date_collected = models.DateTimeField("Date Collected", auto_now=True)
     problem = models.BooleanField(default=False)
     problem_remarks = models.TextField(null=True, blank=True, max_length=64000)
 
