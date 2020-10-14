@@ -1,6 +1,4 @@
 from django.contrib.gis.db import models
-from django.utils.safestring import mark_safe
-
 import projects.models
 from django.db.models import Manager as GeoManager
 
@@ -46,8 +44,8 @@ class IdentificationQualifier(projects.models.IdentificationQualifier):
 
 
 # Geological Context
-class GeologicalContext(projects.models.PaleoCoreLocalityBaseClass):
-    #id = models.CharField(primary_key=True, max_length=255)
+class GeologicalContext(projects.models.PaleoCoreContextBaseClass):
+    id = models.CharField(primary_key=True, max_length=255)
     name = models.TextField(null=True, blank=True, max_length=255)
     context_type = models.CharField(null=True, blank=True, max_length=255)
     context_number = models.IntegerField(null=True, blank=True)
@@ -63,23 +61,29 @@ class GeologicalContext(projects.models.PaleoCoreLocalityBaseClass):
     stratigraphic_section = models.CharField(null=True, blank=True, max_length=50)
     stratigraphic_formation = models.CharField("Formation", max_length=255, blank=True, null=True)
     stratigraphic_member = models.CharField("Member", max_length=255, blank=True, null=True)
-    upper_limit_in_section = models.DecimalField(max_digits=38, decimal_places=8, null=True, blank=True, default=None)
-    lower_limit_in_section = models.DecimalField(max_digits=38, decimal_places=8, null=True, blank=True, default=None)
-
-    in_situ = models.BooleanField(null=True, blank=True, default=None)
-    ranked = models.BooleanField(null=True, blank=True, default=False)
-    geology_type = models.TextField(null=True, blank=True, max_length=255)
+    upper_limit_in_section = models.DecimalField(max_digits=38, decimal_places=8, null=True, blank=True)
+    lower_limit_in_section = models.DecimalField(max_digits=38, decimal_places=8, null=True, blank=True)
+    analytical_unit_1 = models.CharField(max_length=255, blank=True, null=True)
+    analytical_unit_2 = models.CharField(max_length=255, blank=True, null=True)
+    analytical_unit_3 = models.CharField(max_length=255, blank=True, null=True)
+    analytical_unit_found = models.CharField(max_length=255, blank=True, null=True)
+    analytical_unit_likely = models.CharField(max_length=255, blank=True, null=True)
+    analytical_unit_simplified = models.CharField(max_length=255, blank=True, null=True)
+    in_situ = models.BooleanField(default=False)
+    ranked = models.BooleanField(default=False)
+    weathering = models.SmallIntegerField(blank=True, null=True)
+    surface_modification = models.CharField("Surface Mod", max_length=255, blank=True, null=True)
 
     #Cave Attributes
-    dip = models.CharField(null=True, blank=True, max_length=255)
-    strike = models.CharField(null=True, blank=True, max_length=255)
+    dip = models.DecimalField(max_digits=38, decimal_places=8, null=True, blank=True)
+    strike = models.DecimalField(max_digits=38, decimal_places=8, null=True, blank=True)
     color = models.CharField(null=True, blank=True, max_length=255)
     texture = models.CharField(null=True, blank=True, max_length=255)
     height = models.DecimalField(max_digits=38, decimal_places=8, null=True, blank=True)
     width = models.DecimalField(max_digits=38, decimal_places=8, null=True, blank=True)
     depth = models.DecimalField(max_digits=38, decimal_places=8, null=True, blank=True)
     slope_character = models.TextField(null=True, blank=True, max_length=64000)
-    sediment_presence = models.BooleanField(null=True, blank=True, default=None)
+    sediment_presence = models.BooleanField(default=False)
     sediment_character = models.TextField(null=True, blank=True, max_length=64000)
     cave_mouth_character = models.TextField(null=True, blank=True, max_length=64000)
     rockfall_character = models.TextField(null=True, blank=True, max_length=64000)
@@ -87,52 +91,67 @@ class GeologicalContext(projects.models.PaleoCoreLocalityBaseClass):
 
     #Profile Attributes
     size_of_loess = models.CharField(max_length=255, null=True, blank=True)
-    loess_mean_thickness = models.DecimalField(max_digits=38, decimal_places=8, null=True, blank=True, default=None)
-    loess_max_thickness = models.DecimalField(max_digits=38, decimal_places=8, null=True, blank=True, default=None)
-    loess_landscape_position = models.CharField(max_length=255, null=True, blank=True)
-    loess_surface_inclination = models.CharField(max_length=255, null=True, blank=True)
-    loess_presence_coarse_components = models.BooleanField(null=True, blank=True, default=None)
-    loess_amount_coarse_components = models.DecimalField(max_digits=38, decimal_places=8, null=True, blank=True, default=None)
-    loess_number_sediment_layers = models.SmallIntegerField(blank=True, null=True)
-    loess_number_soil_horizons = models.SmallIntegerField(blank=True, null=True)
-    loess_number_cultural_horizons = models.SmallIntegerField(blank=True, null=True)
-    loess_number_coarse_layers = models.SmallIntegerField(blank=True, null=True)
-    loess_presence_vertical_profile = models.BooleanField(default=False)
+    mean_thickness = models.DecimalField(max_digits=38, decimal_places=8, null=True, blank=True)
+    max_thickness = models.DecimalField(max_digits=38, decimal_places=8, null=True, blank=True)
+    landscape_position = models.CharField(max_length=255, null=True, blank=True)
+    surface_inclination = models.CharField(max_length=255, null=True, blank=True)
+    presence_coarse_components = models.BooleanField(default=False)
+    amount_coarse_components = models.DecimalField(max_digits=38, decimal_places=8, null=True, blank=True)
+    number_sediment_layers = models.SmallIntegerField(blank=True, null=True)
+    number_soil_horizons = models.SmallIntegerField(blank=True, null=True)
+    number_cultural_horizons = models.SmallIntegerField(blank=True, null=True)
+    number_coarse_layers = models.SmallIntegerField(blank=True, null=True)
+    presence_vertical_profile = models.BooleanField(default=False)
 
     context_remarks = models.TextField("Context Remarks", max_length=500, null=True, blank=True)
     error_notes = models.CharField(max_length=255, null=True, blank=True)
     notes = models.CharField(max_length=254, null=True, blank=True)
     geom = models.GeometryField()
-    point = models.GeometryField()
-    date_collected = models.DateTimeField("Date Collected", null=True, blank=True)
+    date_collected = models.DateTimeField("Date Collected", auto_now=True)
     date_last_modified = models.DateTimeField("Date Last Modified", auto_now=True)
     objects = GeoManager()
 
-    image = models.FileField(max_length=255, blank=True, upload_to="uploads/images/psr", null=True)
+    image = models.FileField(max_length=255, blank=True, upload_to="uploads/images/hrp", null=True)
 
     def __str__(self):
-        nice_name = str(self.name)
+        nice_name = str(self.collection_code) + " " + str(self.context_number)
         return nice_name.replace("None", "").replace("--", "")
 
     class Meta:
-        verbose_name = f"Geological Context"
-        verbose_name_plural = f"Geological Contexts"
+        verbose_name = f"{app_label.upper()} Geological Context"
+        verbose_name_plural = f"{app_label.upper()} Geological Contexts"
         ordering = ["context_number"]
+
+
+# class Cave(Locality):
+#     dip = models.DecimalField(max_digits=38, decimal_places=8, null=True, blank=True)
+#     strike = models.DecimalField(max_digits=38, decimal_places=8, null=True, blank=True)
+#     color = models.CharField(null=True, blank=True, max_length=255)
+#     texture = models.CharField(null=True, blank=True, max_length=255)
+#     height = models.DecimalField(max_digits=38, decimal_places=8, null=True, blank=True)
+#     width = models.DecimalField(max_digits=38, decimal_places=8, null=True, blank=True)
+#     depth = models.DecimalField(max_digits=38, decimal_places=8, null=True, blank=True)
+#     slope_character = models.TextField(null=True, blank=True, max_length=64000)
+#     sediment_presence = models.BooleanField(default=False)
+#     sediment_character = models.TextField(null=True, blank=True, max_length=64000)
+#     cave_mouth_character = models.TextField(null=True, blank=True, max_length=64000)
+#     rockfall_character = models.TextField(null=True, blank=True, max_length=64000)
+#     speleothem_character = models.TextField(null=True, blank=True, max_length=64000)
+#
+#     class Meta:
+#         verbose_name = f"{app_label.upper()} Cave/Rockshelter"
+#         verbose_name_plural = f"{app_label.upper()} Caves/Rockshelters"
 
 
 class ExcavationUnit(models.Model):
     unit = models.CharField(max_length=6, blank=False)
-    extent = models.MultiPointField(blank=True, null=True)
+    extent = models.GeometryField(dim=3, blank=True, null=True)
     geological_context = models.ForeignKey("GeologicalContext", null=True, blank=True, on_delete=models.SET_NULL)
     objects = GeoManager()
 
     class Meta:
         verbose_name = f"{app_label.upper()} Excavation Unit"
         verbose_name_plural = f"{app_label.upper()} Excavation Units"
-
-    def __str__(self):
-        nice_name = str(self.geological_context.name) + " " + str(self.unit)
-        return nice_name.replace("None", "").replace("--", "")
 
 
 # Occurrence Class and Subclasses
@@ -144,7 +163,6 @@ class Occurrence(projects.models.PaleoCoreOccurrenceBaseClass):
         """
     basis_of_record = models.CharField("Basis of Record", max_length=50, blank=True, null=False,
                                        help_text='e.g. Observed item or Collected item')
-    find_type = models.CharField("Find Type", max_length=255, blank=True, null=False)  # field type description
     item_number = models.IntegerField("Item #", null=True, blank=True)
     item_type = models.CharField("Item Type", max_length=255, blank=True, null=False)  # code
     # item_scientific_name = models.CharField("Sci Name", max_length=255, null=True, blank=True)
@@ -165,26 +183,27 @@ class Occurrence(projects.models.PaleoCoreOccurrenceBaseClass):
     suffix = models.IntegerField("Suffix", null=True, blank=True)
     cat_number = models.CharField("Cat Number", max_length=255, blank=True, null=True)  # unit + newplot_id
     prism = models.DecimalField(max_digits=38, decimal_places=8, null=True, blank=True)
-    point = models.GeometryField(null=True, blank=True)
-    geom = models.GeometryField(null=True, blank=True)
+    point = models.GeometryField(dim=3, null=True, blank=True, srid=-1)
     objects = GeoManager()
 
     item_part = models.CharField("Item Part", max_length=10, null=True, blank=True)
     disposition = models.CharField("Disposition", max_length=255, blank=True, null=True)
     preparation_status = models.CharField("Prep Status", max_length=50, blank=True, null=True)
     collection_remarks = models.TextField("Collection Remarks", null=True, blank=True, max_length=255)
-    date_collected = models.DateTimeField("Date Collected", null=True, blank=True)
-    problem = models.BooleanField(null=True, blank=True, default=False)
+    date_collected = models.DateTimeField("Date Collected", auto_now=True)
+    problem = models.BooleanField(default=False)
     problem_remarks = models.TextField(null=True, blank=True, max_length=64000)
 
+    # Location
     collection_code = models.CharField("Collection Code", max_length=20, blank=True, null=True)
+    drainage_region = models.CharField("Drainage Region", null=True, blank=True, max_length=255)
 
     # Media
-    image = models.FileField(max_length=255, blank=True, upload_to="uploads/images/psr", null=True)
+    image = models.FileField(max_length=255, blank=True, upload_to="uploads/images/hrp", null=True)
 
     class Meta:
-        verbose_name = f"{app_label.upper()} Survey Occurrence"
-        verbose_name_plural = f"{app_label.upper()} Survey Occurrences"
+        verbose_name = f"{app_label.upper()} Occurrence"
+        verbose_name_plural = f"{app_label.upper()} Occurrences"
         ordering = ["collection_code", "geological_context", "item_number", "item_part"]
 
     def catalog_number(self):
@@ -271,143 +290,12 @@ class Biology(Occurrence):
         return str(self.taxon.__str__())
 
     class Meta:
-        verbose_name = f"{app_label.upper()} Survey Biology"
-        verbose_name_plural = f"{app_label.upper()} Survey Biology"
+        verbose_name = f"{app_label.upper()} Biology"
+        verbose_name_plural = f"{app_label.upper()} Biology"
 
 
 # Archaeology Class and Subclasses
 class Archaeology(Occurrence):
-    archaeology_type = models.CharField(null=True, blank=True, max_length=255)
-    period = models.CharField(null=True, blank=True, max_length=255)
-    archaeology_remarks = models.TextField(null=True, blank=True, max_length=64000)
-    length_mm = models.DecimalField(max_digits=38, decimal_places=8, null=True, blank=True)
-    width_mm = models.DecimalField(max_digits=38, decimal_places=8, null=True, blank=True)
-    thick_mm = models.DecimalField(max_digits=38, decimal_places=8, null=True, blank=True)
-    weight = models.DecimalField(max_digits=38, decimal_places=8, null=True, blank=True)
-    archaeology_notes = models.TextField(null=True, blank=True, max_length=64000)
-
-    class Meta:
-        verbose_name = f"{app_label.upper()} Survey Archaeology"
-        verbose_name_plural = f"{app_label.upper()} Survey Archaeology"
-
-
-class Lithic(Archaeology):
-    dataclass = models.CharField(null=True, blank=True, max_length=255)
-    raw_material = models.CharField(null=True, blank=True, max_length=255)
-    raw_material1 = models.CharField(null=True, blank=True, max_length=255)
-    technique = models.CharField(null=True, blank=True, max_length=255)
-    form = models.CharField(null=True, blank=True, max_length=255)
-    type1 = models.CharField(null=True, blank=True, max_length=255)
-    type2 = models.CharField(null=True, blank=True, max_length=255)
-    coretype = models.CharField(null=True, blank=True, max_length=255)
-    biftype = models.CharField(null=True, blank=True, max_length=255)
-    retedge = models.CharField(null=True, blank=True, max_length=255)
-    bifsupport = models.CharField(null=True, blank=True, max_length=255)
-    cortex = models.DecimalField(max_digits=38, decimal_places=8, null=True, blank=True)
-    edgedamage = models.CharField(null=True, blank=True, max_length=255)
-    alteration = models.CharField(null=True, blank=True, max_length=255)
-    platsurf = models.CharField(null=True, blank=True, max_length=255)
-    scarmorph = models.CharField(null=True, blank=True, max_length=255)
-    extplat = models.CharField(null=True, blank=True, max_length=255)
-    lip = models.CharField(null=True, blank=True, max_length=255)
-    pointimpact = models.CharField(null=True, blank=True, max_length=255)
-    platwidth = models.DecimalField(max_digits=38, decimal_places=8, null=True, blank=True)
-    platthick = models.DecimalField(max_digits=38, decimal_places=8, null=True, blank=True)
-    scarlength = models.DecimalField(max_digits=38, decimal_places=8, null=True, blank=True)
-    tqwidth = models.DecimalField(max_digits=38, decimal_places=8, null=True, blank=True)
-    tqthick = models.DecimalField(max_digits=38, decimal_places=8, null=True, blank=True)
-    midwidth = models.DecimalField(max_digits=38, decimal_places=8, null=True, blank=True)
-    midthick = models.DecimalField(max_digits=38, decimal_places=8, null=True, blank=True)
-    tipwidth = models.DecimalField(max_digits=38, decimal_places=8, null=True, blank=True)
-    lentowid = models.DecimalField(max_digits=38, decimal_places=8, null=True, blank=True)
-    lentothick = models.DecimalField(max_digits=38, decimal_places=8, null=True, blank=True)
-    roew1 = models.DecimalField(max_digits=38, decimal_places=8, null=True, blank=True)
-    roet1 = models.DecimalField(max_digits=38, decimal_places=8, null=True, blank=True)
-    roew3 = models.DecimalField(max_digits=38, decimal_places=8, null=True, blank=True)
-    roet1 = models.DecimalField(max_digits=38, decimal_places=8, null=True, blank=True)
-    epa = models.DecimalField(max_digits=38, decimal_places=8, null=True, blank=True)
-
-    class Meta:
-        verbose_name = f"{app_label.upper()} Survey Lithic"
-        verbose_name_plural = f"{app_label.upper()} Survey Lithics"
-
-
-class Bone(Archaeology):
-    cutmarks = models.BooleanField(default=False)
-    burning = models.BooleanField(default=False)
-    part = models.CharField(null=True, blank=True, max_length=255)
-
-    class Meta:
-        verbose_name = f"{app_label.upper()} Survey Archaeological Fauna"
-        verbose_name_plural = f"{app_label.upper()} Survey Archaeological Fauna"
-
-
-class Ceramic(Archaeology):
-    type = models.CharField(null=True, blank=True, max_length=255)
-    decorated = models.BooleanField(default=False)
-
-    class Meta:
-        verbose_name = f"{app_label.upper()} Survey Ceramic"
-        verbose_name_plural = f"{app_label.upper()} Survey Ceramics"
-
-
-class Geology(Occurrence):
-    geology_type = models.CharField(null=True, blank=True, max_length=255)
-    dip = models.DecimalField(max_digits=38, decimal_places=8, null=True, blank=True)
-    strike = models.DecimalField(max_digits=38, decimal_places=8, null=True, blank=True)
-    color = models.CharField(null=True, blank=True, max_length=255)
-    texture = models.CharField(null=True, blank=True, max_length=255)
-
-    class Meta:
-        verbose_name = f"{app_label.upper()} Survey Geology"
-        verbose_name_plural = f"{app_label.upper()} Survey Geology"
-
-
-class Aggregate(Occurrence):
-    screen_size = models.CharField(null=True, blank=True, max_length=255)
-    burning = models.BooleanField(default=False)
-    bone = models.BooleanField(default=False)
-    microfauna = models.BooleanField(default=False)
-    molluscs = models.BooleanField(default=False)
-    pebbles = models.BooleanField(default=False)
-    smallplatforms = models.DecimalField(max_digits=38, decimal_places=8, null=True, blank=True)
-    smalldebris = models.DecimalField(max_digits=38, decimal_places=8, null=True, blank=True)
-    tinyplatforms = models.DecimalField(max_digits=38, decimal_places=8, null=True, blank=True)
-    tinydebris = models.DecimalField(max_digits=38, decimal_places=8, null=True, blank=True)
-    counts = models.IntegerField(null=True, blank=True)
-    bull_find_remarks = models.TextField(null=True, blank=True, max_length=64000)
-
-    class Meta:
-        verbose_name = f"{app_label.upper()} Survey Bulk Find"
-        verbose_name_plural = f"{app_label.upper()} Survey Bulk Finds"
-
-
-class ExcavationOccurrence(projects.models.PaleoCoreOccurrenceBaseClass):
-    geological_context = models.ForeignKey("GeologicalContext", null=True, blank=True, on_delete=models.SET_NULL)
-    unit = models.ForeignKey("ExcavationUnit", null=True, blank=True, on_delete=models.SET_NULL)
-    field_id = models.CharField("Field ID", max_length=50, null=True, blank=True)
-    cat_number = models.CharField("Cat Number", max_length=255, blank=True, null=True)  # unit + newplot_id
-    prism = models.CharField(max_length=50, null=True, blank=True)
-    level = models.CharField(max_length=100, null=True, blank=True)
-
-    item_type = models.CharField("Item Type", max_length=255, blank=True, null=False)
-    type = models.CharField(max_length=100, null=True, blank=True)
-    excavator = models.CharField(max_length=100, null=True, blank=True)
-    found_by = models.ForeignKey("Person", null=True, blank=True, related_name="excav_occurrence_found_by",
-                                 on_delete=models.SET_NULL)
-
-    point = models.MultiPointField(dim=3, srid=-1, null=True, blank=True)
-    objects = GeoManager()
-
-    date_collected = models.DateTimeField("Date Collected", null=True, blank=True)
-
-    class Meta:
-        verbose_name = f"{app_label.upper()} Excavated Occurrence"
-        verbose_name_plural = f"{app_label.upper()} Excavated Occurrences"
-
-
-# Excavated Archaeology Class and Subclasses
-class ExcavatedArchaeology(ExcavationOccurrence):
     archaeology_type = models.CharField(null=True, blank=True, max_length=255)
     period = models.CharField(null=True, blank=True, max_length=255)
     archaeology_preparation = models.CharField(null=True, blank=True, max_length=255)
@@ -419,143 +307,88 @@ class ExcavatedArchaeology(ExcavationOccurrence):
     archaeology_notes = models.TextField(null=True, blank=True, max_length=64000)
 
     class Meta:
-        verbose_name = f"{app_label.upper()} Excavated Archaeology"
-        verbose_name_plural = f"{app_label.upper()} Excavated Archaeology"
+        verbose_name = f"{app_label.upper()} Archaeology"
+        verbose_name_plural = f"{app_label.upper()} Archaeology"
 
 
-class ExcavatedLithic(ExcavatedArchaeology):
+class Lithic(Archaeology):
     dataclass = models.CharField(null=True, blank=True, max_length=255)
-    raw_material = models.CharField(null=True, blank=True, max_length=255)
-    raw_material1 = models.CharField(null=True, blank=True, max_length=255)
-    technique = models.CharField(null=True, blank=True, max_length=255)
+    fbtype = models.SmallIntegerField(blank=True, null=True)
     form = models.CharField(null=True, blank=True, max_length=255)
-    type1 = models.CharField(null=True, blank=True, max_length=255)
-    type2 = models.CharField(null=True, blank=True, max_length=255)
-    coretype = models.CharField(null=True, blank=True, max_length=255)
-    biftype = models.CharField(null=True, blank=True, max_length=255)
-    retedge = models.CharField(null=True, blank=True, max_length=255)
-    bifsupport = models.CharField(null=True, blank=True, max_length=255)
+    technique = models.CharField(null=True, blank=True, max_length=255)
     cortex = models.DecimalField(max_digits=38, decimal_places=8, null=True, blank=True)
-    edgedamage = models.CharField(null=True, blank=True, max_length=255)
-    alteration = models.CharField(null=True, blank=True, max_length=255)
+    coretype = models.CharField(null=True, blank=True, max_length=255)
     platsurf = models.CharField(null=True, blank=True, max_length=255)
     scarmorph = models.CharField(null=True, blank=True, max_length=255)
-    extplat = models.CharField(null=True, blank=True, max_length=255)
-    lip = models.CharField(null=True, blank=True, max_length=255)
-    pointimpact = models.CharField(null=True, blank=True, max_length=255)
+    edgedamage = models.CharField(null=True, blank=True, max_length=255)
     platwidth = models.DecimalField(max_digits=38, decimal_places=8, null=True, blank=True)
     platthick = models.DecimalField(max_digits=38, decimal_places=8, null=True, blank=True)
-    scarlength = models.DecimalField(max_digits=38, decimal_places=8, null=True, blank=True)
-    tqwidth = models.DecimalField(max_digits=38, decimal_places=8, null=True, blank=True)
-    tqthick = models.DecimalField(max_digits=38, decimal_places=8, null=True, blank=True)
-    midwidth = models.DecimalField(max_digits=38, decimal_places=8, null=True, blank=True)
-    midthick = models.DecimalField(max_digits=38, decimal_places=8, null=True, blank=True)
-    tipwidth = models.DecimalField(max_digits=38, decimal_places=8, null=True, blank=True)
-    lentowid = models.DecimalField(max_digits=38, decimal_places=8, null=True, blank=True)
-    lentothick = models.DecimalField(max_digits=38, decimal_places=8, null=True, blank=True)
-    roew1 = models.DecimalField(max_digits=38, decimal_places=8, null=True, blank=True)
-    roet1 = models.DecimalField(max_digits=38, decimal_places=8, null=True, blank=True)
-    roew3 = models.DecimalField(max_digits=38, decimal_places=8, null=True, blank=True)
-    roet1 = models.DecimalField(max_digits=38, decimal_places=8, null=True, blank=True)
     epa = models.DecimalField(max_digits=38, decimal_places=8, null=True, blank=True)
+    scarlength = models.DecimalField(max_digits=38, decimal_places=8, null=True, blank=True)
 
     class Meta:
-        verbose_name = f"{app_label.upper()} Excavated Lithic"
-        verbose_name_plural = f"{app_label.upper()} Excavated Lithics"
+        verbose_name = f"{app_label.upper()} Lithic"
+        verbose_name_plural = f"{app_label.upper()} Lithics"
 
 
-class ExcavatedBone(ExcavatedArchaeology):
+class Bone(Archaeology):
     cutmarks = models.BooleanField(default=False)
     burning = models.BooleanField(default=False)
     part = models.CharField(null=True, blank=True, max_length=255)
 
     class Meta:
-        verbose_name = f"{app_label.upper()} Excavated Archaeological Fauna"
-        verbose_name_plural = f"{app_label.upper()} Excavated Archaeological Fauna"
+        verbose_name = f"{app_label.upper()} Archaeological Fauna"
+        verbose_name_plural = f"{app_label.upper()} Archaeological Fauna"
 
 
-class ExcavatedCeramic(ExcavatedArchaeology):
-    ceramic_type = models.CharField(null=True, blank=True, max_length=255)
+class Ceramic(Archaeology):
+    type = models.CharField(null=True, blank=True, max_length=255)
     decorated = models.BooleanField(default=False)
 
     class Meta:
-        verbose_name = f"{app_label.upper()} Excavated Ceramic"
-        verbose_name_plural = f"{app_label.upper()} Excavated Ceramics"
+        verbose_name = f"{app_label.upper()} Ceramic"
+        verbose_name_plural = f"{app_label.upper()} Ceramic"
 
 
-class ExcavatedGeology(ExcavationOccurrence):
+class Geology(Occurrence):  # need to think about a possible subclass for Locality that is cave
     geology_type = models.CharField(null=True, blank=True, max_length=255)
+    dip = models.DecimalField(max_digits=38, decimal_places=8, null=True, blank=True)
+    strike = models.DecimalField(max_digits=38, decimal_places=8, null=True, blank=True)
     color = models.CharField(null=True, blank=True, max_length=255)
     texture = models.CharField(null=True, blank=True, max_length=255)
 
     class Meta:
-        verbose_name = f"{app_label.upper()} Excavated Geology"
-        verbose_name_plural = f"{app_label.upper()} Excavated Geology"
+        verbose_name = f"{app_label.upper()} Geology"
+        verbose_name_plural = f"{app_label.upper()} Geology"
 
 
-class ExcavatedAggregate(ExcavationOccurrence):
+class Aggregate(Occurrence):
     screen_size = models.CharField(null=True, blank=True, max_length=255)
     burning = models.BooleanField(default=False)
     bone = models.BooleanField(default=False)
     microfauna = models.BooleanField(default=False)
-    molluscs = models.BooleanField(default=False)
     pebbles = models.BooleanField(default=False)
     smallplatforms = models.DecimalField(max_digits=38, decimal_places=8, null=True, blank=True)
     smalldebris = models.DecimalField(max_digits=38, decimal_places=8, null=True, blank=True)
     tinyplatforms = models.DecimalField(max_digits=38, decimal_places=8, null=True, blank=True)
     tinydebris = models.DecimalField(max_digits=38, decimal_places=8, null=True, blank=True)
     counts = models.IntegerField(null=True, blank=True)
+    weights = models.IntegerField(null=True, blank=True)
     bull_find_remarks = models.TextField(null=True, blank=True, max_length=64000)
 
     class Meta:
-        verbose_name = f"{app_label.upper()} Excavated Bulk Find"
-        verbose_name_plural = f"{app_label.upper()} Excavated Bulk Finds"
-
-
-class ExcavatedBiology(ExcavationOccurrence):
-    # Biology
-    biology_type = models.CharField(null=True, blank=True, max_length=255)
-    sex = models.CharField("Sex", null=True, blank=True, max_length=50)
-    life_stage = models.CharField("Life Stage", null=True, blank=True, max_length=50)
-    size_class = models.CharField("Size Class", null=True, blank=True, max_length=50)
-    # Taxon
-    taxon = models.ForeignKey(Taxon,
-                              default=0, on_delete=models.SET_DEFAULT,  # prevent deletion when taxa deleted
-                              related_name='excv_bio_occurrences')
-    identification_qualifier = models.ForeignKey(IdentificationQualifier, null=True, blank=True,
-                                                 on_delete=models.SET_NULL,
-                                                 related_name='excv_bio_occurrences')
-    verbatim_taxon = models.CharField(null=True, blank=True, max_length=1024)
-    verbatim_identification_qualifier = models.CharField(null=True, blank=True, max_length=255)
-    taxonomy_remarks = models.TextField(max_length=500, null=True, blank=True)
-    type_status = models.CharField(null=True, blank=True, max_length=50)
-    fauna_notes = models.TextField(null=True, blank=True, max_length=64000)
-
-    def __str__(self):
-        return str(self.taxon.__str__())
-
-    class Meta:
-        verbose_name = f"{app_label.upper()} Excavated Biology"
-        verbose_name_plural = f"{app_label.upper()} Excavated Biology"
-
-
+        verbose_name = f"{app_label.upper()} Bulk Find"
+        verbose_name_plural = f"{app_label.upper()} Bulk Finds"
 
 
 # Media Classes
 class Image(models.Model):
-    occurrence = models.ForeignKey("Occurrence", related_name='psr_occurrences_image', on_delete=models.CASCADE, default="", null=True, blank=True,)
-    locality = models.ForeignKey("GeologicalContext", related_name='psr_contexts_image', on_delete=models.CASCADE, default="")
+    occurrence = models.ForeignKey("Occurrence", related_name='psr_occurrences', on_delete=models.CASCADE)
     image = models.ImageField(upload_to="uploads/images", null=True, blank=True)
     description = models.TextField(null=True, blank=True)
 
-    def thumbnail(self): #TODO figure out why this is not working
-        return u'<img src="%s" />' % (self.image.url)
-
-    thumbnail.short_description = 'Thumbnail'
-
 
 class File(models.Model):
-    occurrence = models.ForeignKey("Occurrence", related_name='psr_occurrences_file', on_delete=models.CASCADE, default="", null=True, blank=True,)
-    locality = models.ForeignKey("GeologicalContext", related_name='psr_contexts_file', on_delete=models.CASCADE, default="")
+    occurrence = models.ForeignKey("Occurrence", on_delete=models.CASCADE)
     file = models.FileField(upload_to="uploads/files", null=True, blank=True)
     description = models.TextField(null=True, blank=True)
