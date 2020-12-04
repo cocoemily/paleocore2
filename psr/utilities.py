@@ -1,10 +1,12 @@
 #__author__ = 'reedd'
+from django.core.files.base import ContentFile
 
-from psr.models import Occurrence, Archaeology, Biology, Geology, GeologicalContext, Aggregate, Person, Taxon, IdentificationQualifier
+from psr.models import Occurrence, Archaeology, Biology, Geology, GeologicalContext, Aggregate, Person, Taxon, IdentificationQualifier, Image
 from django.core.exceptions import MultipleObjectsReturned, ObjectDoesNotExist
 import collections
 
 import re
+import os
 from django.contrib.gis.geos import Point
 from django.contrib.gis.measure import Distance
 import calendar
@@ -12,10 +14,11 @@ from datetime import datetime
 import psr.ontologies
 import shapefile
 from django.contrib.gis.geos import GEOSGeometry
+from decimal import Decimal
 
-
-#image_folder_path = "/Users/reedd/Documents/projects/PaleoCore/projects/Omo Mursi/Final_Import/omo_mursi_data/omo_mursi_data/"
-
+geo_filename = "/Users/emilycoco/Desktop/NYU/Kazakhstan/PSR-Paleo-Core/PaleoCore-upload/geo_points/geology_21_09_20"
+arch_filename = "/Users/emilycoco/Desktop/NYU/Kazakhstan/PSR-Paleo-Core/PaleoCore-upload/arch_points/archaeology_21_09_20"
+lo_filename = "/Users/emilycoco/Desktop/NYU/Kazakhstan/PSR-Paleo-Core/PaleoCore-upload/local_points/locality_points_21_09_20"
 
 def duplicate_barcodes():
     all_occurrences = Occurrence.objects.filter(basis_of_record='FossilSpecimen')
@@ -782,86 +785,217 @@ def html_escape(text):
     """
     return "".join(html_escape_table.get(c, c) for c in text)
 
-def import_archaeology_shapefile(filename):
-    sf = shapefile.Reader(filename)
-    sr = sf.shapeRecords()
-    for r in sr: #iterate through each record
-        psr_occ = Occurrence(basis_of_record=r.record["Basis Of R"],
-                             item_count=r.record["Item Count"],
-                             item_type=r.record["Item Type"],
-                             item_description=r.record["Descriptio"],
-                             collector=r.record["Identified"],
-                             finder=r.record["Identified"],
-                             collecting_method=r.record["Collecting"],
-                             #geological_context=r.record["Locality"],
-                             field_id=r.record["Name"],
-                             #recorded_by=r.record["Recorded B"],
-                             collection_remarks=r.record["Remarks"]
-                             )
-        if r.shape.shapeType is 1: #point
-            # TODO create statements for dealing with different kinds of geometries
-            coords = r.shape.points[0]
-            geom = GEOSGeometry("POINT (" + str(coords[0]) + " " + str(coords[1]) + ")", 4326)
-        psr_occ.geom = geom
-
-        #TODO set recorded_by and found_by as Persons
-        #psr_occ.found_by=Person.objects.get_or_create(name=r.record["Identified"])
-        #psr_occ.recorded_by=Person.objects.get_or_create(name=r.record["Recorded B"])
-        #TODO set geological_context
-        #psr_occ.geological_context=GeologicalContext.objects.get_or_create(name=r.record["Locality"])
-        psr_occ.date_collected = datetime.strptime(r.record["Date Recor"], '%d. %b %Y, %H:%M')
-
-        #psr_occ.save() #last step to add it to the database
-
-
 def import_geology_shapefile(filename):
     sf = shapefile.Reader(filename)
     sr = sf.shapeRecords()
     for r in sr:
-        #TODO need to figure out how to discern between geological contexts and geology occurrences
-        psr_gc = GeologicalContext(
-            basis_of_record = r.record["Basis Of R"],
-            collecting_method= r.record["Collecting"],
-            name = r.record["Name"],
-            context_type = r.record["Item Type"],
-            description = r.record["Descriptio"],
-            dip = r.record["Dip"],
-            strike = r.record["Strike"],
-            texture = r.record["Texture"],
-            color = r.record["Color"],
-            height = r.record["Height"],
-            width = r.record["Width"],
-            depth= r.record["Depth"],
-            context_remarks= r.record["Remarks"],
-            rockfall_character = r.record["Rockfall C"],
-            sediment_character = r.record["Sediment C"],
-            slope_character= r.record["Slope Char"],
-            speleothem_character= r.record["Speleothem"],
-            cave_mouth_character= r.record["Cave Mouth"]
+        if r.record["Item Type"] in ("Geosample") :
+            psr_g = Occurrence(
+                basis_of_record=r.record["Basis Of R"],
+                item_count=r.record["Item Count"],
+                item_type=r.record["Item Type"],
+                item_description=r.record["Descriptio"],
+                collecting_method=r.record["Collecting"],
+                field_id=r.record["Name"],
+                collection_remarks=r.record["Remarks"]
+            )
+            #set point
+            if r.shape.shapeType is 1:  # point
+                coords = r.shape.points[0]
+                geom = GEOSGeometry("POINT (" + str(coords[0]) + " " + str(coords[1]) + ")", 4326)
+            psr_g.point = geom
+            # set geological context
+            psr_g.geological_context = GeologicalContext.objects.get_or_create(name=r.record["Locality"], geom=geom)[0]
+
+        else:
+            psr_g = GeologicalContext(
+                basis_of_record = r.record["Basis Of R"],
+                collecting_method= r.record["Collecting"],
+                name = r.record["Name"],
+                context_type = r.record["Item Type"],
+                description = r.record["Descriptio"],
+                dip = r.record["Dip"],
+                strike = r.record["Strike"],
+                texture = r.record["Texture"],
+                color = r.record["Color"],
+                context_remarks= r.record["Remarks"],
+                rockfall_character = r.record["Rockfall C"],
+                sediment_character = r.record["Sediment C"],
+                slope_character= r.record["Slope Char"],
+                speleothem_character= r.record["Speleothem"],
+                cave_mouth_character= r.record["Cave Mouth"],
+                geology_type = r.record["Geology Ty"]
+            )
+
+            if r.record["Height"] not in ("", None):
+                psr_g.height = Decimal(r.record["Height"])
+            if r.record["Width"] not in ("", None):
+                psr_g.width = Decimal(r.record["Width"])
+            if r.record["Depth"] not in ("", None):
+                psr_g.depth = Decimal(r.record["Depth"])
+
+            if r.record["Sediment P"] in ('-None Selected-'):
+                psr_g.sediment_presence = None
+            else:
+                psr_g.sediment_presence = r.record["Sediment P"]
+
+            if r.shape.shapeType is 1:  # point
+                coords = r.shape.points[0]
+                geom = GEOSGeometry("POINT (" + str(coords[0]) + " " + str(coords[1]) + ")", 4326)
+            # elif r.shape.shapeType is 5: #polygon
+            # elif r.shape.shapeType is 8: #multipoint
+            psr_g.geom = geom
+
+        if r.record["Date Recor"] is not "":
+            if "at" in r.record["Date Recor"]:
+                psr_g.date_collected = datetime.strptime(r.record["Date Recor"], '%d. %b %Y at %H:%M')
+            elif "," in r.record["Date Recor"]:
+                psr_g.date_collected = datetime.strptime(r.record["Date Recor"], '%d. %b %Y, %H:%M')
+            else:
+                psr_g.date_collected = datetime.strptime(r.record["Date Recor"], '%d. %b %Y')
+        else:
+            psr_g.date_collected = None
+
+        name=r.record["Recorded B"].split(" ")
+        psr_g.recorded_by=Person.objects.get_or_create(last_name=name[1], first_name=name[0])[0]
+
+        psr_g.last_import = True
+        psr_g.save()
+
+        photodir = "/Users/emilycoco/Desktop/NYU/Kazakhstan/PSR-Paleo-Core/PaleoCore-upload/geo_points"
+        photonames = r.record["Photo"].split(",")
+        upload_pictures(photonames, psr_g, photodir)
+
+def import_archaeology_shapefile(filename):
+    sf = shapefile.Reader(filename)
+    sr = sf.shapeRecords()
+    for r in sr: #iterate through each record
+        if r.record["Item Type"] in ("Caves"):
+            psr_a = GeologicalContext(
+                basis_of_record=r.record["Basis Of R"],
+                collecting_method=r.record["Collecting"],
+                name=r.record["Name"],
+                context_type=r.record["Item Type"],
+                description=r.record["Descriptio"],
+                #dip=r.record["Dip"],
+                #strike=r.record["Strike"],
+                #texture=r.record["Texture"],
+                #color=r.record["Color"],
+                context_remarks=r.record["Remarks"],
+                rockfall_character=r.record["Rockfall C"],
+                sediment_character=r.record["Sediment C"],
+                slope_character=r.record["Slope Char"],
+                speleothem_character=r.record["Speleothem"],
+                cave_mouth_character=r.record["Cave Mouth"],
+                #geology_type=r.record["Geology Ty"]
+            )
+
+            if r.record["Height"] not in ("", None):
+                psr_a.height = Decimal(r.record["Height"])
+            if r.record["Width"] not in ("", None):
+                psr_a.width = Decimal(r.record["Width"])
+            if r.record["Depth"] not in ("", None):
+                psr_a.depth = Decimal(r.record["Depth"])
+
+            if r.record["Sediment P"] in ('-None Selected-'):
+                psr_a.sediment_presence = None
+            else:
+                psr_a.sediment_presence = r.record["Sediment P"]
+
+            if r.shape.shapeType is 1:  # point
+                coords = r.shape.points[0]
+                geom = GEOSGeometry("POINT (" + str(coords[0]) + " " + str(coords[1]) + ")", 4326)
+            # elif r.shape.shapeType is 5: #polygon
+            # elif r.shape.shapeType is 8: #multipoint
+            psr_a.geom = geom
+
+        else:
+            psr_a = Occurrence(
+                basis_of_record=r.record["Basis Of R"],
+                item_count=r.record["Item Count"],
+                item_type=r.record["Item Type"],
+                item_description=r.record["Descriptio"],
+                #collector=r.record["Identified"],
+                #finder=r.record["Identified"],
+                collecting_method=r.record["Collecting"],
+                field_id=r.record["Name"],
+                collection_remarks=r.record["Remarks"]
+            )
+            # set point
+            if r.shape.shapeType is 1:  # point
+                coords = r.shape.points[0]
+                geom = GEOSGeometry("POINT (" + str(coords[0]) + " " + str(coords[1]) + ")", 4326)
+            psr_a.point = geom
+            # set geological context
+            psr_a.geological_context = GeologicalContext.objects.get_or_create(name=r.record["Locality"], geom=geom)[0]
+            # set people
+            if r.record["Identified"] not in ('-None Selected-', "", None):
+                name1 = r.record["Identified"].split(" ")
+                psr_a.found_by = Person.objects.get_or_create(last_name=name1[1], first_name=name1[0])[0]
+                psr_a.collector=r.record["Identified"]
+                psr_a.finder=r.record["Identified"]
+
+        if r.record["Date Recor"] not in ("", None):
+            if "at" in r.record["Date Recor"]:
+                psr_a.date_collected = datetime.strptime(r.record["Date Recor"], '%d. %b %Y at %H:%M')
+            elif "," in r.record["Date Recor"]:
+                psr_a.date_collected = datetime.strptime(r.record["Date Recor"], '%d. %b %Y, %H:%M')
+            else:
+                psr_a.date_collected = datetime.strptime(r.record["Date Recor"], '%d. %b %Y')
+        else:
+            psr_a.date_collected = None
+
+        if r.record["Recorded B"] not in ('-None Selected-', "", None):
+            name=r.record["Recorded B"].split(" ")
+            psr_a.recorded_by=Person.objects.get_or_create(last_name=name[1], first_name=name[0])[0]
+
+        psr_a.last_import = True
+        psr_a.save()  # last step to add it to the database
+
+        photodir = "/Users/emilycoco/Desktop/NYU/Kazakhstan/PSR-Paleo-Core/PaleoCore-upload/arch_points"
+        photonames = r.record["Photo"].split(",")
+        upload_pictures(photonames, psr_a, photodir)
+
+def import_locality_points_shapefile(filename):
+    sf = shapefile.Reader(filename)
+    sr = sf.shapeRecords()
+    for r in sr:  # iterate through each record
+        psr_l = Occurrence(
+            item_type=r.record["Type"],
+            item_description=r.record["Descriptio"],
+            field_id=r.record["Name"]
         )
-        if r.shape.shapeType is 1: #point
-            # TODO create statements for dealing with different kinds of geometries
+        # set point
+        if r.shape.shapeType is 1:  # point
             coords = r.shape.points[0]
             geom = GEOSGeometry("POINT (" + str(coords[0]) + " " + str(coords[1]) + ")", 4326)
-        psr_gc.geom = geom
+        psr_l.point = geom
+        # set geological context
+        psr_l.geological_context = GeologicalContext.objects.get_or_create(name=r.record["Locality"], geom=geom)[0]
 
-        if r.record["Sediment P"] in ('-None Selected-', 'False', 'No', 'NO', 'no'):
-            psr_gc.sediment_presence = False
-        elif r.record["Sediment P"] in ('True', 'Yes', 'YES', 'yes'):
-            psr_gc.sediment_presence = True
+        psr_l.last_import = True
+        psr_l.save()  # last step to add it to the database
 
-        psr_gc.date_collected = datetime.strptime(r.record["Date Recor"], '%d. %b %Y, %H:%M')
+        photodir = "/Users/emilycoco/Desktop/NYU/Kazakhstan/PSR-Paleo-Core/PaleoCore-upload/landscape_observations"
+        photonames = r.record["Photos"].split(",")
+        upload_pictures(photonames, psr_l, photodir)
 
-        #TODO how use ontologies??
-        #if psr_gc.collecting_method in ('Exploratory Survey', 'Exploratory survey'):
-            #psr_gc.collection_code =
-        #TODO elif statements for other collection methods
-
-        # TODO set recorded_by as Persons
-        psr_gc.recorded_by=Person.objects.get_or_create(name=r.record["Recorded B"])
-
-        #psr_gc.save()
-
+#photodir = "/Users/emilycoco/Desktop/NYU/Kazakhstan/PSR-Paleo-Core/PaleoCore-upload/geo_points"
+def upload_pictures(photonames, obj, photodir):
+    if not 'N/A' in photonames[0]:
+        for p in photonames:
+            if os.path.isfile(os.path.join(photodir, p)):
+                f = open(os.path.join(photodir, p), 'rb')
+                upload_dir = Image._meta.get_field('image').upload_to
+                name = os.path.join(upload_dir, str(obj.id) + '_' + p)
+                im = Image(description=name)
+                if type(obj) is Occurrence:
+                    im.occurrence = Occurrence.objects.get_or_create(id = obj.id)[0]
+                    im.locality = obj.geological_context
+                elif type(obj) is GeologicalContext:
+                    im.locality = GeologicalContext.objects.get_or_create(id = obj.id)[0]
+                im.image.save(name, ContentFile(f.read()))
+                im.save()
 
 
 
