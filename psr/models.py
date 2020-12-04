@@ -45,7 +45,7 @@ class IdentificationQualifier(projects.models.IdentificationQualifier):
 
 # Geological Context
 class GeologicalContext(projects.models.PaleoCoreContextBaseClass):
-    id = models.CharField(primary_key=True, max_length=255)
+    #id = models.CharField(primary_key=True, max_length=255)
     name = models.TextField(null=True, blank=True, max_length=255)
     context_type = models.CharField(null=True, blank=True, max_length=255)
     context_number = models.IntegerField(null=True, blank=True)
@@ -61,29 +61,30 @@ class GeologicalContext(projects.models.PaleoCoreContextBaseClass):
     stratigraphic_section = models.CharField(null=True, blank=True, max_length=50)
     stratigraphic_formation = models.CharField("Formation", max_length=255, blank=True, null=True)
     stratigraphic_member = models.CharField("Member", max_length=255, blank=True, null=True)
-    upper_limit_in_section = models.DecimalField(max_digits=38, decimal_places=8, null=True, blank=True)
-    lower_limit_in_section = models.DecimalField(max_digits=38, decimal_places=8, null=True, blank=True)
+    upper_limit_in_section = models.DecimalField(max_digits=38, decimal_places=8, null=True, blank=True, default=None)
+    lower_limit_in_section = models.DecimalField(max_digits=38, decimal_places=8, null=True, blank=True, default=None)
     analytical_unit_1 = models.CharField(max_length=255, blank=True, null=True)
     analytical_unit_2 = models.CharField(max_length=255, blank=True, null=True)
     analytical_unit_3 = models.CharField(max_length=255, blank=True, null=True)
     analytical_unit_found = models.CharField(max_length=255, blank=True, null=True)
     analytical_unit_likely = models.CharField(max_length=255, blank=True, null=True)
     analytical_unit_simplified = models.CharField(max_length=255, blank=True, null=True)
-    in_situ = models.BooleanField(default=False)
-    ranked = models.BooleanField(default=False)
+    in_situ = models.BooleanField(null=True, blank=True, default=None)
+    ranked = models.BooleanField(null=True, blank=True, default=False)
     weathering = models.SmallIntegerField(blank=True, null=True)
     surface_modification = models.CharField("Surface Mod", max_length=255, blank=True, null=True)
+    geology_type = models.TextField(null=True, blank=True, max_length=255)
 
     #Cave Attributes
-    dip = models.DecimalField(max_digits=38, decimal_places=8, null=True, blank=True)
-    strike = models.DecimalField(max_digits=38, decimal_places=8, null=True, blank=True)
+    dip = models.CharField(null=True, blank=True, max_length=255)
+    strike = models.CharField(null=True, blank=True, max_length=255)
     color = models.CharField(null=True, blank=True, max_length=255)
     texture = models.CharField(null=True, blank=True, max_length=255)
     height = models.DecimalField(max_digits=38, decimal_places=8, null=True, blank=True)
     width = models.DecimalField(max_digits=38, decimal_places=8, null=True, blank=True)
     depth = models.DecimalField(max_digits=38, decimal_places=8, null=True, blank=True)
     slope_character = models.TextField(null=True, blank=True, max_length=64000)
-    sediment_presence = models.BooleanField(default=False)
+    sediment_presence = models.BooleanField(null=True, blank=True, default=None)
     sediment_character = models.TextField(null=True, blank=True, max_length=64000)
     cave_mouth_character = models.TextField(null=True, blank=True, max_length=64000)
     rockfall_character = models.TextField(null=True, blank=True, max_length=64000)
@@ -91,12 +92,12 @@ class GeologicalContext(projects.models.PaleoCoreContextBaseClass):
 
     #Profile Attributes
     size_of_loess = models.CharField(max_length=255, null=True, blank=True)
-    mean_thickness = models.DecimalField(max_digits=38, decimal_places=8, null=True, blank=True)
-    max_thickness = models.DecimalField(max_digits=38, decimal_places=8, null=True, blank=True)
+    mean_thickness = models.DecimalField(max_digits=38, decimal_places=8, null=True, blank=True, default=None)
+    max_thickness = models.DecimalField(max_digits=38, decimal_places=8, null=True, blank=True, default=None)
     landscape_position = models.CharField(max_length=255, null=True, blank=True)
     surface_inclination = models.CharField(max_length=255, null=True, blank=True)
-    presence_coarse_components = models.BooleanField(default=False)
-    amount_coarse_components = models.DecimalField(max_digits=38, decimal_places=8, null=True, blank=True)
+    presence_coarse_components = models.BooleanField(null=True, blank=True, default=None)
+    amount_coarse_components = models.DecimalField(max_digits=38, decimal_places=8, null=True, blank=True, default=None)
     number_sediment_layers = models.SmallIntegerField(blank=True, null=True)
     number_soil_horizons = models.SmallIntegerField(blank=True, null=True)
     number_cultural_horizons = models.SmallIntegerField(blank=True, null=True)
@@ -111,7 +112,7 @@ class GeologicalContext(projects.models.PaleoCoreContextBaseClass):
     date_last_modified = models.DateTimeField("Date Last Modified", auto_now=True)
     objects = GeoManager()
 
-    image = models.FileField(max_length=255, blank=True, upload_to="uploads/images/hrp", null=True)
+    image = models.FileField(max_length=255, blank=True, upload_to="uploads/images/psr", null=True)
 
     def __str__(self):
         nice_name = str(self.collection_code) + " " + str(self.context_number)
@@ -121,26 +122,6 @@ class GeologicalContext(projects.models.PaleoCoreContextBaseClass):
         verbose_name = f"{app_label.upper()} Geological Context"
         verbose_name_plural = f"{app_label.upper()} Geological Contexts"
         ordering = ["context_number"]
-
-
-# class Cave(Locality):
-#     dip = models.DecimalField(max_digits=38, decimal_places=8, null=True, blank=True)
-#     strike = models.DecimalField(max_digits=38, decimal_places=8, null=True, blank=True)
-#     color = models.CharField(null=True, blank=True, max_length=255)
-#     texture = models.CharField(null=True, blank=True, max_length=255)
-#     height = models.DecimalField(max_digits=38, decimal_places=8, null=True, blank=True)
-#     width = models.DecimalField(max_digits=38, decimal_places=8, null=True, blank=True)
-#     depth = models.DecimalField(max_digits=38, decimal_places=8, null=True, blank=True)
-#     slope_character = models.TextField(null=True, blank=True, max_length=64000)
-#     sediment_presence = models.BooleanField(default=False)
-#     sediment_character = models.TextField(null=True, blank=True, max_length=64000)
-#     cave_mouth_character = models.TextField(null=True, blank=True, max_length=64000)
-#     rockfall_character = models.TextField(null=True, blank=True, max_length=64000)
-#     speleothem_character = models.TextField(null=True, blank=True, max_length=64000)
-#
-#     class Meta:
-#         verbose_name = f"{app_label.upper()} Cave/Rockshelter"
-#         verbose_name_plural = f"{app_label.upper()} Caves/Rockshelters"
 
 
 class ExcavationUnit(models.Model):
@@ -183,15 +164,15 @@ class Occurrence(projects.models.PaleoCoreOccurrenceBaseClass):
     suffix = models.IntegerField("Suffix", null=True, blank=True)
     cat_number = models.CharField("Cat Number", max_length=255, blank=True, null=True)  # unit + newplot_id
     prism = models.DecimalField(max_digits=38, decimal_places=8, null=True, blank=True)
-    point = models.GeometryField(dim=3, null=True, blank=True, srid=-1)
+    point = models.GeometryField(null=True, blank=True, srid=-1)
     objects = GeoManager()
 
     item_part = models.CharField("Item Part", max_length=10, null=True, blank=True)
     disposition = models.CharField("Disposition", max_length=255, blank=True, null=True)
     preparation_status = models.CharField("Prep Status", max_length=50, blank=True, null=True)
     collection_remarks = models.TextField("Collection Remarks", null=True, blank=True, max_length=255)
-    date_collected = models.DateTimeField("Date Collected", auto_now=True)
-    problem = models.BooleanField(default=False)
+    date_collected = models.DateTimeField("Date Collected", auto_now=True, null=True, blank=True)
+    problem = models.BooleanField(null=True, blank=True, default=False)
     problem_remarks = models.TextField(null=True, blank=True, max_length=64000)
 
     # Location
@@ -199,7 +180,7 @@ class Occurrence(projects.models.PaleoCoreOccurrenceBaseClass):
     drainage_region = models.CharField("Drainage Region", null=True, blank=True, max_length=255)
 
     # Media
-    image = models.FileField(max_length=255, blank=True, upload_to="uploads/images/hrp", null=True)
+    image = models.FileField(max_length=255, blank=True, upload_to="uploads/images/psr", null=True)
 
     class Meta:
         verbose_name = f"{app_label.upper()} Occurrence"
@@ -383,12 +364,14 @@ class Aggregate(Occurrence):
 
 # Media Classes
 class Image(models.Model):
-    occurrence = models.ForeignKey("Occurrence", related_name='psr_occurrences', on_delete=models.CASCADE)
+    occurrence = models.ForeignKey("Occurrence", related_name='psr_occurrences_image', on_delete=models.CASCADE, default="", null=True, blank=True,)
+    locality = models.ForeignKey("GeologicalContext", related_name='psr_contexts_image', on_delete=models.CASCADE, default="")
     image = models.ImageField(upload_to="uploads/images", null=True, blank=True)
     description = models.TextField(null=True, blank=True)
 
 
 class File(models.Model):
-    occurrence = models.ForeignKey("Occurrence", on_delete=models.CASCADE)
+    occurrence = models.ForeignKey("Occurrence", related_name='psr_occurrences_file', on_delete=models.CASCADE, default="", null=True, blank=True,)
+    locality = models.ForeignKey("GeologicalContext", related_name='psr_contexts_file', on_delete=models.CASCADE, default="")
     file = models.FileField(upload_to="uploads/files", null=True, blank=True)
     description = models.TextField(null=True, blank=True)
