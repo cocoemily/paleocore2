@@ -785,6 +785,7 @@ def html_escape(text):
     """
     return "".join(html_escape_table.get(c, c) for c in text)
 
+
 def import_geology_shapefile(filename):
     sf = shapefile.Reader(filename)
     sr = sf.shapeRecords()
@@ -802,10 +803,14 @@ def import_geology_shapefile(filename):
             #set point
             if r.shape.shapeType is 1:  # point
                 coords = r.shape.points[0]
-                geom = GEOSGeometry("POINT (" + str(coords[0]) + " " + str(coords[1]) + ")", 4326)
+                geom = GEOSGeometry("POINT(" + str(coords[0]) + " " + str(coords[1]) + ")", 4326)
             psr_g.point = geom
+            psr_g.geom = geom
             # set geological context
-            psr_g.geological_context = GeologicalContext.objects.get_or_create(name=r.record["Locality"], geom=geom)[0]
+            try:
+                psr_g.geological_context = GeologicalContext.objects.get(name=r.record["Locality"])
+            except:
+                psr_g.geological_context = GeologicalContext.objects.get_or_create(name=r.record["Locality"], geom=geom, point=geom)[0]
 
         else:
             psr_g = GeologicalContext(
@@ -841,10 +846,11 @@ def import_geology_shapefile(filename):
 
             if r.shape.shapeType is 1:  # point
                 coords = r.shape.points[0]
-                geom = GEOSGeometry("POINT (" + str(coords[0]) + " " + str(coords[1]) + ")", 4326)
+                geom = GEOSGeometry("POINT(" + str(coords[0]) + " " + str(coords[1]) + ")", 4326)
             # elif r.shape.shapeType is 5: #polygon
             # elif r.shape.shapeType is 8: #multipoint
             psr_g.geom = geom
+            psr_g.point = geom
 
         if r.record["Date Recor"] is not "":
             if "at" in r.record["Date Recor"]:
@@ -856,8 +862,9 @@ def import_geology_shapefile(filename):
         else:
             psr_g.date_collected = None
 
-        name=r.record["Recorded B"].split(" ")
-        psr_g.recorded_by=Person.objects.get_or_create(last_name=name[1], first_name=name[0])[0]
+        if r.record["Recorded B"] not in ('-None Selected-', "", None):
+            name=r.record["Recorded B"].split(" ")
+            psr_g.recorded_by=Person.objects.get_or_create(last_name=name[1], first_name=name[0])[0]
 
         psr_g.last_import = True
         psr_g.save()
@@ -865,6 +872,7 @@ def import_geology_shapefile(filename):
         photodir = "/Users/emilycoco/Desktop/NYU/Kazakhstan/PSR-Paleo-Core/PaleoCore-upload/geo_points"
         photonames = r.record["Photo"].split(",")
         upload_pictures(photonames, psr_g, photodir)
+
 
 def import_archaeology_shapefile(filename):
     sf = shapefile.Reader(filename)
@@ -904,10 +912,11 @@ def import_archaeology_shapefile(filename):
 
             if r.shape.shapeType is 1:  # point
                 coords = r.shape.points[0]
-                geom = GEOSGeometry("POINT (" + str(coords[0]) + " " + str(coords[1]) + ")", 4326)
+                geom = GEOSGeometry("POINT(" + str(coords[0]) + " " + str(coords[1]) + ")", 4326)
             # elif r.shape.shapeType is 5: #polygon
             # elif r.shape.shapeType is 8: #multipoint
             psr_a.geom = geom
+            psr_a.point = geom
 
         else:
             psr_a = Occurrence(
@@ -921,19 +930,27 @@ def import_archaeology_shapefile(filename):
                 field_id=r.record["Name"],
                 collection_remarks=r.record["Remarks"]
             )
+
             # set point
             if r.shape.shapeType is 1:  # point
                 coords = r.shape.points[0]
-                geom = GEOSGeometry("POINT (" + str(coords[0]) + " " + str(coords[1]) + ")", 4326)
+                geom = GEOSGeometry("POINT(" + str(coords[0]) + " " + str(coords[1]) + ")", 4326)
             psr_a.point = geom
+            psr_a.geom = geom
+
             # set geological context
-            psr_a.geological_context = GeologicalContext.objects.get_or_create(name=r.record["Locality"], geom=geom)[0]
+            try:
+                psr_a.geological_context = GeologicalContext.objects.get(name=r.record["Locality"])
+            except:
+                psr_a.geological_context = GeologicalContext.objects.get_or_create(name=r.record["Locality"], geom=geom, point=geom)[0]
+
             # set people
             if r.record["Identified"] not in ('-None Selected-', "", None):
                 name1 = r.record["Identified"].split(" ")
                 psr_a.found_by = Person.objects.get_or_create(last_name=name1[1], first_name=name1[0])[0]
                 psr_a.collector=r.record["Identified"]
                 psr_a.finder=r.record["Identified"]
+
 
         if r.record["Date Recor"] not in ("", None):
             if "at" in r.record["Date Recor"]:
@@ -956,6 +973,7 @@ def import_archaeology_shapefile(filename):
         photonames = r.record["Photo"].split(",")
         upload_pictures(photonames, psr_a, photodir)
 
+
 def import_locality_points_shapefile(filename):
     sf = shapefile.Reader(filename)
     sr = sf.shapeRecords()
@@ -970,8 +988,13 @@ def import_locality_points_shapefile(filename):
             coords = r.shape.points[0]
             geom = GEOSGeometry("POINT (" + str(coords[0]) + " " + str(coords[1]) + ")", 4326)
         psr_l.point = geom
+        psr_l.geom = geom
+
         # set geological context
-        psr_l.geological_context = GeologicalContext.objects.get_or_create(name=r.record["Locality"], geom=geom)[0]
+        try:
+            psr_l.geological_context = GeologicalContext.objects.get(name=r.record["Locality"])
+        except:
+            psr_l.geological_context = GeologicalContext.objects.get_or_create(name=r.record["Locality"], geom=geom, point=geom)[0]
 
         psr_l.last_import = True
         psr_l.save()  # last step to add it to the database
