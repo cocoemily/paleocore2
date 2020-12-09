@@ -44,7 +44,7 @@ class IdentificationQualifier(projects.models.IdentificationQualifier):
 
 
 # Geological Context
-class GeologicalContext(projects.models.PaleoCoreContextBaseClass):
+class GeologicalContext(projects.models.PaleoCoreLocalityBaseClass):
     #id = models.CharField(primary_key=True, max_length=255)
     name = models.TextField(null=True, blank=True, max_length=255)
     context_type = models.CharField(null=True, blank=True, max_length=255)
@@ -108,7 +108,8 @@ class GeologicalContext(projects.models.PaleoCoreContextBaseClass):
     error_notes = models.CharField(max_length=255, null=True, blank=True)
     notes = models.CharField(max_length=254, null=True, blank=True)
     geom = models.GeometryField()
-    date_collected = models.DateTimeField("Date Collected", auto_now=True)
+    point = models.GeometryField()
+    date_collected = models.DateTimeField("Date Collected", null=True, blank=True)
     date_last_modified = models.DateTimeField("Date Last Modified", auto_now=True)
     objects = GeoManager()
 
@@ -164,14 +165,15 @@ class Occurrence(projects.models.PaleoCoreOccurrenceBaseClass):
     suffix = models.IntegerField("Suffix", null=True, blank=True)
     cat_number = models.CharField("Cat Number", max_length=255, blank=True, null=True)  # unit + newplot_id
     prism = models.DecimalField(max_digits=38, decimal_places=8, null=True, blank=True)
-    point = models.GeometryField(null=True, blank=True, srid=-1)
+    point = models.GeometryField(null=True, blank=True)
+    geom = models.GeometryField(null=True, blank=True)
     objects = GeoManager()
 
     item_part = models.CharField("Item Part", max_length=10, null=True, blank=True)
     disposition = models.CharField("Disposition", max_length=255, blank=True, null=True)
     preparation_status = models.CharField("Prep Status", max_length=50, blank=True, null=True)
     collection_remarks = models.TextField("Collection Remarks", null=True, blank=True, max_length=255)
-    date_collected = models.DateTimeField("Date Collected", auto_now=True, null=True, blank=True)
+    date_collected = models.DateTimeField("Date Collected", null=True, blank=True)
     problem = models.BooleanField(null=True, blank=True, default=False)
     problem_remarks = models.TextField(null=True, blank=True, max_length=64000)
 

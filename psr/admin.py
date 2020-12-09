@@ -8,8 +8,58 @@ from .models import *  # import database models from models.py
 import projects.admin
 from .views import ImportKMZ
 
+psr_occurrence_fieldsets = (
+    ('Record Details', {
+        'fields': [('field_id', 'item_type', 'item_description'),
+                   ('basis_of_record',),
+                   ('remarks', 'date_created',),
+                   ('date_last_modified')]
+    }),  # lgrp_occurrence_fieldsets[0]
+    ('Find Details', {
+        'fields': [('collecting_method',),
+                   ('collector', 'finder', 'item_count', 'field_number',),
+                   ]
+    }),  # lgrp_occurrence_fieldsets[1]
+    ('Photos', {
+        'fields': [('photo', 'image')],
+        # 'classes': ['collapse'],
+    }),  # lgrp_occurrence_fieldsets[2]  # lgrp_occurrence_fieldsets[3]
+    ('Location', {
+        'fields': [('geom',), ('point')]
+    }),  # lgrp_occurrence_fieldsets[4]
+    ('Problems', {
+        'fields': [('problem', 'problem_comment'),
+                   ],
+        'classes': ['collapse']
+    }),  # lgrp_occurrence_fieldsets[5]
+)
 
-
+psr_gc_fieldsets = (
+    ('Record Details', {
+        'fields': [('name', 'context_type',  ),
+                   ('basis_of_record', 'collecting_method'),
+                   ('remarks', 'date_created'),
+                   ('date_last_modified')]
+    }),  # lgrp_occurrence_fieldsets[0]
+    ('Geology Details', {
+        'fields': [('geology_type'), ('description'), ('dip', 'strike', 'color', 'texture', 'height', 'width', 'depth'),
+                   ('slope_character'), ('sediment_presence', 'sediment_character', ),
+                   ('cave_mouth_character'), ('rockfall_character'), ('speleothem_character')
+                   ]
+    }),  # lgrp_occurrence_fieldsets[1]
+    ('Photos', {
+        'fields': [('image')],
+        # 'classes': ['collapse'],
+    }),  # lgrp_occurrence_fieldsets[2]  # lgrp_occurrence_fieldsets[3]
+    ('Location', {
+        'fields': [('geom', 'point')]
+    }),  # lgrp_occurrence_fieldsets[4]
+    ('Problems', {
+        'fields': [('problem', 'problem_comment'),
+                   ],
+        'classes': ['collapse']
+    }),  # lgrp_occurrence_fieldsets[5]
+)
 
 class ImagesInline(admin.TabularInline):
     model = Image
@@ -28,15 +78,20 @@ class OccurrenceResource(resources.ModelResource):
     class Meta:
         model = Occurrence
 
+
 class OccurrenceAdmin(projects.admin.PaleoCoreOccurrenceAdmin):
     resource_class = OccurrenceResource
-    default_read_only_fields = ('id', 'point_x', 'point_y', 'easting', 'northing', 'date_last_modified')
+    #empty_value_display = '-empty-'
+
+    default_read_only_fields = ('id', 'geom', 'point_x', 'point_y', 'easting', 'northing', 'date_last_modified', 'date_collected')
     readonly_fields = default_read_only_fields + ('photo', 'catalog_number', 'longitude', 'latitude')
-    default_list_filter = ['basis_of_record', 'item_type',
-                           'field_number', 'collector', 'problem', 'disposition']
+    default_list_filter = [ 'item_type', 'basis_of_record', 'collector', 'finder']
     list_filter = default_list_filter
-    search_fields = ['id', 'item_scientific_name', 'item_description', 'barcode', 'cat_number']
+    search_fields = ['id', 'item_type', 'item_description', 'barcode', 'field_id']
     list_per_page = 500
+
+    list_display = ('field_id', 'item_type', 'geological_context_id')
+    fieldsets = psr_occurrence_fieldsets
 
     def get_urls(self):
         tool_item_urls = [
@@ -47,15 +102,22 @@ class OccurrenceAdmin(projects.admin.PaleoCoreOccurrenceAdmin):
         ]
         return tool_item_urls + super(OccurrenceAdmin, self).get_urls()
 
-#class OccurrenceAdmin(projects.admin.PaleoCoreOccurrenceAdmin):
-#    resource_class = OccurrenceResource
-#    default_read_only_fields = ('id', 'point_x', 'point_y', 'easting', 'northing', 'date_last_modified')
-#    readonly_fields = default_read_only_fields + ('photo', 'catalog_number', 'longitude', 'latitude')
-#    default_list_filter = ['basis_of_record', 'item_type',
-#                           'field_number', 'collector', 'problem', 'disposition']
-#    list_filter = default_list_filter
-#    search_fields = ['id', 'item_scientific_name', 'item_description', 'barcode', 'cat_number']
-#    list_per_page = 500
+
+class GeologicalContextResource(resources.ModelResource):
+    class Meta:
+        model = GeologicalContext
+
+
+class GeologicalContextAdmin(projects.admin.PaleoCoreOccurrenceAdmin):
+    resource_class = GeologicalContextResource
+    #empty_value_display = '-empty-'
+    readonly_fields = ('id', 'geom', 'point_x', 'point_y', 'easting', 'northing', 'date_last_modified', 'date_collected')
+    list_filter = ['context_type', 'basis_of_record', 'collecting_method', 'geology_type', 'sediment_presence']
+    list_per_page = 500
+    search_fields = ['id', 'item_scientific_name', 'item_description', 'barcode', 'cat_number']
+
+    list_display = ('name', 'context_type', 'geology_type')
+    fieldsets = psr_gc_fieldsets
 
 
 class ArchaeologyResource(resources.ModelResource):
@@ -66,6 +128,7 @@ class ArchaeologyResource(resources.ModelResource):
 class ArchaeologyAdmin(OccurrenceAdmin):
     model = Archaeology
     resource_class = ArchaeologyResource
+    #empty_value_display = '-empty-'
 
 
 class BiologyResource(resources.ModelResource):
@@ -76,6 +139,7 @@ class BiologyResource(resources.ModelResource):
 class BiologyAdmin(OccurrenceAdmin):
     model = Archaeology
     resource_class = ArchaeologyResource
+    #empty_value_display = '-empty-'
 
 
 class GeologyResource(resources.ModelResource):
@@ -86,6 +150,7 @@ class GeologyResource(resources.ModelResource):
 class GeologyAdmin(OccurrenceAdmin):
     model = Geology
     resource_class = GeologyResource
+    #empty_value_display = '-empty-'
 
 
 class AggregateResource(resources.ModelResource):
@@ -96,12 +161,13 @@ class AggregateResource(resources.ModelResource):
 class AggregateAdmin(OccurrenceAdmin):
     model = Aggregate
     resource_class = AggregateResource
+    #empty_value_display = '-empty-'
 
 
 admin.site.register(Biology, BiologyAdmin)
 admin.site.register(Archaeology, ArchaeologyAdmin)
 admin.site.register(Geology, GeologyAdmin)
-admin.site.register(GeologicalContext)
+admin.site.register(GeologicalContext, GeologicalContextAdmin)
 admin.site.register(Occurrence, OccurrenceAdmin)
 admin.site.register(Taxon, projects.admin.TaxonomyAdmin)
 admin.site.register(Aggregate, AggregateAdmin)
