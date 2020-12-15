@@ -3,6 +3,7 @@ from django.core.files.base import ContentFile
 
 from psr.models import Occurrence, Archaeology, Biology, Geology, GeologicalContext, Aggregate, Person, Taxon, IdentificationQualifier, Image
 from django.core.exceptions import MultipleObjectsReturned, ObjectDoesNotExist
+from psr.ontologies import *
 import collections
 
 import re
@@ -206,25 +207,19 @@ def occurrence2biology(oi):
     :return: returns nothing.
     """
 
-    if oi.item_type in ['Faunal', 'Floral']:  # convert only faunal or floral items to Biology
+    if oi.item_type in ['Faunal', 'Floral', 'Biological']:  # convert only faunal or floral items to Biology
         # Initiate variables
         # taxon = get_taxon_from_scientific_name(oi.item_scientific_name)
-        taxon = Taxon.objects.get(name__exact='Life')
-        id_qual = IdentificationQualifier.objects.get(name__exact='None')
+        #taxon = Taxon.objects.get(name__exact='Life')
+        #id_qual = IdentificationQualifier.objects.get(name__exact='None')
         # Create a new biology object
-        new_biology = Biology(barcode=oi.barcode,
-                                 item_type=oi.item_type,
-                                 basis_of_record=oi.basis_of_record,
-                                 collecting_method=oi.collecting_method,
-                                 field_number=oi.field_number,
-                                 taxon=taxon,
-                                 identification_qualifier=id_qual,
-                                 geom=oi.geom
-                                 )
+        new_biology = Biology(biology_type=oi.find_type,
+                              geom=oi.geom
+                              )
         for key in list(oi.__dict__.keys()):
             new_biology.__dict__[key]=oi.__dict__[key]
 
-        oi.delete()
+        #oi.delete()
         new_biology.save()
 
 
@@ -234,13 +229,9 @@ def occurrence2archaeology(oi):
     :param oi: occurrence instance
     :return: returns nothing
     """
-    if oi.item_type in ['Artifactual']:  # convert only artifactual items to archaeology
+    if oi.item_type in ['Artifactual', 'Archaeological']:  # convert only artifactual items to archaeology
         # Create a new archaeology object
-        new_archaeology = Archaeology(barcode=oi.barcode,
-                                 item_type=oi.item_type,
-                                 basis_of_record=oi.basis_of_record,
-                                 collecting_method=oi.collecting_method,
-                                 field_number=oi.field_number,
+        new_archaeology = Archaeology(archaeology_type=oi.find_type,
                                  geom=oi.geom
                                  )
         for key in list(oi.__dict__.keys()):
@@ -259,7 +250,7 @@ def find2geo(oi):
     if oi.item_type in ['Geological']:  # convert only geological items to Geology subclass
         # Create a new Geology object
         print("Creating a new geo object for pk {}".format(oi.id))
-        new_geo = Geology(barcode=oi.barcode,
+        new_geo = Geology(geology_type=oi.find_type,
                           geom=oi.geom)
         print("Copying data")
         for key in list(oi.__dict__.keys()):
@@ -285,7 +276,7 @@ def get_finds():
 def subtype_finds():
     untyped_finds = get_finds()
     for f in untyped_finds:
-        if f.item_type in ['Faunal', 'Floral'] and f.item_scientific_name!='No Fossils At This Location':
+        if f.item_type in ['Faunal', 'Floral', 'Biological'] and f.item_scientific_name!='No Fossils At This Location':
             occurrence2biology(f)
         elif f.item_type in ['Archaeological', 'Artifactual']:
             occurrence2archaeology(f)
@@ -786,7 +777,7 @@ def html_escape(text):
     return "".join(html_escape_table.get(c, c) for c in text)
 
 
-def import_geology_shapefile(filename):
+def import_pre2020_geology_shapefile(filename):
     sf = shapefile.Reader(filename)
     sr = sf.shapeRecords()
     for r in sr:
@@ -794,12 +785,22 @@ def import_geology_shapefile(filename):
             psr_g = Occurrence(
                 basis_of_record=r.record["Basis Of R"],
                 item_count=r.record["Item Count"],
-                item_type=r.record["Item Type"],
+                find_type=r.record["Item Type"],
                 item_description=r.record["Descriptio"],
                 collecting_method=r.record["Collecting"],
                 field_id=r.record["Name"],
                 collection_remarks=r.record["Remarks"]
             )
+            # set item type code
+            if psr_g.find_type in PSR_ARCHAEOLOGY_VOCABULARY:
+                psr_g.item_type = "Archaeological"
+            elif psr_g.find_type in PSR_BIOLOGY_VOCABULARY:
+                psr_g.item_type = "Biological"
+            elif psr_g.find_type in PSR_GEOLOGY_VOCABULARY:
+                psr_g.item_type = "Geological"
+            else:
+                pass
+
             #set point
             if r.shape.shapeType is 1:  # point
                 coords = r.shape.points[0]
@@ -874,7 +875,7 @@ def import_geology_shapefile(filename):
         upload_pictures(photonames, psr_g, photodir)
 
 
-def import_archaeology_shapefile(filename):
+def import_pre2020_archaeology_shapefile(filename):
     sf = shapefile.Reader(filename)
     sr = sf.shapeRecords()
     for r in sr: #iterate through each record
@@ -922,7 +923,7 @@ def import_archaeology_shapefile(filename):
             psr_a = Occurrence(
                 basis_of_record=r.record["Basis Of R"],
                 item_count=r.record["Item Count"],
-                item_type=r.record["Item Type"],
+                find_type=r.record["Item Type"],
                 item_description=r.record["Descriptio"],
                 #collector=r.record["Identified"],
                 #finder=r.record["Identified"],
@@ -930,6 +931,15 @@ def import_archaeology_shapefile(filename):
                 field_id=r.record["Name"],
                 collection_remarks=r.record["Remarks"]
             )
+            #set item type code
+            if psr_a.find_type in PSR_ARCHAEOLOGY_VOCABULARY:
+                psr_a.item_type = "Archaeological"
+            elif psr_a.find_type in PSR_BIOLOGY_VOCABULARY:
+                psr_a.item_type = "Biological"
+            elif psr_a.find_type in PSR_GEOLOGY_VOCABULARY:
+                psr_a.item_type = "Geological"
+            else:
+                pass
 
             # set point
             if r.shape.shapeType is 1:  # point
@@ -974,15 +984,25 @@ def import_archaeology_shapefile(filename):
         upload_pictures(photonames, psr_a, photodir)
 
 
-def import_locality_points_shapefile(filename):
+def import_pre2020_locality_points_shapefile(filename):
     sf = shapefile.Reader(filename)
     sr = sf.shapeRecords()
     for r in sr:  # iterate through each record
         psr_l = Occurrence(
-            item_type=r.record["Type"],
+            find_type=r.record["Type"],
             item_description=r.record["Descriptio"],
             field_id=r.record["Name"]
         )
+        # set item type code
+        if psr_l.find_type in PSR_ARCHAEOLOGY_VOCABULARY:
+            psr_l.item_type = "Archaeological"
+        elif psr_l.find_type in PSR_BIOLOGY_VOCABULARY:
+            psr_l.item_type = "Biological"
+        elif psr_l.find_type in PSR_GEOLOGY_VOCABULARY:
+            psr_l.item_type = "Geological"
+        else:
+            pass
+
         # set point
         if r.shape.shapeType is 1:  # point
             coords = r.shape.points[0]
