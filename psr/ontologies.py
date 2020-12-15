@@ -6,6 +6,30 @@ BASIS_OF_RECORD_VOCABULARY = ontologies.BASIS_OF_RECORD_VOCABULARY
 # Item Type Vocabulary
 ITEM_TYPE_VOCABULARY = ontologies.ITEM_TYPE_VOCABULARY
 
+geosample = "Geosample" #geology
+lithics = "Lithics" #archaeology
+lithic = "Lithic" #archaeology
+burial = "Burial" #archaeology?
+bones = "Bones" #archaeology/biology
+bone = "Bone" #archaeology/biology
+enclosure = "Enclosure" #geology
+hearth = "Hearth" #geology
+petroglyphs = "Petroglyphs" #geology
+trench = "Trench" #excavation unit?
+ceramic = "Ceramic" #archaeology
+ceramics = "Ceramics" #archaeology
+fauna = "Fauna" #biology/archaeology
+flora = "Flora" #biology
+microfauna = "Microfauna" #biology
+
+PSR_ARCHAEOLOGY_VOCABULARY = ( lithics, lithic, ceramic, ceramics, burial, bones, bone )
+
+PSR_GEOLOGY_VOCABULARY = ( hearth, petroglyphs, geosample )
+
+PSR_BIOLOGY_VOCABULARY = ( microfauna, flora )
+
+
+
 # Collection Method Vocabulary
 COLLECTING_METHOD_VOCABULARY = ontologies.COLLECTING_METHOD_VOCABULARY
 

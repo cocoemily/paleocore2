@@ -145,6 +145,7 @@ class Occurrence(projects.models.PaleoCoreOccurrenceBaseClass):
         """
     basis_of_record = models.CharField("Basis of Record", max_length=50, blank=True, null=False,
                                        help_text='e.g. Observed item or Collected item')
+    find_type = models.CharField("Find Type", max_length=255, blank=True, null=False)  # field type description
     item_number = models.IntegerField("Item #", null=True, blank=True)
     item_type = models.CharField("Item Type", max_length=255, blank=True, null=False)  # code
     # item_scientific_name = models.CharField("Sci Name", max_length=255, null=True, blank=True)
@@ -333,7 +334,7 @@ class Ceramic(Archaeology):
         verbose_name_plural = f"{app_label.upper()} Ceramic"
 
 
-class Geology(Occurrence):  # need to think about a possible subclass for Locality that is cave
+class Geology(Occurrence):
     geology_type = models.CharField(null=True, blank=True, max_length=255)
     dip = models.DecimalField(max_digits=38, decimal_places=8, null=True, blank=True)
     strike = models.DecimalField(max_digits=38, decimal_places=8, null=True, blank=True)
