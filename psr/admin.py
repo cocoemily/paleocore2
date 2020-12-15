@@ -10,7 +10,7 @@ from .views import ImportKMZ
 
 psr_occurrence_fieldsets = (
     ('Record Details', {
-        'fields': [('field_id', 'item_type', 'item_description'),
+        'fields': [('field_id', 'item_type', 'find_type', 'item_description'),
                    ('basis_of_record',),
                    ('remarks', 'date_created',),
                    ('date_last_modified')]
@@ -90,7 +90,7 @@ class OccurrenceAdmin(projects.admin.PaleoCoreOccurrenceAdmin):
     search_fields = ['id', 'item_type', 'item_description', 'barcode', 'field_id']
     list_per_page = 500
 
-    list_display = ('field_id', 'item_type', 'geological_context_id')
+    list_display = ('field_id', 'item_type', 'find_type', 'geological_context_id')
     fieldsets = psr_occurrence_fieldsets
 
     def get_urls(self):
@@ -129,6 +129,7 @@ class ArchaeologyAdmin(OccurrenceAdmin):
     model = Archaeology
     resource_class = ArchaeologyResource
     #empty_value_display = '-empty-'
+    list_display = ('occurrence_ptr_id', 'archaeology_type')
 
 
 class BiologyResource(resources.ModelResource):
@@ -140,6 +141,7 @@ class BiologyAdmin(OccurrenceAdmin):
     model = Archaeology
     resource_class = ArchaeologyResource
     #empty_value_display = '-empty-'
+    list_display = ('occurrence_ptr_id', 'biology_type')
 
 
 class GeologyResource(resources.ModelResource):
@@ -151,6 +153,7 @@ class GeologyAdmin(OccurrenceAdmin):
     model = Geology
     resource_class = GeologyResource
     #empty_value_display = '-empty-'
+    list_display = ('occurrence_ptr_id', 'geology_type')
 
 
 class AggregateResource(resources.ModelResource):
@@ -162,6 +165,7 @@ class AggregateAdmin(OccurrenceAdmin):
     model = Aggregate
     resource_class = AggregateResource
     #empty_value_display = '-empty-'
+    list_display = ('occurrence_ptr_id', 'screen_size')
 
 
 admin.site.register(Biology, BiologyAdmin)
