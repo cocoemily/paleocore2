@@ -7,6 +7,10 @@ from django.contrib.gis.geos import GEOSGeometry
 from pygeoif import geometry
 from zipfile import ZipFile
 
+#need to decide which one of these to use
+#from mdb_parser import MDBParser, MDBTable
+#from access_parser import AccessParser
+
 # Django Libraries
 from django.conf import settings
 from django.views import generic
@@ -259,4 +263,3 @@ class ImportKMZ(generic.FormView):
             message_string = '{} occurrences'.format(occurrence_count)
         messages.add_message(self.request, messages.INFO,
                              'Successfully imported {} occurrences'.format(message_string))
-
