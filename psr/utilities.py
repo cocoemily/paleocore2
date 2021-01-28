@@ -1,14 +1,14 @@
 #__author__ = 'reedd'
 from django.core.files.base import ContentFile
 
-from psr.models import Occurrence, Archaeology, Biology, Geology, GeologicalContext, Aggregate, Person, Taxon, IdentificationQualifier, Image
+from psr.models import *
 from django.core.exceptions import MultipleObjectsReturned, ObjectDoesNotExist
 from psr.ontologies import *
 import collections
 
 import re
 import os
-from django.contrib.gis.geos import Point
+from django.contrib.gis.geos import Point, MultiPoint
 from django.contrib.gis.measure import Distance
 import calendar
 from datetime import datetime
@@ -16,10 +16,26 @@ import psr.ontologies
 import shapefile
 from django.contrib.gis.geos import GEOSGeometry
 from decimal import Decimal
+from mdb_parser import MDBTable, MDBParser
+from access_parser import AccessParser
 
 geo_filename = "/Users/emilycoco/Desktop/NYU/Kazakhstan/PSR-Paleo-Core/PaleoCore-upload/geo_points/geology_21_09_20"
 arch_filename = "/Users/emilycoco/Desktop/NYU/Kazakhstan/PSR-Paleo-Core/PaleoCore-upload/arch_points/archaeology_21_09_20"
 lo_filename = "/Users/emilycoco/Desktop/NYU/Kazakhstan/PSR-Paleo-Core/PaleoCore-upload/local_points/locality_points_21_09_20"
+databases = [
+    "/Users/emilycoco/Desktop/NYU/Kazakhstan/PSR-Paleo-Core/excavation-databases/Aqtasty_local_copy/aqtasty.mdb",
+    "/Users/emilycoco/Desktop/NYU/Kazakhstan/PSR-Paleo-Core/excavation-databases/Aqtogai_1_local_copy/aqtogai_1.mdb",
+    "/Users/emilycoco/Desktop/NYU/Kazakhstan/PSR-Paleo-Core/excavation-databases/Kyzylzhartas_local_copy/kyzylzhartas.mdb",
+    "/Users/emilycoco/Desktop/NYU/Kazakhstan/PSR-Paleo-Core/excavation-databases/Marsel_ungiri_local_copy/marsel_ungiri.mdb",
+    "/Users/emilycoco/Desktop/NYU/Kazakhstan/PSR-Paleo-Core/excavation-databases/Nazugum_local_copy/nazugum.mdb",
+    "/Users/emilycoco/Desktop/NYU/Kazakhstan/PSR-Paleo-Core/excavation-databases/Qaraungir_local_copy/qaraungir.mdb",
+    "/Users/emilycoco/Desktop/NYU/Kazakhstan/PSR-Paleo-Core/excavation-databases/Temir_2_local_copy/temir_2.mdb",
+    "/Users/emilycoco/Desktop/NYU/Kazakhstan/PSR-Paleo-Core/excavation-databases/Tuttybulaq_local_copy/tuttybulaq.mdb",
+    "/Users/emilycoco/Desktop/NYU/Kazakhstan/PSR-Paleo-Core/excavation-databases/Tuttybulaq_upper_local_copy/tuttybulaq_upper.mdb",
+    "/Users/emilycoco/Desktop/NYU/Kazakhstan/PSR-Paleo-Core/excavation-databases/Ushbas_local_copy/ushbas.mdb",
+    "/Users/emilycoco/Desktop/NYU/Kazakhstan/PSR-Paleo-Core/excavation-databases/Ushozen_local_copy/ushozen.mdb",
+    "/Users/emilycoco/Desktop/NYU/Kazakhstan/PSR-Paleo-Core/excavation-databases/Zhetiotau_local_copy/zhetiotau.mdb"
+    ]
 
 def duplicate_barcodes():
     all_occurrences = Occurrence.objects.filter(basis_of_record='FossilSpecimen')
@@ -1023,6 +1039,7 @@ def import_pre2020_locality_points_shapefile(filename):
         photonames = r.record["Photos"].split(",")
         upload_pictures(photonames, psr_l, photodir)
 
+
 #photodir = "/Users/emilycoco/Desktop/NYU/Kazakhstan/PSR-Paleo-Core/PaleoCore-upload/geo_points"
 def upload_pictures(photonames, obj, photodir):
     if not 'N/A' in photonames[0]:
@@ -1041,8 +1058,97 @@ def upload_pictures(photonames, obj, photodir):
                 im.save()
 
 
+databases = [
+    "/Users/emilycoco/Desktop/NYU/Kazakhstan/PSR-Paleo-Core/excavation-databases/Aqtasty_local_copy/aqtasty.mdb",
+    "/Users/emilycoco/Desktop/NYU/Kazakhstan/PSR-Paleo-Core/excavation-databases/Aqtogai_1_local_copy/aqtogai_1.mdb",
+    "/Users/emilycoco/Desktop/NYU/Kazakhstan/PSR-Paleo-Core/excavation-databases/Kyzylzhartas_local_copy/kyzylzhartas.mdb",
+    "/Users/emilycoco/Desktop/NYU/Kazakhstan/PSR-Paleo-Core/excavation-databases/Marsel_ungiri_local_copy/marsel_ungiri.mdb",
+    "/Users/emilycoco/Desktop/NYU/Kazakhstan/PSR-Paleo-Core/excavation-databases/Nazugum_local_copy/nazugum.mdb",
+    "/Users/emilycoco/Desktop/NYU/Kazakhstan/PSR-Paleo-Core/excavation-databases/Qaraungir_local_copy/qaraungir.mdb",
+    "/Users/emilycoco/Desktop/NYU/Kazakhstan/PSR-Paleo-Core/excavation-databases/Temir_2_local_copy/temir_2.mdb",
+    "/Users/emilycoco/Desktop/NYU/Kazakhstan/PSR-Paleo-Core/excavation-databases/Tuttybulaq_local_copy/tuttybulaq.mdb",
+    "/Users/emilycoco/Desktop/NYU/Kazakhstan/PSR-Paleo-Core/excavation-databases/Tuttybulaq_upper_local_copy/tuttybulaq_upper.mdb",
+    "/Users/emilycoco/Desktop/NYU/Kazakhstan/PSR-Paleo-Core/excavation-databases/Ushbas_local_copy/ushbas.mdb",
+    "/Users/emilycoco/Desktop/NYU/Kazakhstan/PSR-Paleo-Core/excavation-databases/Ushozen_local_copy/ushozen.mdb",
+    "/Users/emilycoco/Desktop/NYU/Kazakhstan/PSR-Paleo-Core/excavation-databases/Zhetiotau_local_copy/zhetiotau.mdb"
+    ]
+
+locality_names = {
+    "Kyzylzhartas": "Qyzyljartas",
+    "Tuttybulaq Upper": "Tuttybulaq 2",
+    "Zhetiotau": "Jetiotau Cave"
+}
 
 
+def parse_mdb(file_path, locality_names=locality_names):
+    dbname = file_path.split("/")
+    db = dbname[dbname.__len__()-1]
+    name = db.replace("_", ".").split(".")
+
+    if name.__len__() == 2:
+        lname = name[0].capitalize()
+    else:
+        if name[1].isdigit() :
+            lname = name[0].capitalize() + " " + name[1]
+        else:
+            lname = name[0].capitalize() + " " + name[1].capitalize()
+
+    print(lname)
+
+    try:
+        locality = GeologicalContext.objects.get(name=lname)
+    except:
+        if lname in locality_names:
+            lname2 = locality_names[lname]
+            locality = GeologicalContext.objects.get(name=lname2)
+        elif not any(char.isdigit() for char in lname):
+            lname2 = lname + " 1"
+            locality = GeologicalContext.objects.get(name=lname2)
+
+    context = MDBTable(file_path, "Context")
+    xyz = MDBTable(file_path, "xyz")
+    units = MDBTable(file_path, "EDM_Units")
+
+    for u in units:
+        psr_eu = ExcavationUnit.objects.get_or_create(unit=u[0], geological_context=locality)[0]
+        psr_eu.extent = MultiPoint(Point(int(u[2]), int(u[4]), srid=-1), Point(int(u[3]), int(u[5]), srid=-1), srid=-1)
+        psr_eu.save()
+
+    for obj in context:
+        un = ExcavationUnit.objects.get_or_create(unit=obj[0], geological_context=locality)[0]
+        psr_eo = ExcavationOccurrence.objects.get_or_create(geological_context=locality, unit=un, field_id=obj[1])[0]
+        psr_eo.level = obj[2]
+        psr_eo.type = obj[3]
+        psr_eo.excavator = obj[4]
+        psr_eo.cat_number = obj[0] + " " + obj[1]
+
+        #TODO create method for pulling Person foreign key
+
+        psr_eo.last_import = True
+        psr_eo.save()
+
+    for p in xyz:
+        un = ExcavationUnit.objects.get_or_create(unit=p[0], geological_context=locality)[0]
+        eo = ExcavationOccurrence.objects.get_or_create(unit=un, field_id=p[1], geological_context=locality)
+        obj = eo[0]
+        is_new = eo[1]
+        obj.prism = p[3] ## TODO multiple different prism heights for different points
+        if (p[7] + " " + p[8]) is not " ":
+            obj.date_collected = datetime.strptime(p[7] + " " + p[8], '%m/%d/%Y %I:%M:%S %p')
+
+        if not is_new:
+            if obj.point is not None:
+                new_point = Point(float(p[4]), float(p[5]), float(p[6]), srid=-1)
+                points = [pt for pt in obj.point]
+                if new_point not in points:
+                    points.append(new_point)
+                    obj.point = MultiPoint(points, srid=-1)
+            else:
+                obj.point = MultiPoint(Point(float(p[4]), float(p[5]), float(p[6]), srid=-1))
+        else:
+            obj.point = MultiPoint(Point(float(p[4]), float(p[5]), float(p[6]), srid=-1))
+
+        obj.save()
 
 
 

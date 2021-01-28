@@ -116,7 +116,7 @@ class GeologicalContext(projects.models.PaleoCoreLocalityBaseClass):
     image = models.FileField(max_length=255, blank=True, upload_to="uploads/images/psr", null=True)
 
     def __str__(self):
-        nice_name = str(self.collection_code) + " " + str(self.context_number)
+        nice_name = str(self.name)
         return nice_name.replace("None", "").replace("--", "")
 
     class Meta:
@@ -127,13 +127,17 @@ class GeologicalContext(projects.models.PaleoCoreLocalityBaseClass):
 
 class ExcavationUnit(models.Model):
     unit = models.CharField(max_length=6, blank=False)
-    extent = models.GeometryField(dim=3, blank=True, null=True)
+    extent = models.MultiPointField(blank=True, null=True)
     geological_context = models.ForeignKey("GeologicalContext", null=True, blank=True, on_delete=models.SET_NULL)
     objects = GeoManager()
 
     class Meta:
         verbose_name = f"{app_label.upper()} Excavation Unit"
         verbose_name_plural = f"{app_label.upper()} Excavation Units"
+
+    def __str__(self):
+        nice_name = str(self.geological_context.name) + " " + str(self.unit)
+        return nice_name.replace("None", "").replace("--", "")
 
 
 # Occurrence Class and Subclasses
@@ -186,8 +190,8 @@ class Occurrence(projects.models.PaleoCoreOccurrenceBaseClass):
     image = models.FileField(max_length=255, blank=True, upload_to="uploads/images/psr", null=True)
 
     class Meta:
-        verbose_name = f"{app_label.upper()} Occurrence"
-        verbose_name_plural = f"{app_label.upper()} Occurrences"
+        verbose_name = f"{app_label.upper()} Survey Occurrence"
+        verbose_name_plural = f"{app_label.upper()} Survey Occurrences"
         ordering = ["collection_code", "geological_context", "item_number", "item_part"]
 
     def catalog_number(self):
@@ -334,7 +338,7 @@ class Ceramic(Archaeology):
         verbose_name_plural = f"{app_label.upper()} Ceramic"
 
 
-class Geology(Occurrence):
+class Geology(Occurrence):  # need to think about a possible subclass for Locality that is cave
     geology_type = models.CharField(null=True, blank=True, max_length=255)
     dip = models.DecimalField(max_digits=38, decimal_places=8, null=True, blank=True)
     strike = models.DecimalField(max_digits=38, decimal_places=8, null=True, blank=True)
@@ -363,6 +367,29 @@ class Aggregate(Occurrence):
     class Meta:
         verbose_name = f"{app_label.upper()} Bulk Find"
         verbose_name_plural = f"{app_label.upper()} Bulk Finds"
+
+
+class ExcavationOccurrence(projects.models.PaleoCoreOccurrenceBaseClass):
+    geological_context = models.ForeignKey("GeologicalContext", null=True, blank=True, on_delete=models.SET_NULL)
+    unit = models.ForeignKey("ExcavationUnit", null=True, blank=True, on_delete=models.SET_NULL)
+    field_id = models.CharField("Field ID", max_length=50, null=True, blank=True)
+    cat_number = models.CharField("Cat Number", max_length=255, blank=True, null=True)  # unit + newplot_id
+    prism = models.CharField(max_length=50, null=True, blank=True)
+    level = models.CharField(max_length=100, null=True, blank=True)
+
+    type = models.CharField(max_length=100, null=True, blank=True)
+    excavator = models.CharField(max_length=100, null=True, blank=True)
+    found_by = models.ForeignKey("Person", null=True, blank=True, related_name="excav_occurrence_found_by",
+                                 on_delete=models.SET_NULL)
+
+    point = models.MultiPointField(dim=3, srid=-1, null=True, blank=True)
+    objects = GeoManager()
+
+    date_collected = models.DateTimeField("Date Collected", null=True, blank=True)
+
+    class Meta:
+        verbose_name = f"{app_label.upper()} Excavated Occurrence"
+        verbose_name_plural = f"{app_label.upper()} Excavated Occurrences"
 
 
 # Media Classes
