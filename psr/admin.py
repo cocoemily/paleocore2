@@ -90,17 +90,46 @@ class OccurrenceAdmin(projects.admin.PaleoCoreOccurrenceAdmin):
     search_fields = ['id', 'item_type', 'item_description', 'barcode', 'field_id']
     list_per_page = 500
 
-    list_display = ('field_id', 'item_type', 'find_type', 'geological_context_id')
+    list_display = ('field_id', 'item_type', 'find_type', 'geological_context')
     fieldsets = psr_occurrence_fieldsets
 
-    def get_urls(self):
-        tool_item_urls = [
-            path(r'import_kmz/', ImportKMZ.as_view()),
-            # path(r'^summary/$',permission_required('mlp.change_occurrence',
-            #                         login_url='login/')(self.views.Summary.as_view()),
-            #     name="summary"),
-        ]
-        return tool_item_urls + super(OccurrenceAdmin, self).get_urls()
+    # def get_urls(self):
+    #     tool_item_urls = [
+    #         path(r'import_kmz/', ImportKMZ.as_view()),
+    #         # path(r'^summary/$',permission_required('mlp.change_occurrence',
+    #         #                         login_url='login/')(self.views.Summary.as_view()),
+    #         #     name="summary"),
+    #     ]
+    #     return tool_item_urls + super(OccurrenceAdmin, self).get_urls()
+
+
+class ExcavationOccurrenceResource(resources.ModelResource):
+    class Meta:
+        model = ExcavationOccurrence
+
+
+class ExcavationOccurrenceAdmin(projects.admin.PaleoCoreOccurrenceAdmin):
+    resource_class = ExcavationOccurrenceResource
+    readonly_fields = ('id', 'point', 'date_collected', 'field_id', 'unit')
+
+    list_display = ('type', 'geological_context', 'cat_number')
+    list_filter = ['type', 'geological_context']
+
+    fieldsets = (
+        ('Record Details', {
+            'fields': [('field_id', 'type',),
+                       ('cat_number', 'date_collected',),
+                       ('date_created', 'date_last_modified')]
+        }),  # lgrp_occurrence_fieldsets[0]
+        ('Find Details', {
+            'fields': [('level', 'prism'),
+                       ('excavator'),
+                       ]
+        }),
+        ('Location', {
+            'fields':[('point'), ('geological_context', 'unit')]
+        })
+    )
 
 
 class GeologicalContextResource(resources.ModelResource):
@@ -114,7 +143,7 @@ class GeologicalContextAdmin(projects.admin.PaleoCoreOccurrenceAdmin):
     readonly_fields = ('id', 'geom', 'point_x', 'point_y', 'easting', 'northing', 'date_last_modified', 'date_collected')
     list_filter = ['context_type', 'basis_of_record', 'collecting_method', 'geology_type', 'sediment_presence']
     list_per_page = 500
-    search_fields = ['id', 'item_scientific_name', 'item_description', 'barcode', 'cat_number']
+    search_fields = ['id', 'item_scientific_name', 'item_description', 'barcode', 'cat_number', 'name']
 
     list_display = ('name', 'context_type', 'geology_type')
     fieldsets = psr_gc_fieldsets
@@ -129,7 +158,7 @@ class ArchaeologyAdmin(OccurrenceAdmin):
     model = Archaeology
     resource_class = ArchaeologyResource
     #empty_value_display = '-empty-'
-    list_display = ('occurrence_ptr_id', 'archaeology_type')
+    list_display = ('occurrence_ptr_id', 'archaeology_type', 'geological_context')
 
 
 class BiologyResource(resources.ModelResource):
@@ -141,7 +170,7 @@ class BiologyAdmin(OccurrenceAdmin):
     model = Archaeology
     resource_class = ArchaeologyResource
     #empty_value_display = '-empty-'
-    list_display = ('occurrence_ptr_id', 'biology_type')
+    list_display = ('occurrence_ptr_id', 'biology_type', 'geological_context')
 
 
 class GeologyResource(resources.ModelResource):
@@ -153,7 +182,7 @@ class GeologyAdmin(OccurrenceAdmin):
     model = Geology
     resource_class = GeologyResource
     #empty_value_display = '-empty-'
-    list_display = ('occurrence_ptr_id', 'geology_type')
+    list_display = ('occurrence_ptr_id', 'geology_type', 'geological_context')
 
 
 class AggregateResource(resources.ModelResource):
@@ -165,7 +194,7 @@ class AggregateAdmin(OccurrenceAdmin):
     model = Aggregate
     resource_class = AggregateResource
     #empty_value_display = '-empty-'
-    list_display = ('occurrence_ptr_id', 'screen_size')
+    list_display = ('occurrence_ptr_id', 'screen_size', 'geological_context')
 
 
 admin.site.register(Biology, BiologyAdmin)
@@ -173,5 +202,6 @@ admin.site.register(Archaeology, ArchaeologyAdmin)
 admin.site.register(Geology, GeologyAdmin)
 admin.site.register(GeologicalContext, GeologicalContextAdmin)
 admin.site.register(Occurrence, OccurrenceAdmin)
+admin.site.register(ExcavationOccurrence, ExcavationOccurrenceAdmin)
 admin.site.register(Taxon, projects.admin.TaxonomyAdmin)
 admin.site.register(Aggregate, AggregateAdmin)
