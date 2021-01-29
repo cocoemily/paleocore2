@@ -1,7 +1,7 @@
 from django.contrib import admin
 from origins.models import *
 import origins.util
-from projects.admin import PaleoCoreLocalityAdminGoogle
+from projects.admin import PaleoCoreLocalityAdminGoogle, TaxonomyAdmin
 from django.utils.html import format_html
 from django.contrib.gis.measure import Distance
 from django.contrib.contenttypes.models import ContentType
@@ -75,8 +75,12 @@ class SiteAdmin(PaleoCoreLocalityAdminGoogle):
             'classes': ['collapse'],
         }),
         ('Location', {
-            'fields': [('country', ), ('latitude', 'longitude'), ('geom',)]
+            'fields': [('country', ), ('location_remarks', ), ('latitude', 'longitude'), ('geom',)]
         }),
+        # ('References', {
+        #     'fields': [('references',),]
+        # }),
+
     ]
 
 
@@ -90,12 +94,12 @@ class ActiveSiteAdmin(SiteAdmin):
 class ContextAdmin(PaleoCoreLocalityAdminGoogle):
     save_as = True
     list_display = ['id', 'name', 'site_link', 'geological_formation', 'geological_member',
-                    'older_interval', 'younger_interval', 'max_age', 'min_age', 'best_age']
+                    'max_stage', 'min_stage', 'max_age', 'min_age', 'best_age',]
     search_fields = ['id', 'name', 'geological_formation', 'geological_member',
+                     'max_stage', 'min_stage', 'max_epoch', 'min_epoch', 'max_period', 'min_period',
                      'older_interval', 'younger_interval', 'max_age', 'min_age', 'best_age']
     list_filter = ['origins', 'site__name']
     list_per_page = 500
-    # readonly_fields = ['latitude', 'longitude']
     fieldsets = [
         ('Context Details', {
             'fields': [('name', 'origins', 'source')],
@@ -103,11 +107,20 @@ class ContextAdmin(PaleoCoreLocalityAdminGoogle):
         ('Stratigraphy', {
             'fields': [('geological_formation', 'geological_member',)],
         }),
+        ('Chronostratigraphy', {
+            'fields': [('max_period', 'min_period',),
+                       ('max_epoch', 'min_epoch',),
+                       ('max_stage', 'min_stage'),
+                       ],
+        }),
         ('Geochronology', {
             'fields': [('older_interval', 'younger_interval',),
                        ('max_age', 'min_age', 'best_age')],
         }),
         ('Location', {'fields': [('site',), ]}),
+        ('References', {
+            'fields': [('references',)]
+        }),
         ('Verbatim', {
             'fields': ['verbatim_collection_no', 'verbatim_record_type', 'verbatim_formation',
                        'verbatim_lng', 'verbatim_lat', 'verbatim_collection_name', 'verbatim_collection_subset',
@@ -188,6 +201,13 @@ class ReferenceInline(admin.TabularInline):
     extra = 1
 
 
+class PublicationsInline(admin.TabularInline):
+    model = Fossil.references.through
+    extra = 1
+    verbose_name = "Publication"
+    verbose_name_plural = "Publications"
+
+
 class PhotosInline(admin.StackedInline):
     model = Photo
     extra = 0
@@ -198,10 +218,15 @@ class PhotosInline(admin.StackedInline):
 
 
 class FossilAdmin(admin.ModelAdmin):
-    list_display = ['id', 'catalog_number', 'site', 'context_link',
-                    'country', 'context__best_age', 'default_image', 'element_description', 'source']
-    list_filter = ['origins', 'holotype', 'source', 'country', ]
+    list_display = ['id', 'catalog_number', 'site_link', 'context_link', 'taxon_link',
+                    'country', 'context__best_age',
+                    'short_description',
+                    # 'default_image',
+                    # 'element_description',
+                    ]
+    list_filter = ['origins', 'holotype', 'source', 'site__name', 'country', ]
     list_display_links = ['id', 'catalog_number']
+    list_select_related = ['site', 'context', 'taxon']
     search_fields = ['catalog_number', 'place_name', 'country', 'locality',
                      'fossil_element__skeletal_element']
     readonly_fields = ['element_count', 'aapa', 'id', 'default_image', 'element_description']
@@ -209,9 +234,11 @@ class FossilAdmin(admin.ModelAdmin):
     list_per_page = 200
     inlines = [
         # ReferenceInline, # the number of references significantly slows page loads
+        PublicationsInline,
         FossilElementInline,
-        PhotosInline
+        PhotosInline,
     ]
+    filter_horizontal = ('references', )
 
     fieldsets = [
         ('Fossil Details', {
@@ -220,9 +247,13 @@ class FossilAdmin(admin.ModelAdmin):
                         #'guid',
                          'uuid', 'organism_id'),
                        ('description'),
+                       ('short_description'),
                        ('nickname', 'place_name'),
                        ('holotype', 'lifestage', 'sex'),
                        ('origins',)],
+        }),
+        ('Taxon', {
+            'fields': [('taxon',)]
         }),
         ('Verbatim', {
             'fields': [('verbatim_PlaceName', 'verbatim_HomininElement'),
@@ -237,10 +268,15 @@ class FossilAdmin(admin.ModelAdmin):
             'classes': ['collapse'],
         }),
         ('Location', {
-            'fields': [('site', 'locality', 'country', 'continent', 'context')]
+            'fields': [
+                ('continent', ),
+                ('country', ),
+                ('site', 'locality'),
+                ('context')
+            ]
         }),
-        # ('Image', {
-        #     'fields': [('image',)]
+        # ('References', {
+        #     'fields': [('references',)]
         # })
     ]
 
@@ -269,6 +305,20 @@ class FossilAdmin(admin.ModelAdmin):
 
     context_link.admin_order_field = 'context'
     context_link.short_description = 'Context'
+
+    def site_link(self, obj):
+        if obj.site:
+            site_url = reverse('admin:origins_site_change', args=(obj.site.id,))
+            return format_html('<a href={}>{}</a>'.format(site_url, obj.site))
+        else:
+            return None
+
+    def taxon_link(self, obj):
+        if obj.taxon:
+            taxon_url = reverse('admin:origins_taxon_change', args=(obj.taxon.id,))
+            return format_html('<a href={}>{}</a>'.format(taxon_url, obj.taxon))
+        else:
+            return None
 
     def context__site(self, obj):
         """
@@ -340,16 +390,9 @@ class FossilAdmin(admin.ModelAdmin):
         """
         if db_field.name == "site" and self.current_obj:
             kwargs["queryset"] = Site.objects.filter(country=self.current_obj.country).order_by('name')
-        # if db_field.name == "context":
-        #     if self.current_obj:
-        #         if self.current_obj.context and self.current_obj.context.site:
-        #             kwargs["queryset"] = Context.objects.filter(site=self.current_obj.context.site)
-        #         elif self.current_obj.country:
-        #             kwargs["queryset"] = Context.objects.filter(site__country=self.current_obj.country).filter(origins=True)
-        #         else:
-        #             kwargs["queryset"] = Context.objects.filter(origins=True)
-        #             # If ever I add geom for fossil specimens, then query below useful to find closest context objects
-        #             # nearby = Context.objects.filter(geom__distance_lte=(self.geom, D(m=10000)))[:5]
+        if db_field.name == "context" and self.current_obj:
+            kwargs["queryset"] = Context.objects.filter(site=self.current_obj.site).order_by('name')
+
         return super(FossilAdmin, self).formfield_for_foreignkey(db_field, request, **kwargs)
 
     def update_sites(self, request, queryset):
@@ -385,8 +428,13 @@ class FossilAdmin(admin.ModelAdmin):
                ] + super(FossilAdmin, self).get_urls()
 
 
+class TaxonAdmin(TaxonomyAdmin):
+    fields = TaxonomyAdmin.fields + ['references']
+
+
 # Register your models here.
 admin.site.register(Context, ContextAdmin)
 admin.site.register(Reference, ReferenceAdmin)
 admin.site.register(Fossil, FossilAdmin)
 admin.site.register(Site, SiteAdmin)
+admin.site.register(Taxon, TaxonAdmin)
