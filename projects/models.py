@@ -212,7 +212,7 @@ class Taxon(PaleoCoreBaseClass):
 
     def biology_usages(self):
         """
-        Method to get a count of the number of Biology objects pointing to the taxon instance. This method usese
+        Count the number of Biology objects pointing to the taxon instance. This method uses
         the content type system to find the containing app and model.
         :return: Returns and integer count of the number of biology instances in the app that point to the taxon.
         """
