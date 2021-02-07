@@ -226,7 +226,7 @@ class Context(projects.models.PaleoCoreContextBaseClass):
             has_ref = True
         return has_ref
 
-    # def latitude(self):
+    # def latitude(self):S
     #     return self.gcs_coordinates('lat')
     #
     # def longitude(self):

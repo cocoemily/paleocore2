@@ -22,6 +22,18 @@ class ReferenceAdmin(admin.ModelAdmin):
     list_per_page = 200
 
 
+class ReferenceInline(admin.TabularInline):
+    model = Reference.fossil.through
+    extra = 1
+
+
+class ContextPublicationsInline(admin.TabularInline):
+    model = Context.references.through
+    extra = 1
+    verbose_name = "Publication"
+    verbose_name_plural = "Publications"
+
+
 class ContextInline(admin.TabularInline):
     model = Context
 
@@ -118,9 +130,6 @@ class ContextAdmin(PaleoCoreLocalityAdminGoogle):
                        ('max_age', 'min_age', 'best_age')],
         }),
         ('Location', {'fields': [('site',), ]}),
-        ('References', {
-            'fields': [('references',)]
-        }),
         ('Verbatim', {
             'fields': ['verbatim_collection_no', 'verbatim_record_type', 'verbatim_formation',
                        'verbatim_lng', 'verbatim_lat', 'verbatim_collection_name', 'verbatim_collection_subset',
@@ -129,7 +138,9 @@ class ContextAdmin(PaleoCoreLocalityAdminGoogle):
             'classes': ['collapse'],
         }),
     ]
-
+    inlines = [
+        ContextPublicationsInline,
+    ]
     actions = ['create_site_from_context']
 
     def site_link(self, obj):
@@ -196,18 +207,6 @@ class FossilElementInline(admin.TabularInline):
     extra = 0
 
 
-class ReferenceInline(admin.TabularInline):
-    model = Reference.fossil.through
-    extra = 1
-
-
-class PublicationsInline(admin.TabularInline):
-    model = Fossil.references.through
-    extra = 1
-    verbose_name = "Publication"
-    verbose_name_plural = "Publications"
-
-
 class PhotosInline(admin.StackedInline):
     model = Photo
     extra = 0
@@ -215,6 +214,13 @@ class PhotosInline(admin.StackedInline):
     fieldsets = [
         ('Photos', {
             'fields': [('default_image', 'image', 'thumbnail', 'description')]})]
+
+
+class FossilPublicationsInline(admin.TabularInline):
+    model = Fossil.references.through
+    extra = 1
+    verbose_name = "Publication"
+    verbose_name_plural = "Publications"
 
 
 class FossilAdmin(admin.ModelAdmin):
@@ -234,7 +240,7 @@ class FossilAdmin(admin.ModelAdmin):
     list_per_page = 200
     inlines = [
         # ReferenceInline, # the number of references significantly slows page loads
-        PublicationsInline,
+        FossilPublicationsInline,
         FossilElementInline,
         PhotosInline,
     ]
@@ -428,8 +434,16 @@ class FossilAdmin(admin.ModelAdmin):
                ] + super(FossilAdmin, self).get_urls()
 
 
+class TaxonPublicationsInline(admin.TabularInline):
+    model = Taxon.references.through
+    extra = 1
+    verbose_name = "Publication"
+    verbose_name_plural = "Publications"
+
+
 class TaxonAdmin(TaxonomyAdmin):
     fields = TaxonomyAdmin.fields + ['references']
+    inlines = [TaxonPublicationsInline]
 
 
 # Register your models here.
