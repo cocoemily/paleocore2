@@ -442,7 +442,7 @@ class TaxonPublicationsInline(admin.TabularInline):
 
 
 class TaxonAdmin(TaxonomyAdmin):
-    fields = TaxonomyAdmin.fields + ['references']
+    fields = TaxonomyAdmin.fields
     inlines = [TaxonPublicationsInline]
 
 
