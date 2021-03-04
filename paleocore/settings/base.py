@@ -68,6 +68,7 @@ INSTALLED_APPS = (
     'import_export',  # generic import-export - used by projects app
     'djgeojson',  # Django geojson
     'leaflet',  # leaflet mapping
+    'mptt',  # modified pre-ordered tree traversal - used to manage hierarchies and trees
 
 
     'blog',  # generic blog app
