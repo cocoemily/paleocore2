@@ -29,6 +29,8 @@ import publications.models
 from .ontologies import CONTINENT_CHOICES
 import publications.models
 
+from mptt.models import MPTTModel, TreeForeignKey
+
 
 # Taxonomy models inherited from paleo core base project
 class TaxonRank(projects.models.TaxonRank):
@@ -50,6 +52,20 @@ class Taxon(projects.models.Taxon):
 class IdentificationQualifier(projects.models.IdentificationQualifier):
     class Meta:
         verbose_name = "Identification Qualifier"
+
+
+class MPTTTaxon(MPTTModel, projects.models.Taxon):
+    parent = TreeForeignKey('self', null=True, blank=True, on_delete=models.CASCADE, related_name='children')
+    rank = models.ForeignKey('TaxonRank', null=True, blank=True, on_delete=models.SET_NULL)
+    #references = models.ManyToManyField(publications.models.Publication, blank=True)
+
+    # class Meta:
+    #     verbose_name = "Taxon"
+    #     verbose_name_plural = "Taxa"
+    #     ordering = ['rank__ordinal', 'label']
+
+    class MPTTMeta:
+        order_insertion_by = ['name']
 
 
 class Reference(models.Model):
@@ -244,6 +260,7 @@ class Fossil(models.Model):
     guid = models.URLField(null=True, blank=True)
     uuid = models.UUIDField(default=uuid.uuid4)
     catalog_number = models.CharField(max_length=40, null=True, blank=True)
+    other_catalog_numbers = models.CharField(max_length=255, null=True, blank=True)
     year_collected = models.IntegerField("Year", blank=True, null=True,
                                          help_text='The year, event or field campaign during which the item was found.')
     organism_id = models.CharField(max_length=40, null=True, blank=True)

@@ -13,6 +13,9 @@ import origins.views
 from django.contrib import messages
 from django.contrib.gis.geos import Point
 
+from django.contrib import admin
+from mptt.admin import MPTTModelAdmin
+
 
 class ReferenceAdmin(admin.ModelAdmin):
     list_display = ['id', 'reference_no', 'author1last', 'reftitle']
@@ -227,7 +230,7 @@ class FossilAdmin(admin.ModelAdmin):
     list_display = ['id', 'catalog_number', 'site_link', 'context_link', 'taxon_link',
                     'country', 'context__best_age',
                     'short_description',
-                    # 'default_image',
+                    'default_image',
                     # 'element_description',
                     ]
     list_filter = ['origins', 'holotype', 'source', 'site__name', 'country', ]
@@ -249,12 +252,10 @@ class FossilAdmin(admin.ModelAdmin):
     fieldsets = [
         ('Fossil Details', {
             'fields': [('id', 'catalog_number', 'source'),
-                        (
-                        #'guid',
-                         'uuid', 'organism_id'),
-                       ('description'),
-                       ('short_description'),
-                       ('nickname', 'place_name'),
+                       ('guid', 'organism_id'),
+                       ('description',),
+                       ('short_description',),
+                       ('nickname', 'other_catalog_numbers'),
                        ('holotype', 'lifestage', 'sex'),
                        ('origins',)],
         }),
@@ -446,9 +447,15 @@ class TaxonAdmin(TaxonomyAdmin):
     inlines = [TaxonPublicationsInline]
 
 
+class MPTTTaxonAdmin(MPTTModelAdmin, TaxonomyAdmin):
+    fields = TaxonomyAdmin.fields
+    #inlines = [TaxonPublicationsInline]
+
+
 # Register your models here.
 admin.site.register(Context, ContextAdmin)
 admin.site.register(Reference, ReferenceAdmin)
 admin.site.register(Fossil, FossilAdmin)
 admin.site.register(Site, SiteAdmin)
 admin.site.register(Taxon, TaxonAdmin)
+admin.site.register(MPTTTaxon, MPTTTaxonAdmin)
