@@ -6,7 +6,6 @@ from django.db import migrations, models
 class Migration(migrations.Migration):
 
     dependencies = [
-        ('publications', '0003_auto_20210306_0019'),
         ('origins', '0015_fossil_other_catalog_numbers'),
     ]
 
