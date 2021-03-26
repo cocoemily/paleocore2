@@ -57,12 +57,12 @@ class IdentificationQualifier(projects.models.IdentificationQualifier):
 class MPTTTaxon(MPTTModel, projects.models.Taxon):
     parent = TreeForeignKey('self', null=True, blank=True, on_delete=models.CASCADE, related_name='children')
     rank = models.ForeignKey('TaxonRank', null=True, blank=True, on_delete=models.SET_NULL)
-    #references = models.ManyToManyField(publications.models.Publication, blank=True)
+    references = models.ManyToManyField(publications.models.Publication, blank=True)
 
-    # class Meta:
-    #     verbose_name = "Taxon"
-    #     verbose_name_plural = "Taxa"
-    #     ordering = ['rank__ordinal', 'label']
+    class Meta:
+        verbose_name = "MPTaxon"
+        verbose_name_plural = "MPTaxa"
+        ordering = ['rank__ordinal', 'label']
 
     class MPTTMeta:
         order_insertion_by = ['name']
@@ -274,6 +274,7 @@ class Fossil(models.Model):
 
     # Taxon
     taxon = models.ForeignKey(Taxon, null=True, blank=True, on_delete=models.SET_NULL)
+    mptt_taxon = models.ForeignKey(MPTTTaxon, null=True, blank=True, on_delete=models.SET_NULL)
 
     # Project
     project_name = models.CharField(max_length=100, null=True, blank=True)

@@ -376,3 +376,12 @@ def create_fossil_page(fossil):
         intro=fossil.catalog_number
     )
     template_page.copy(update_attrs=update_dict)
+
+
+def taxon2mptt(taxon):
+    """
+    Match a Taxon instance to a corresponding MPTTTaxon instance.
+    :param taxon:
+    :return: MPTTTaxon or None
+    """
+    matches = MPTTTaxon.objects.filter(name=taxon.name)

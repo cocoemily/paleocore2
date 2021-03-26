@@ -59,6 +59,7 @@ syntype = 'syntype'  # Each specimen of a type series (q.v.) from which neither 
 topotype = 'topotype'  # A term, not regulated by the Code, for a specimen originating from the type locality of the
 # species or subspecies to which it is thought to belong, whether or not the specimen is part of the type series.
 
+# Using a select set of terms recognized by ICZN.
 TYPE_CHOICES = (
     (holotype, 'holotype'),
     (paratype, 'paratype'),

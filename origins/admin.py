@@ -447,9 +447,16 @@ class TaxonAdmin(TaxonomyAdmin):
     inlines = [TaxonPublicationsInline]
 
 
+class MPTTTaxonPublicationsInline(admin.TabularInline):
+    model = MPTTTaxon.references.through
+    extra = 1
+    verbose_name = "Publication"
+    verbose_name_plural = "Publications"
+
+
 class MPTTTaxonAdmin(MPTTModelAdmin, TaxonomyAdmin):
     fields = TaxonomyAdmin.fields
-    #inlines = [TaxonPublicationsInline]
+    inlines = [MPTTTaxonPublicationsInline]
 
 
 # Register your models here.
