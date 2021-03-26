@@ -455,6 +455,7 @@ class MPTTTaxonPublicationsInline(admin.TabularInline):
 
 
 class MPTTTaxonAdmin(MPTTModelAdmin, TaxonomyAdmin):
+    list_display = ['label', 'rank', 'biology_usages']
     fields = TaxonomyAdmin.fields
     inlines = [MPTTTaxonPublicationsInline]
 
@@ -466,3 +467,4 @@ admin.site.register(Fossil, FossilAdmin)
 admin.site.register(Site, SiteAdmin)
 admin.site.register(Taxon, TaxonAdmin)
 admin.site.register(MPTTTaxon, MPTTTaxonAdmin)
+admin.site.register(TaxonRank)

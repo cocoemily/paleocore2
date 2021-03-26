@@ -123,6 +123,16 @@ class TaxonRank(PaleoCoreBaseClass):
     plural = models.CharField(null=False, blank=False, max_length=50, unique=True)
     ordinal = models.IntegerField(null=False, blank=False, unique=True)
 
+    def __str__(self):
+        """
+        Generate a string representation prefixed with a bracket ordinal value, e.g. [0] Root
+        :return: Return a string representation of a TaxonRank instance.
+        """
+        id_string = '[' + str(self.ordinal) + ']'
+        if self.name:
+            id_string = id_string + ' ' + self.name
+        return id_string
+
     class Meta:
         abstract = True
         verbose_name = "Taxon Rank"

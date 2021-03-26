@@ -36,6 +36,7 @@ from mptt.models import MPTTModel, TreeForeignKey
 class TaxonRank(projects.models.TaxonRank):
     class Meta:
         verbose_name = "Taxon Rank"
+        ordering = ['ordinal']
 
 
 class Taxon(projects.models.Taxon):
