@@ -1,0 +1,56 @@
+{% load wagtailcore_tags wagtailimages_tags %}
+<!--
+<div class="small-12 columns">-->
+{% for site in site_pages %}
+
+<div class="row">
+
+
+    <div class="column">
+        <div class="card">
+            <div class="card-section" style="padding: 12px;">
+
+                <div class="row">
+
+                        <div class="small-2 column">
+                            {% if site.feed_image %}
+                                <a href="{% pageurl site %}">
+                                    {% image site.feed_image fill-100x100 %}
+                                </a>
+                            {% endif %}
+                        </div>
+                        <div class="small-8 column">
+                            <a href="{% pageurl site %}">
+                                <h5><strong>{{ site.title }}</strong></h5>
+                                {% if site.intro %}
+                                    {{ site.intro|richtext|truncatewords:25 }}
+                                {% endif %}
+                                {% if site.is_public %}
+                                    Public data
+                                    {% else %}
+                                    Private data
+                                {% endif %}
+                                {% if site.record_count %}
+                                    {{ site.record_count }} records
+                                {% endif %}
+                            </a>
+                        </div>
+
+                    <div class="small-2 column">
+                        {% url 'admin:app_list' site.slug as admin_url %}
+                        {% if admin_url %}
+                          <a class="button small" href="{%  pageurl site %}">Details &raquo;</a>
+                          <a class="button warning small" href="{{ admin_url }}">Admin &raquo;</a>
+                        {% endif %}
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+</div>
+
+{% empty %}
+    No sites found
+{% endfor %}
+<!--</div>-->
