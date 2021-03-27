@@ -68,6 +68,21 @@ TYPE_CHOICES = (
     (syntype, 'syntype'),
 )
 
+# Nomenclatural Code Choices
+iczn = 'ICZN'
+icbn = 'ICBN'
+NOMENCLATURAL_CODE_CHOICES = (
+    (iczn, 'ICZN'),
+    (icbn, 'ICBN')
+)
+
+# Nomenclatural Status Choices
+accepted = 'accepted'
+junior_synonym = 'junior_synonym'
+NOMENCLATURAL_STATUS_CHOICES = (
+    (accepted, 'accepted'),
+    (junior_synonym, 'junior_synonym')
+)
 
 # helper functions
 def choices2list(choices_tuple):

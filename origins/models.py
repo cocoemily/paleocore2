@@ -26,7 +26,7 @@ from utils.models import RelatedLink, CarouselItem
 # Paleo Core imports
 import projects.models
 import publications.models
-from .ontologies import CONTINENT_CHOICES
+from .ontologies import CONTINENT_CHOICES, NOMENCLATURAL_STATUS_CHOICES, NOMENCLATURAL_CODE_CHOICES
 import publications.models
 
 from mptt.models import MPTTModel, TreeForeignKey
@@ -55,14 +55,41 @@ class IdentificationQualifier(projects.models.IdentificationQualifier):
         verbose_name = "Identification Qualifier"
 
 
-class MPTTTaxon(MPTTModel, projects.models.Taxon):
+class TTaxon(MPTTModel, projects.models.Taxon):
+    """
+    Modified Preordered Tree Traversal Taxon class
+    """
+    epithet = models.CharField(max_length=255, null=True, blank=True)
+    abbreviation = models.CharField(max_length=255, null=True, blank=True)
+    authorship = models.CharField(max_length=255, null=True, blank=True)
+    year = models.CharField(max_length=255, null=True, blank=True)
+    nomenclatural_code = models.CharField(max_length=255, null=True, blank=True, default='ICZN',
+                                          choices=NOMENCLATURAL_CODE_CHOICES)
+    nomenclatural_status = models.CharField(max_length=255, null=True, blank=True, choices=NOMENCLATURAL_STATUS_CHOICES)
     parent = TreeForeignKey('self', null=True, blank=True, on_delete=models.CASCADE, related_name='children')
+    junior_to = TreeForeignKey('self', null=True, blank=True, on_delete=models.CASCADE, related_name='synonyms')
     rank = models.ForeignKey('TaxonRank', null=True, blank=True, on_delete=models.SET_NULL)
     references = models.ManyToManyField(publications.models.Publication, blank=True)
 
+    def fossil_usages(self):
+        """
+        Count the number of Fossil objects pointing to the ttaxon instance. This method uses
+        the content type system to find the containing app and model.
+        :return: Returns and integer count of the number of biology instances in the app that point to the taxon.
+        """
+        result = None
+        app = self._meta.app_label
+        try:
+            content_type = ContentType.objects.get(app_label=app, model='fossil')  # assumes the model is named Biology
+            this_fossil_model = content_type.model_class()
+            result = this_fossil_model.objects.filter(ttaxon=self).count()
+        except ContentType.DoesNotExist:
+            pass  # If no matching content type then we'll pass here and return None
+        return result
+
     class Meta:
-        verbose_name = "MPTaxon"
-        verbose_name_plural = "MPTaxa"
+        verbose_name = "TTaxon"
+        verbose_name_plural = "TTaxa"
         ordering = ['rank__ordinal', 'label']
 
     class MPTTMeta:
@@ -275,7 +302,7 @@ class Fossil(models.Model):
 
     # Taxon
     taxon = models.ForeignKey(Taxon, null=True, blank=True, on_delete=models.SET_NULL)
-    mptt_taxon = models.ForeignKey(MPTTTaxon, null=True, blank=True, on_delete=models.SET_NULL)
+    ttaxon = models.ForeignKey(TTaxon, null=True, blank=True, on_delete=models.SET_NULL)
 
     # Project
     project_name = models.CharField(max_length=100, null=True, blank=True)

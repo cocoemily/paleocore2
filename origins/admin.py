@@ -260,7 +260,7 @@ class FossilAdmin(admin.ModelAdmin):
                        ('origins',)],
         }),
         ('Taxon', {
-            'fields': [('taxon',)]
+            'fields': [('taxon',), ('ttaxon')]
         }),
         ('Verbatim', {
             'fields': [('verbatim_PlaceName', 'verbatim_HomininElement'),
@@ -447,17 +447,19 @@ class TaxonAdmin(TaxonomyAdmin):
     inlines = [TaxonPublicationsInline]
 
 
-class MPTTTaxonPublicationsInline(admin.TabularInline):
-    model = MPTTTaxon.references.through
+class TTaxonPublicationsInline(admin.TabularInline):
+    model = TTaxon.references.through
     extra = 1
     verbose_name = "Publication"
     verbose_name_plural = "Publications"
 
 
-class MPTTTaxonAdmin(MPTTModelAdmin, TaxonomyAdmin):
-    list_display = ['label', 'rank', 'biology_usages']
-    fields = TaxonomyAdmin.fields
-    inlines = [MPTTTaxonPublicationsInline]
+class TTaxonAdmin(MPTTModelAdmin, TaxonomyAdmin):
+    readonly_fields = ['id', 'biology_usages', 'fossil_usages']
+    list_display = ['name', 'epithet', 'label', 'rank', 'fossil_usages']
+    fields = ['id', 'name', 'epithet', 'abbreviation', 'label', 'authorship', 'year',
+              'parent', 'junior_to', 'rank', 'nomenclatural_code', 'nomenclatural_status', 'remarks']
+    inlines = [TTaxonPublicationsInline]
 
 
 # Register your models here.
@@ -466,5 +468,5 @@ admin.site.register(Reference, ReferenceAdmin)
 admin.site.register(Fossil, FossilAdmin)
 admin.site.register(Site, SiteAdmin)
 admin.site.register(Taxon, TaxonAdmin)
-admin.site.register(MPTTTaxon, MPTTTaxonAdmin)
+admin.site.register(TTaxon, TTaxonAdmin)
 admin.site.register(TaxonRank)
