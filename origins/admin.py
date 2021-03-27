@@ -238,7 +238,7 @@ class FossilAdmin(admin.ModelAdmin):
     list_select_related = ['site', 'context', 'taxon']
     search_fields = ['catalog_number', 'place_name', 'country', 'locality',
                      'fossil_element__skeletal_element']
-    readonly_fields = ['element_count', 'aapa', 'id', 'default_image', 'element_description']
+    readonly_fields = ['element_count', 'aapa', 'id', 'default_image', 'element_description', 'taxon_link']
 
     list_per_page = 200
     inlines = [
@@ -260,7 +260,7 @@ class FossilAdmin(admin.ModelAdmin):
                        ('origins',)],
         }),
         ('Taxon', {
-            'fields': [('taxon',), ('ttaxon')]
+            'fields': [('ttaxon',)]
         }),
         ('Verbatim', {
             'fields': [('verbatim_PlaceName', 'verbatim_HomininElement'),
@@ -321,9 +321,9 @@ class FossilAdmin(admin.ModelAdmin):
             return None
 
     def taxon_link(self, obj):
-        if obj.taxon:
-            taxon_url = reverse('admin:origins_taxon_change', args=(obj.taxon.id,))
-            return format_html('<a href={}>{}</a>'.format(taxon_url, obj.taxon))
+        if obj.ttaxon:
+            taxon_url = reverse('admin:origins_ttaxon_change', args=(obj.ttaxon.id,))
+            return format_html('<a href={}>{}</a>'.format(taxon_url, obj.ttaxon))
         else:
             return None
 
