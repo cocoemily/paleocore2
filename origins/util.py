@@ -401,7 +401,8 @@ def fossil_taxa():
 
 
 def update_ttaxon():
-    for f in Fossil.objects.all():
-        if f.taxon and not f.ttaxon:
-            f.ttaxon = TTaxon.objects.get(name=f.taxon.name)
-            f.save()
+    for t in TTaxon.objects.all():
+        if t.name and not t.epithet:
+            t.epithet = t.name
+        t.name = t.label
+        t.save()
