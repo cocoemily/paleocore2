@@ -5,7 +5,7 @@ import uuid
 from django.contrib.gis.db import models
 from django.contrib.contenttypes.models import ContentType
 
-from django.utils.html import mark_safe
+from django.utils.html import mark_safe, format_html
 # Django countries imports
 from django_countries.fields import CountryField
 # Wagtail imports
@@ -75,6 +75,18 @@ class TTaxon(MPTTModel, projects.models.Taxon):
         except ContentType.DoesNotExist:
             pass  # If no matching content type then we'll pass here and return None
         return result
+
+    def scientific_name(self):
+        """
+        Generate pretty format html with full scientific name
+        :return:
+        """
+        scientific_name_html = ''
+        if self.authorship:
+            scientific_name_html = '<i>' + self.name + '</i> ' + self.authorship
+        else:
+            scientific_name_html = '<i>' + self.name
+        return format_html(scientific_name_html)
 
     class Meta:
         verbose_name = "TTaxon"
