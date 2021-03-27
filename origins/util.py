@@ -384,7 +384,11 @@ def taxon2mptt(taxon):
     :param taxon:
     :return: MPTTTaxon or None
     """
-    return TTaxon.objects.get(name=taxon.name)
+    try:
+        match = TTaxon.objects.get(name=taxon.name)
+    except ObjectDoesNotExist:
+        match = None
+    return match
 
 
 def fossil_taxa():
@@ -400,3 +404,4 @@ def update_ttaxon():
     for f in Fossil.objects.all():
         if f.taxon and not f.ttaxon:
             f.ttaxon = TTaxon.objects.get(name=f.taxon.name)
+            f.save()
