@@ -84,6 +84,7 @@ NOMENCLATURAL_STATUS_CHOICES = (
     (junior_synonym, 'junior_synonym')
 )
 
+
 # helper functions
 def choices2list(choices_tuple):
     """

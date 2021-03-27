@@ -1,15 +1,15 @@
 from django.conf.urls import url
-from origins.models import SitePage, WorldBorder
+from origins.models import Site, WorldBorder
 from .views import MyGeoJSONLayerView
 
 urlpatterns = [
     # url to get a geojson representation of all Origins sites
     # ex. /origins/origins.geojson  Note no trailing slash!
     url(r'^origins.geojson$',
-        MyGeoJSONLayerView.as_view(model=SitePage,
+        MyGeoJSONLayerView.as_view(model=Site,
                                    crs=False,
-                                   properties=['title', 'slug', 'url_path'],
-                                   geometry_field='location'),
+                                   properties=['name', 'min_ma', 'max_ma', 'formation'],
+                                   geometry_field='geom'),
         name='sites_geojson'),
 url(r'^countries.geojson$',
         MyGeoJSONLayerView.as_view(model=WorldBorder,
