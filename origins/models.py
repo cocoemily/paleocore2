@@ -54,11 +54,15 @@ class TTaxon(MPTTModel, projects.models.Taxon):
     year = models.CharField(max_length=255, null=True, blank=True)
     nomenclatural_code = models.CharField(max_length=255, null=True, blank=True, default='ICZN',
                                           choices=NOMENCLATURAL_CODE_CHOICES)
-    nomenclatural_status = models.CharField(max_length=255, null=True, blank=True, choices=NOMENCLATURAL_STATUS_CHOICES)
+    nomenclatural_status = models.CharField('Nom. Status', max_length=255, null=True, blank=True,
+                                            choices=NOMENCLATURAL_STATUS_CHOICES)
     parent = TreeForeignKey('self', null=True, blank=True, on_delete=models.CASCADE, related_name='children')
     junior_to = TreeForeignKey('self', null=True, blank=True, on_delete=models.CASCADE, related_name='synonyms')
     rank = models.ForeignKey('TaxonRank', null=True, blank=True, on_delete=models.SET_NULL)
     references = models.ManyToManyField(publications.models.Publication, blank=True)
+
+    def _synonyms(self):
+        return list(self.synonyms.all())
 
     def fossil_usages(self):
         """
