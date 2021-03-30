@@ -99,7 +99,7 @@ INSTALLED_APPS = (
     'fc',  # Fontechevadpc
     'wtap',  # West Turkana Archaeology Project
     'arvrc',  # African Rift Valley Research Consortium
-    #'eval',  # Evaluation
+    'eval',  # Evaluation
 
     'wagtail.contrib.routable_page',
     'wagtail.contrib.sitemaps',
