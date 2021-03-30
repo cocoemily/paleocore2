@@ -23,9 +23,10 @@ from django.core.files.base import ContentFile
 
 # App Libraries
 from .models import Occurrence, Biology, Archaeology, Geology, Taxon, IdentificationQualifier
-from .forms import UploadKMLForm, DownloadKMLForm, ChangeXYForm, Occurrence2Biology, DeleteAllForm
-from .utilities import html_escape, get_finds
+from .forms import *
+from .utilities import *
 from .ontologies import *  # import vocabularies and choice lists
+
 
 # Create your views here.
 class ImportKMZ(generic.FormView):
@@ -263,3 +264,26 @@ class ImportKMZ(generic.FormView):
             message_string = '{} occurrences'.format(occurrence_count)
         messages.add_message(self.request, messages.INFO,
                              'Successfully imported {} occurrences'.format(message_string))
+
+
+class ImportShapefile(generic.FormView):
+    template_name = "psr/import_file.html"
+    form_class = UploadShapefile
+    context_object_name = 'upload'
+    success_url = '../?last_import__exact=1'
+
+    #TODO define functions for importing shapefiles --need to do this based on new survey forms
+
+
+class ImportAccessDatabase(generic.FormView):
+    template_name = "psr/import_file.html"
+    form_class = UploadMDB
+    context_object_name = 'upload'
+    success_url = '../?last_import__exact=1'
+
+    def get_import_file(self):
+        return self.request.FILES['mdbUpload']
+
+    def import_excavated_instances(self):
+        file = self.get_import_file()
+        parse_mdb(file.name)
