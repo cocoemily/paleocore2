@@ -1,5 +1,5 @@
 from django import forms
-from mlp.models import Occurrence, Biology
+from mlp.models import *
 
 
 class UploadKMLForm(forms.Form):
@@ -51,3 +51,16 @@ class Occurrence2Biology(forms.ModelForm):
                   "item_scientific_name", "item_description", "taxon", "identification_qualifier"
                   ]
         #fields = ['barcode', 'taxon', 'identification_qualifier']
+
+
+class UploadShapefile(forms.ModelForm):
+    shapefileUpload = forms.FileField(
+        label='Upload a shape file, *.shp',
+    )
+
+
+class UploadMDB(forms.ModelForm):
+    mdbUpload = forms.FileField(
+        label='Upload an Access Database, *.mdb',
+    )
+
