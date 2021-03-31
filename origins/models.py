@@ -48,6 +48,7 @@ class TTaxon(MPTTModel, projects.models.Taxon):
     """
     Modified Preordered Tree Traversal Taxon class
     """
+    zoobank_id = models.CharField(max_length=255, null=True, blank=True)
     epithet = models.CharField(max_length=255, null=True, blank=True)
     abbreviation = models.CharField(max_length=255, null=True, blank=True)
     authorship = models.CharField(max_length=255, null=True, blank=True)

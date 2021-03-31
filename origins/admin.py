@@ -457,7 +457,7 @@ class TTaxonPublicationsInline(admin.TabularInline):
 class TTaxonAdmin(MPTTModelAdmin, TaxonomyAdmin):
     readonly_fields = ['id', 'biology_usages', 'fossil_usages', 'scientific_name', '_synonyms']
     list_display = ['name', 'scientific_name', 'rank', 'nomenclatural_status', 'fossil_usages', '_synonyms']
-    fields = ['id', 'epithet', 'name', 'abbreviation', 'label', 'authorship', 'year',
+    fields = ['id', 'zoobank_id', 'epithet', 'name', 'abbreviation', 'label', 'authorship', 'year',
               'parent', 'junior_to', 'rank', 'nomenclatural_code', 'nomenclatural_status', 'remarks']
     inlines = [TTaxonPublicationsInline]
     list_filter = ['nomenclatural_status', 'rank']
