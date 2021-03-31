@@ -35,6 +35,9 @@ urlpatterns = [
     # Paleo Core Projects
     path('projects/', include(('projects.urls', 'projects'), namespace='projects')),
 
+    # Origins
+    path('origins/', include(('origins.urls', 'origins'), namespace='origins')),
+
     # Third party django-publications apps
     url(r'^publications/', include('publications.urls')),
 
