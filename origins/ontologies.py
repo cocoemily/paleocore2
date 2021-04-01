@@ -79,9 +79,11 @@ NOMENCLATURAL_CODE_CHOICES = (
 # Nomenclatural Status Choices
 accepted = 'accepted'
 junior_synonym = 'junior_synonym'
+supressed = 'supressed'
 NOMENCLATURAL_STATUS_CHOICES = (
     (accepted, 'accepted'),
-    (junior_synonym, 'junior_synonym')
+    (junior_synonym, 'junior_synonym'),
+    (supressed, 'supressed')
 )
 
 
