@@ -1,11 +1,12 @@
 from django.shortcuts import render
 from django.views import generic
 from .forms import UpdateSitesForm, UpdateSitesModelForm
-from .models import Fossil, Site
+from .models import Fossil, Site, TTaxon
 from django.contrib import messages
 from djgeojson.views import GeoJSONLayerView, GeoJSONResponseMixin
 from djgeojson.serializers import Serializer as GeoJSONSerializer
 from django.contrib.auth.mixins import LoginRequiredMixin
+from django.http import HttpResponse
 
 
 class UpdateSites(generic.FormView):
@@ -59,3 +60,36 @@ class MyGeoJSONLayerView(GeoJSONLayerView):
                              crs=self.crs,  # in geoJSON crs is deprecated, raises error 36 in ol.source
                              **options)
         return response
+
+
+def index(request):
+    return HttpResponse("Hello, world. You're at the Origins index.")
+
+
+class TaxonListView(generic.ListView):
+    #template_name = 'taxalist.html'
+    context_object_name = 'taxa'
+
+    def get_queryset(self):
+        """Return a list of taxa """
+        # get just the non-class paleocore terms, which get added to the context as terms
+        taxa = TTaxon.objects.filter(nomenclatural_status='accepted')
+        return taxa
+
+    # def get_context_data(self, **kwargs):
+    #     # supplement the context by adding a list of class terms
+    #
+    #     # get the original context
+    #     context = super(TaxaListView, self).get_context_data(**kwargs)
+    #
+    #     # get a queryset of just paleocore classes
+    #     paleocore_classes = Term.objects.filter(projects__name='pc').filter(is_class=True).order_by('term_ordering')
+    #
+    #     # add them to the context, which now contains elements for terms and classes
+    #     context['classes'] = paleocore_classes
+    #     return context
+
+
+class TaxonDetailView(generic.DetailView):
+    model = TTaxon
+

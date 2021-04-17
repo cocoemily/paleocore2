@@ -53,6 +53,7 @@ class TTaxon(MPTTModel, projects.models.Taxon):
     abbreviation = models.CharField(max_length=255, null=True, blank=True)
     authorship = models.CharField(max_length=255, null=True, blank=True)
     year = models.CharField(max_length=255, null=True, blank=True)
+    type_specimen = models.CharField(max_length=255, null=True, blank=True)
     nomenclatural_code = models.CharField(max_length=255, null=True, blank=True, default='ICZN',
                                           choices=NOMENCLATURAL_CODE_CHOICES)
     nomenclatural_status = models.CharField('Nom. Status', max_length=255, null=True, blank=True,
@@ -87,16 +88,21 @@ class TTaxon(MPTTModel, projects.models.Taxon):
         :return:
         """
         scientific_name_html = ''
+        name_string = "{otag}{name}{ctag} {auth}".format(otag='<i>' if self.rank.ordinal >= 60 else "",
+                                                        name=self.name,
+                                                        ctag='</i>' if self.rank.ordinal >= 60 else "",
+                                                        auth=self.authorship if self.authorship else "")
         if self.authorship:
             scientific_name_html = '<i>' + self.name + '</i> ' + self.authorship
         else:
-            scientific_name_html = '<i>' + self.name
-        return format_html(scientific_name_html)
+            scientific_name_html = '<i>' + self.name + '</i>'
+        #return format_html(scientific_name_html)
+        return format_html(name_string)
 
     class Meta:
         verbose_name = "TTaxon"
         verbose_name_plural = "TTaxa"
-        ordering = ['rank__ordinal', 'label']
+        ordering = ['rank__ordinal', 'name']
 
     class MPTTMeta:
         order_insertion_by = ['name']
