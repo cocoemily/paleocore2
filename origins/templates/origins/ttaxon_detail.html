@@ -1,0 +1,27 @@
+{% extends "base.html" %}
+{% load mptt_tags %}
+{% block content %}
+<div id="content" class="grid-container">
+  <div class="grid-x grid-margin-x">
+    <div class="medium-10 cell">
+<h4>{{ttaxon.scientific_name}}</h4>
+
+<h5>Holotype: {{ttaxon.fossils}}</h5>
+      <h5>Zoobank LSID: {{ttaxon.zoobank_id}}</h5>
+      <h5>Status: {{ttaxon.nomenclatural_status}}</h5>
+      <h5>References</h5>
+  <ol>
+  {% for publication in ttaxon.references.all %}
+      <li>{{ publication.authors }}. {{ publication.title }}{% if not publication.title_ends_with_punct %}.{% endif %}{% if publication.journal %} {{ publication.journal }},{% endif %}{% if publication.book_title %} {{ publication.book_title }},{% endif %}{% if publication.publisher %} {{ publication.publisher }},{% endif %}{% if publication.institution %} {{ publication.institution }},{% endif %}{% if publication.volume %} volume {{ publication.volume }},{% endif %}{% if publication.number %} issue {{ publication.number }},{% endif %}{% if publication.pages %} pages {{ publication.pages }},{% endif %}{% if publication.month %} {{ publication.month_long }}{% endif %} {{ publication.year }}.<br/>
+      </li>
+        {% endfor %}
+      </ol>
+
+      <h5>Remarks</h5>
+      <p>{{ ttaxon.remarks | safe }}</p>
+    </div>
+  </div>
+</div>
+
+
+{% endblock %}

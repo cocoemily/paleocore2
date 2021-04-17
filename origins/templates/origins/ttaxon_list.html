@@ -1,0 +1,30 @@
+{% extends "base.html" %}
+{% load mptt_tags %}
+{% block content %}
+
+<div id="content" class="grid-container">
+  <div class="grid-x grid-margin-x">
+    <div class="medium-10 cell">
+      <h2>Origins Taxa (List)</h2>
+      <div>
+        <ul>
+          {% recursetree taxa %}
+          <li>
+            {{node.rank.name}}: <a href="{% url 'origins:taxon_detail_view' node.id %}">{{ node.scientific_name }}</a>
+            {% if not node.is_leaf_node %}
+            <ul class="children">
+              {{ children }}
+            </ul>
+            {% endif %}
+          </li>
+          {% endrecursetree %}
+        </ul>
+      </div>
+    </div>
+  </div>
+
+
+
+
+
+{% endblock %}
