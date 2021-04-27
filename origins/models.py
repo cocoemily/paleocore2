@@ -107,6 +107,9 @@ class TTaxon(MPTTModel, projects.models.Taxon):
     class MPTTMeta:
         order_insertion_by = ['name']
 
+    def __str__(self):
+        return str(self.name)
+
 
 class Reference(models.Model):
     # Original fields from Paleobiology DB
