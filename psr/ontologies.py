@@ -85,3 +85,9 @@ FIELD_SEASON_CHOICES = (
     (jun2019, 'Jun 2019'),
     (aug2019, 'Aug 2019')
 )
+
+locality_names = {
+    "Kyzylzhartas": "Qyzyljartas",
+    "Tuttybulaq Upper": "Tuttybulaq 2",
+    "Zhetiotau": "Jetiotau Cave"
+}

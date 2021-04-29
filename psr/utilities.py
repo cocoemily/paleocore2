@@ -35,91 +35,6 @@ databases = [
     "/Users/emilycoco/Desktop/NYU/Kazakhstan/PSR-Paleo-Core/excavation-databases/Zhetiotau_local_copy/zhetiotau.mdb"
     ]
 
-# def duplicate_barcodes():
-#     all_occurrences = Occurrence.objects.filter(basis_of_record='FossilSpecimen')
-#     barcode_list = []
-#     duplicate_list = []
-#     for item in all_occurrences:
-#         try:
-#             barcode_list.append(item.barcode)
-#         except:
-#             print("Error")
-#     for item, count in list(collections.Counter(barcode_list).items()):
-#                 if count > 1:
-#                     duplicate_list.append(item)
-#     return duplicate_list
-
-
-# def report_duplicates():
-#     dups = duplicate_barcodes()
-#     for d in dups:
-#         if d:
-#             occs = Occurrence.objects.filter(barcode=d)
-#             for o in occs:
-#                 print_string = "id:{} barcode:{} item_type:{} basis:{} collector:{}".format(
-#                     o.id, o.barcode, o.item_type, o.basis_of_record, o.collector
-#                 )
-#                 print(print_string)
-
-
-# def missing_barcodes():
-#     occurrences = Occurrence.objects.filter(basis_of_record='FossilSpecimen')
-#     missing_list = []
-
-
-# def find_mlp_duplicate_biological_barcodes():
-#     all_mlp_collected_bio_occurrences = Occurrence.objects.filter(item_type__exact="Faunal").filter(basis_of_record__exact="FossilSpecimen")
-#     barcode_list = []
-#     duplicate_list = []
-#     for item in all_mlp_collected_bio_occurrences:
-#         try:
-#             barcode_list.append(item.barcode)
-#         except:
-#             print("Error")
-#     for item, count in list(collections.Counter(barcode_list).items()):
-#                 if count > 1:
-#                     duplicate_list.append(item)
-#     return duplicate_list
-#
-#
-# def find_mlp_duplicate_biological_catalog_numbers():
-#     all_mlp_collected_bio_occurrences = Occurrence.objects.filter(item_type__exact="Faunal").filter(basis_of_record__exact="FossilSpecimen")
-#     catalog_list = []
-#     duplicate_list = []
-#     for item in all_mlp_collected_bio_occurrences:
-#         try:
-#             catalog_list.append(item.catalog_number)
-#         except:
-#             print("Error")
-#     for item, count in list(collections.Counter(catalog_list).items()):
-#                 if count > 1:
-#                     duplicate_list.append(item)
-#     return duplicate_list
-#
-#
-# def find_mlp_missing_coordinates():
-#     all_mlp_occurrences = Occurrence.objects.all()
-#     missing_coordinates_id_list=[]
-#     for o in all_mlp_occurrences:
-#         try: o.geom.x
-#         except AttributeError:
-#             missing_coordinates_id_list.append(o.id)
-#     return missing_coordinates_id_list
-
-
-# def update_mlp_bio(updatelist=update_tuple_list):
-#     for o in updatelist:  # iterate through record tuples in list
-#         cat, tax, des = o  # unpack tuple values
-#         #print cat+" "+tax+" "+des  # do something with them
-#
-#         try:
-#             occurrence = Occurrence.objects.get(catalog_number=cat)  # fetch the object with the catalog number
-#             occurrence.item_scientific_name = tax  # update item scientific name
-#             occurrence.item_description = des  # update item_description
-#             occurrence.save()  # save updates
-#         except ObjectDoesNotExist:  # handle if object is not found or is duplicate returning more than 1 match
-#             print("Does Not Exist or Duplicate:"+cat)
-
 
 def split_scientific_name(scientific_name):
     # split colon delimited string into list e.g. Rodentia:Muridae to ['Rodentia', 'Muridae']
@@ -185,33 +100,8 @@ def get_taxon_from_scientific_name(scientific_name):
     return taxon
 
 
-# def test_get_taxon_from_scientific_name(test_list=id_test_list):
-#     count=0
-#     for i in test_list:
-#         try:
-#             taxon = get_taxon_from_scientific_name(i)
-#             #print '{}, {} = {}'.format(count, i, taxon)
-#         except ObjectDoesNotExist:
-#             print('{}, {} = {}'.format(count, i, "Does Not Exist"))
-#         except MultipleObjectsReturned:
-#             '{}, {} = {}'.format(count, i, 'Multiple Objects Returned')
-#         count+=1
 
-
-# def mlp_missing_biology_occurrences():
-#     """
-#     Function to identify occurrences that should also be biology but are missing from biology table
-#     :return: returns a list of occurrence object ids.
-#     """
-#     result_list = []  # Initialize result list
-#     # Biology occurrences should be all occurrences that are item_type "Faunal" or "Floral"
-#     biology_occurrences = Occurrence.objects.filter(item_type__in=['Faunal', 'Floral'])
-#     for occurrence in biology_occurrences:
-#         try: Biology.objects.get(occurrence_ptr_id__exact=occurrence.id)  # Find matching occurrence in bio
-#         except ObjectDoesNotExist:
-#             result_list.append(occurrence.id)
-#     return result_list
-
+##SUBTYPING FUNCTIONS##
 
 def occurrence2biology(oi, survey):
     """
@@ -302,7 +192,7 @@ def occurrence2aggr(oi, survey):
 
 
 def archaeology2lithic(ai, survey):
-    if ai.archaeology_type in PSR_LITHIC_VOCABULARY:
+    #if ai.archaeology_type in PSR_LITHIC_VOCABULARY:
         print("Creating a new geo object for pk {}".format(ai.id))
         if survey:
             new_lithic = Lithic(geom=ai.geom)
@@ -317,7 +207,7 @@ def archaeology2lithic(ai, survey):
 
 
 def archaeology2bone(ai, survey):
-    if ai.archaeology_type in PSR_BONE_VOCABULARY:
+    #if ai.archaeology_type in PSR_BONE_VOCABULARY:
         print("Creating a new geo object for pk {}".format(ai.id))
         if survey:
             new_bone = Bone(geom=ai.geom)
@@ -332,7 +222,7 @@ def archaeology2bone(ai, survey):
 
 
 def archaeology2ceramic(ai, survey):
-    if ai.archaeology_type in PSR_CERAMIC_VOCABULARY:
+    #if ai.archaeology_type in PSR_CERAMIC_VOCABULARY:
         print("Creating a new geo object for pk {}".format(ai.id))
         if survey:
             new_cer = Ceramic(geom=ai.geom)
@@ -430,6 +320,8 @@ def subtype_archaeology(survey=True):
         else:
             pass
 
+
+##CHECKING FOR DUPLICATES##
 
 def show_duplicate_rows(data_list):
     print("\nChecking for duplicate records.")
@@ -738,6 +630,7 @@ def html_escape(text):
     return "".join(html_escape_table.get(c, c) for c in text)
 
 
+### PRE 2020 PSR IMPORT FUNCTIONS ###
 def import_pre2020_geology_shapefile(filename):
     sf = shapefile.Reader(filename)
     sr = sf.shapeRecords()
@@ -993,37 +886,36 @@ def upload_pictures(photonames, obj, photodir):
                 f = open(os.path.join(photodir, p), 'rb')
                 upload_dir = Image._meta.get_field('image').upload_to
                 name = os.path.join(upload_dir, str(obj.id) + '_' + p)
-                im = Image(description=name)
                 if type(obj) is Occurrence:
-                    im.occurrence = Occurrence.objects.get_or_create(id = obj.id)[0]
-                    im.locality = obj.geological_context
+                    o = Occurrence.objects.get_or_create(id = obj.id)[0]
+                    l = obj.geological_context
+                    im = Image.objects.get_or_create(occurrence=o, locality=l, description=name)[0]
                 elif type(obj) is GeologicalContext:
-                    im.locality = GeologicalContext.objects.get_or_create(id = obj.id)[0]
+                    l = GeologicalContext.objects.get_or_create(id = obj.id)[0]
+                    im = Image.objects.get_or_create(locality=l, description=name)[0]
                 im.image.save(name, ContentFile(f.read()))
                 im.save()
 
 
-locality_names = {
-    "Kyzylzhartas": "Qyzyljartas",
-    "Tuttybulaq Upper": "Tuttybulaq 2",
-    "Zhetiotau": "Jetiotau Cave"
-}
-
-
-def parse_mdb(file_path, locality_names=locality_names):
+### IMPORT FUNCTIONS ###
+def get_locality_name(file_path):
     dbname = file_path.split("/")
-    db = dbname[dbname.__len__()-1]
+    db = dbname[dbname.__len__() - 1]
     name = db.replace("_", ".").split(".")
 
     if name.__len__() == 2:
         lname = name[0].capitalize()
     else:
-        if name[1].isdigit() :
+        if name[1].isdigit():
             lname = name[0].capitalize() + " " + name[1]
         else:
             lname = name[0].capitalize() + " " + name[1].capitalize()
 
-    print(lname)
+    return lname
+
+
+def parse_mdb(file_path, site_name, locality_names=locality_names):
+    lname = site_name
 
     try:
         locality = GeologicalContext.objects.get(name=lname)
@@ -1093,5 +985,135 @@ def parse_mdb(file_path, locality_names=locality_names):
         obj.save()
 
 
+def import_geo_contexts(filename):
+    sf = shapefile.Reader(filename)
+    sr = sf.shapeRecords()
+
+    for r in sr: #TODO update with new form information
+        psr_g = GeologicalContext(
+            basis_of_record=r.record["Basis Of R"],
+            collecting_method=r.record["Collecting"],
+            name=r.record["Name"],
+            context_type=r.record["Item Type"],
+            description=r.record["Descriptio"],
+            dip=r.record["Dip"],
+            strike=r.record["Strike"],
+            texture=r.record["Texture"],
+            color=r.record["Color"],
+            context_remarks=r.record["Remarks"],
+            rockfall_character=r.record["Rockfall C"],
+            sediment_character=r.record["Sediment C"],
+            slope_character=r.record["Slope Char"],
+            speleothem_character=r.record["Speleothem"],
+            cave_mouth_character=r.record["Cave Mouth"],
+            geology_type=r.record["Geology Ty"]
+        )
+
+        if r.record["Height"] not in ("", None):
+            psr_g.height = Decimal(r.record["Height"])
+        if r.record["Width"] not in ("", None):
+            psr_g.width = Decimal(r.record["Width"])
+        if r.record["Depth"] not in ("", None):
+            psr_g.depth = Decimal(r.record["Depth"])
+
+        if r.record["Sediment P"] in ('-None Selected-'):
+            psr_g.sediment_presence = None
+        else:
+            psr_g.sediment_presence = r.record["Sediment P"]
+
+        if r.shape.shapeType is 1:  # point
+            coords = r.shape.points[0]
+            geom = GEOSGeometry("POINT(" + str(coords[0]) + " " + str(coords[1]) + ")", 4326)
+        # elif r.shape.shapeType is 5: #polygon
+        # elif r.shape.shapeType is 8: #multipoint
+        psr_g.geom = geom
+        psr_g.point = geom
+
+        if r.record["Date Recor"] is not "":
+            if "at" in r.record["Date Recor"]:
+                psr_g.date_collected = datetime.strptime(r.record["Date Recor"], '%d. %b %Y at %H:%M')
+            elif "," in r.record["Date Recor"]:
+                psr_g.date_collected = datetime.strptime(r.record["Date Recor"], '%d. %b %Y, %H:%M')
+            else:
+                psr_g.date_collected = datetime.strptime(r.record["Date Recor"], '%d. %b %Y')
+        else:
+            psr_g.date_collected = None
+
+        if r.record["Recorded B"] not in ('-None Selected-', "", None):
+            name = r.record["Recorded B"].split(" ")
+            psr_g.recorded_by = Person.objects.get_or_create(last_name=name[1], first_name=name[0])[0]
+
+        psr_g.last_import = True
+        psr_g.save()
+
+        # TODO how to add pictures?
+
+
+def import_survey_occurrences(filename):
+    sf = shapefile.Reader(filename)
+    sr = sf.shapeRecords()
+
+    for r in sr:  # TODO update with new form information
+        psr_a = Occurrence(
+            basis_of_record=r.record["Basis Of R"],
+            item_count=r.record["Item Count"],
+            find_type=r.record["Item Type"],
+            item_description=r.record["Descriptio"],
+            # collector=r.record["Identified"],
+            # finder=r.record["Identified"],
+            collecting_method=r.record["Collecting"],
+            field_id=r.record["Name"],
+            collection_remarks=r.record["Remarks"]
+        )
+        # set item type code
+        if psr_a.find_type in PSR_ARCHAEOLOGY_VOCABULARY:
+            psr_a.item_type = "Archaeological"
+        elif psr_a.find_type in PSR_BIOLOGY_VOCABULARY:
+            psr_a.item_type = "Biological"
+        elif psr_a.find_type in PSR_GEOLOGY_VOCABULARY:
+            psr_a.item_type = "Geological"
+        else:
+            pass
+
+        # set point
+        if r.shape.shapeType is 1:  # point
+            coords = r.shape.points[0]
+            geom = GEOSGeometry("POINT(" + str(coords[0]) + " " + str(coords[1]) + ")", 4326)
+        psr_a.point = geom
+        psr_a.geom = geom
+
+        # set geological context
+        try:
+            psr_a.geological_context = GeologicalContext.objects.get(name=r.record["Locality"])
+        except:
+            psr_a.geological_context = \
+                GeologicalContext.objects.get_or_create(name=r.record["Locality"], geom=geom, point=geom)[0]
+
+        # set people
+        if r.record["Identified"] not in ('-None Selected-', "", None):
+            name1 = r.record["Identified"].split(" ")
+            psr_a.found_by = Person.objects.get_or_create(last_name=name1[1], first_name=name1[0])[0]
+            psr_a.collector = r.record["Identified"]
+            psr_a.finder = r.record["Identified"]
+
+
+        if r.record["Date Recor"] not in ("", None):
+            if "at" in r.record["Date Recor"]:
+                psr_a.date_collected = datetime.strptime(r.record["Date Recor"], '%d. %b %Y at %H:%M')
+            elif "," in r.record["Date Recor"]:
+                psr_a.date_collected = datetime.strptime(r.record["Date Recor"], '%d. %b %Y, %H:%M')
+            else:
+                psr_a.date_collected = datetime.strptime(r.record["Date Recor"], '%d. %b %Y')
+        else:
+            psr_a.date_collected = None
+
+        if r.record["Recorded B"] not in ('-None Selected-', "", None):
+            name = r.record["Recorded B"].split(" ")
+            psr_a.recorded_by = Person.objects.get_or_create(last_name=name[1], first_name=name[0])[0]
+
+        psr_a.last_import = True
+        psr_a.save()  # last step to add it to the database
+
+        # TODO how to add pictures?
 
 

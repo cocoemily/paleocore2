@@ -319,12 +319,13 @@ class Lithic(Archaeology):
     midwidth = models.DecimalField(max_digits=38, decimal_places=8, null=True, blank=True)
     midthick = models.DecimalField(max_digits=38, decimal_places=8, null=True, blank=True)
     tipwidth = models.DecimalField(max_digits=38, decimal_places=8, null=True, blank=True)
+    tipthick = models.DecimalField(max_digits=38, decimal_places=8, null=True, blank=True)
     lentowid = models.DecimalField(max_digits=38, decimal_places=8, null=True, blank=True)
     lentothick = models.DecimalField(max_digits=38, decimal_places=8, null=True, blank=True)
     roew1 = models.DecimalField(max_digits=38, decimal_places=8, null=True, blank=True)
     roet1 = models.DecimalField(max_digits=38, decimal_places=8, null=True, blank=True)
     roew3 = models.DecimalField(max_digits=38, decimal_places=8, null=True, blank=True)
-    roet1 = models.DecimalField(max_digits=38, decimal_places=8, null=True, blank=True)
+    roet3 = models.DecimalField(max_digits=38, decimal_places=8, null=True, blank=True)
     epa = models.DecimalField(max_digits=38, decimal_places=8, null=True, blank=True)
 
     class Meta:
@@ -451,12 +452,13 @@ class ExcavatedLithic(ExcavatedArchaeology):
     midwidth = models.DecimalField(max_digits=38, decimal_places=8, null=True, blank=True)
     midthick = models.DecimalField(max_digits=38, decimal_places=8, null=True, blank=True)
     tipwidth = models.DecimalField(max_digits=38, decimal_places=8, null=True, blank=True)
+    tipthick = models.DecimalField(max_digits=38, decimal_places=8, null=True, blank=True)
     lentowid = models.DecimalField(max_digits=38, decimal_places=8, null=True, blank=True)
     lentothick = models.DecimalField(max_digits=38, decimal_places=8, null=True, blank=True)
     roew1 = models.DecimalField(max_digits=38, decimal_places=8, null=True, blank=True)
     roet1 = models.DecimalField(max_digits=38, decimal_places=8, null=True, blank=True)
     roew3 = models.DecimalField(max_digits=38, decimal_places=8, null=True, blank=True)
-    roet1 = models.DecimalField(max_digits=38, decimal_places=8, null=True, blank=True)
+    roet3 = models.DecimalField(max_digits=38, decimal_places=8, null=True, blank=True)
     epa = models.DecimalField(max_digits=38, decimal_places=8, null=True, blank=True)
 
     class Meta:
@@ -547,11 +549,6 @@ class Image(models.Model):
     locality = models.ForeignKey("GeologicalContext", related_name='psr_contexts_image', on_delete=models.CASCADE, default="")
     image = models.ImageField(upload_to="uploads/images", null=True, blank=True)
     description = models.TextField(null=True, blank=True)
-
-    def thumbnail(self): #TODO figure out why this is not working
-        return u'<img src="%s" />' % (self.image.url)
-
-    thumbnail.short_description = 'Thumbnail'
 
 
 class File(models.Model):

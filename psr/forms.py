@@ -1,23 +1,5 @@
 from django import forms
-from mlp.models import *
-
-
-class UploadKMLForm(forms.Form):
-    kmlfileUpload = forms.FileField(
-        label='Upload a kml/kmz file, *.kml or *.kmz ',
-    )
-
-class DeleteAllForm(forms.Form):
-    pass
-
-class DownloadKMLForm(forms.Form):
-    FILE_TYPE_CHOICES = (('1', 'KML',), ('2', 'KMZ',))
-    kmlfileDownload = forms.ChoiceField(
-        required=False,
-        widget=forms.RadioSelect,
-        choices=FILE_TYPE_CHOICES,
-        label="File Type: "
-    )
+from psr.models import *
 
 
 class UploadForm(forms.Form):
@@ -31,36 +13,56 @@ class UploadForm(forms.Form):
         label='Upload shape file data, *.dbf',
     )
 
-class ChangeXYForm(forms.ModelForm):
-    class Meta:
-        model = Occurrence
-        fields = ["barcode", "item_scientific_name", "item_description"]
-    DB_id = forms.IntegerField( max_value=100000)
-    old_easting = forms.DecimalField(max_digits=12)
-    old_northing = forms.DecimalField(max_digits=12)
-    new_easting = forms.DecimalField(max_digits=12)
-    new_northing = forms.DecimalField(max_digits=12)
 
-
-class Occurrence2Biology(forms.ModelForm):
-    class Meta:
-        model = Biology
-        fields = ["barcode", "catalog_number",
-                  "basis_of_record", "item_type", "collector", "collecting_method",
-                  "field_number", "year_collected",
-                  "item_scientific_name", "item_description", "taxon", "identification_qualifier"
-                  ]
-        #fields = ['barcode', 'taxon', 'identification_qualifier']
-
-
-class UploadShapefile(forms.ModelForm):
+class UploadShapefile(forms.Form):
     shapefileUpload = forms.FileField(
         label='Upload a shape file, *.shp',
     )
 
 
-class UploadMDB(forms.ModelForm):
+class UploadMDB(forms.Form):
     mdbUpload = forms.FileField(
         label='Upload an Access Database, *.mdb',
     )
 
+
+
+
+# class UploadKMLForm(forms.Form):
+#     kmlfileUpload = forms.FileField(
+#         label='Upload a kml/kmz file, *.kml or *.kmz ',
+#     )
+#
+# class DeleteAllForm(forms.Form):
+#     pass
+#
+# class DownloadKMLForm(forms.Form):
+#     FILE_TYPE_CHOICES = (('1', 'KML',), ('2', 'KMZ',))
+#     kmlfileDownload = forms.ChoiceField(
+#         required=False,
+#         widget=forms.RadioSelect,
+#         choices=FILE_TYPE_CHOICES,
+#         label="File Type: "
+#     )
+
+
+# class ChangeXYForm(forms.ModelForm):
+#     class Meta:
+#         model = Occurrence
+#         fields = ["barcode", "item_scientific_name", "item_description"]
+#     DB_id = forms.IntegerField( max_value=100000)
+#     old_easting = forms.DecimalField(max_digits=12)
+#     old_northing = forms.DecimalField(max_digits=12)
+#     new_easting = forms.DecimalField(max_digits=12)
+#     new_northing = forms.DecimalField(max_digits=12)
+#
+#
+# class Occurrence2Biology(forms.ModelForm):
+#     class Meta:
+#         model = Biology
+#         fields = ["barcode", "catalog_number",
+#                   "basis_of_record", "item_type", "collector", "collecting_method",
+#                   "field_number", "year_collected",
+#                   "item_scientific_name", "item_description", "taxon", "identification_qualifier"
+#                   ]
+#         #fields = ['barcode', 'taxon', 'identification_qualifier']
