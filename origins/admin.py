@@ -462,7 +462,7 @@ class TTaxonAdmin(MPTTModelAdmin, TaxonomyAdmin):
               'type_specimen', 'type_status', 'parent', 'classification_status', 'junior_to', 'rank',
               'nomenclatural_code', 'nomenclatural_status', 'remarks']
     inlines = [TTaxonPublicationsInline]
-    list_filter = ['nomenclatural_status', 'rank']
+    list_filter = ['nomenclatural_status', 'classification_status', 'rank']
 
 
 # Register your models here.

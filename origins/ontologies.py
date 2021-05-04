@@ -85,9 +85,7 @@ invalid_sh = 'invalid_sh'  # Specific homonym
 invalid_sm = 'invalid_sm'  # Specific nomen nudum before 1931
 invalid_sn = 'invalid_sn'  # Specific nomen nudum after 1930
 invalid_so = 'invalid_so'  # Specific nomen nudum - proposed conditionally
-accepted = 'accepted'   # deprecated - transfer to classifciation choices
-junior_synonym = 'junior_synonym'  # deprecated - transfer to Classification choices
-supressed = 'supressed'  # Name supressed by ICZN decision.
+suppressed = 'suppressed'  # Name suppressed by ICZN decision.
 NOMENCLATURAL_STATUS_CHOICES = (
     (valid, 'Valid'),
     (invalid_gh, 'Invalid GH'),
@@ -97,18 +95,18 @@ NOMENCLATURAL_STATUS_CHOICES = (
     (invalid_sm, 'Invalid SM'),
     (invalid_sn, 'Invalid SN'),
     (invalid_so, 'Inavlid SO'),
-    (accepted, 'Accepted'),
-    (junior_synonym, 'Junior Synonym'),
-    (supressed, 'Supressed')
+    (suppressed, 'Supressed')
 )
 
 # Classification Status Choices
 accepted = 'accepted'
 junior_synonym = 'junior_synonym'
+deprecated = 'deprecated'
+# supressed defined above for Nomenclatural status choices
 CLASSIFICATION_STATUS_CHOICES = (
     (accepted, 'Accepted'),
     (junior_synonym, 'Junior Synonym'),
-    (supressed, 'Supressed')
+    (deprecated, 'Deprecated')
 )
 
 

@@ -61,7 +61,7 @@ class TTaxon(MPTTModel, projects.models.Taxon):
     nomenclatural_status = models.CharField('Nom. Status', max_length=255, null=True, blank=True,
                                             choices=NOMENCLATURAL_STATUS_CHOICES)
     parent = TreeForeignKey('self', null=True, blank=True, on_delete=models.CASCADE, related_name='children')
-    classification_status = models.CharField(max_length=255, null=True, blank=True, default='ICZN',
+    classification_status = models.CharField('Classif. Status', max_length=255, null=True, blank=True, default='ICZN',
                                           choices=CLASSIFICATION_STATUS_CHOICES)
     junior_to = TreeForeignKey('self', null=True, blank=True, on_delete=models.CASCADE, related_name='synonyms')
     rank = models.ForeignKey('TaxonRank', null=True, blank=True, on_delete=models.SET_NULL)
