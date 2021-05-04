@@ -15,8 +15,7 @@ from django_countries.fields import CountryField
 # Paleo Core imports
 import projects.models
 import publications.models
-from .ontologies import CONTINENT_CHOICES, NOMENCLATURAL_STATUS_CHOICES, NOMENCLATURAL_CODE_CHOICES
-import publications.models
+from .ontologies import CONTINENT_CHOICES, NOMENCLATURAL_STATUS_CHOICES, NOMENCLATURAL_CODE_CHOICES, TYPE_CHOICES
 
 from mptt.models import MPTTModel, TreeForeignKey
 
@@ -54,6 +53,8 @@ class TTaxon(MPTTModel, projects.models.Taxon):
     authorship = models.CharField(max_length=255, null=True, blank=True)
     year = models.CharField(max_length=255, null=True, blank=True)
     type_specimen = models.CharField(max_length=255, null=True, blank=True)
+    type_status = models.CharField(max_length=255, null=True, blank=True, choices=TYPE_CHOICES)
+    paratypes = models.CharField(max_length=255, null=True, blank=True)
     nomenclatural_code = models.CharField(max_length=255, null=True, blank=True, default='ICZN',
                                           choices=NOMENCLATURAL_CODE_CHOICES)
     nomenclatural_status = models.CharField('Nom. Status', max_length=255, null=True, blank=True,
@@ -61,10 +62,31 @@ class TTaxon(MPTTModel, projects.models.Taxon):
     parent = TreeForeignKey('self', null=True, blank=True, on_delete=models.CASCADE, related_name='children')
     junior_to = TreeForeignKey('self', null=True, blank=True, on_delete=models.CASCADE, related_name='synonyms')
     rank = models.ForeignKey('TaxonRank', null=True, blank=True, on_delete=models.SET_NULL)
+    name_reference = models.ForeignKey(publications.models.Publication, null=True, blank=True,
+                                       on_delete=models.SET_NULL, related_name='name_references')
     references = models.ManyToManyField(publications.models.Publication, blank=True)
 
     def _synonyms(self):
+        """
+        Get list of TTaxa that are synonyms using the junior_to field.
+        :return:
+        """
         return list(self.synonyms.all())
+
+    def hypodigm(self):
+        """
+        Get the queryset of Fossil objects that are identified to this taxon
+        :return: returns queryset of Fossil objects.
+        """
+        result = None
+        app = self._meta.app_label
+        try:
+            content_type = ContentType.objects.get(app_label=app, model='fossil')  # assumes the model is named Biology
+            this_fossil_model = content_type.model_class()
+            result = this_fossil_model.objects.filter(ttaxon=self)
+        except ContentType.DoesNotExist:
+            pass  # If no matching content type then we'll pass here and return None
+        return result
 
     def fossil_usages(self):
         """
@@ -72,15 +94,7 @@ class TTaxon(MPTTModel, projects.models.Taxon):
         the content type system to find the containing app and model.
         :return: Returns and integer count of the number of biology instances in the app that point to the taxon.
         """
-        result = None
-        app = self._meta.app_label
-        try:
-            content_type = ContentType.objects.get(app_label=app, model='fossil')  # assumes the model is named Biology
-            this_fossil_model = content_type.model_class()
-            result = this_fossil_model.objects.filter(ttaxon=self).count()
-        except ContentType.DoesNotExist:
-            pass  # If no matching content type then we'll pass here and return None
-        return result
+        return self.hypodigm().count()
 
     def scientific_name(self):
         """

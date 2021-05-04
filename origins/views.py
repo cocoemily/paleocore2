@@ -1,7 +1,7 @@
 from django.shortcuts import render
 from django.views import generic
 from .forms import UpdateSitesForm, UpdateSitesModelForm
-from .models import Fossil, Site, TTaxon
+from .models import Fossil, Site, TTaxon, TaxonRank
 from django.contrib import messages
 from djgeojson.views import GeoJSONLayerView, GeoJSONResponseMixin
 from djgeojson.serializers import Serializer as GeoJSONSerializer
@@ -93,3 +93,14 @@ class TaxonListView(generic.ListView):
 class TaxonDetailView(generic.DetailView):
     model = TTaxon
 
+
+class NominaListView(generic.ListView):
+    template_name = 'origins/nomina.html'
+    context_object_name = 'taxa'
+    model = TTaxon
+
+    def get_queryset(self):
+        """Return a list of all species names"""
+        species = TaxonRank.objects.get(name='Species')
+        taxa = TTaxon.objects.filter(rank=species).order_by('name')
+        return taxa

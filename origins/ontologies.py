@@ -61,11 +61,11 @@ topotype = 'topotype'  # A term, not regulated by the Code, for a specimen origi
 
 # Using a select set of terms recognized by ICZN.
 TYPE_CHOICES = (
-    (holotype, 'holotype'),
-    (paratype, 'paratype'),
-    (lectotype, 'lectotype'),
-    (neotype, 'neotype'),
-    (syntype, 'syntype'),
+    (holotype, 'Holotype'),
+    (paratype, 'Paratype'),
+    (lectotype, 'Lectotype'),
+    (neotype, 'Neotype'),
+    (syntype, 'Syntype'),
 )
 
 # Nomenclatural Code Choices
@@ -77,10 +77,35 @@ NOMENCLATURAL_CODE_CHOICES = (
 )
 
 # Nomenclatural Status Choices
+valid = 'valid'
+invalid_gh = 'invalid_gh'  # Generic homonym
+invalid_ga = 'invalid_ga'  # Genus nomen nudum before 1931
+invalid_gb = 'invalid_gb'  # Genus nomen nudum after 1930
+invalid_sh = 'invalid_sh'  # Specific homonym
+invalid_sm = 'invalid_sm'  # Specific nomen nudum before 1931
+invalid_sn = 'invalid_sn'  # Specific nomen nudum after 1930
+invalid_so = 'invalid_so'  # Specific nomen nudum - proposed conditionally
+accepted = 'accepted'   # deprecated - transfer to classifciation choices
+junior_synonym = 'junior_synonym'  # deprecated - transfer to Classification choices
+supressed = 'supressed'  # Name supressed by ICZN decision.
+NOMENCLATURAL_STATUS_CHOICES = (
+    (valid, 'Valid'),
+    (invalid_gh, 'Invalid GH'),
+    (invalid_ga, 'Invalid GA'),
+    (invalid_gb, 'Invalid GB'),
+    (invalid_sh, 'Inavlid SH'),
+    (invalid_sm, 'Invalid SM'),
+    (invalid_sn, 'Invalid SN'),
+    (invalid_so, 'Inavlid SO'),
+    (accepted, 'Accepted'),
+    (junior_synonym, 'Junior Synonym'),
+    (supressed, 'Supressed')
+)
+
+# Classification Status Choices
 accepted = 'accepted'
 junior_synonym = 'junior_synonym'
-supressed = 'supressed'
-NOMENCLATURAL_STATUS_CHOICES = (
+CLASSIFICATION_STATUS_CHOICES = (
     (accepted, 'accepted'),
     (junior_synonym, 'junior_synonym'),
     (supressed, 'supressed')
