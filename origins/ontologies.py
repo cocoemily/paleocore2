@@ -106,9 +106,9 @@ NOMENCLATURAL_STATUS_CHOICES = (
 accepted = 'accepted'
 junior_synonym = 'junior_synonym'
 CLASSIFICATION_STATUS_CHOICES = (
-    (accepted, 'accepted'),
-    (junior_synonym, 'junior_synonym'),
-    (supressed, 'supressed')
+    (accepted, 'Accepted'),
+    (junior_synonym, 'Junior Synonym'),
+    (supressed, 'Supressed')
 )
 
 
