@@ -15,7 +15,8 @@ from django_countries.fields import CountryField
 # Paleo Core imports
 import projects.models
 import publications.models
-from .ontologies import CONTINENT_CHOICES, NOMENCLATURAL_STATUS_CHOICES, NOMENCLATURAL_CODE_CHOICES, TYPE_CHOICES
+from .ontologies import CONTINENT_CHOICES, NOMENCLATURAL_STATUS_CHOICES, NOMENCLATURAL_CODE_CHOICES, TYPE_CHOICES, \
+    CLASSIFICATION_STATUS_CHOICES
 
 from mptt.models import MPTTModel, TreeForeignKey
 
@@ -60,6 +61,8 @@ class TTaxon(MPTTModel, projects.models.Taxon):
     nomenclatural_status = models.CharField('Nom. Status', max_length=255, null=True, blank=True,
                                             choices=NOMENCLATURAL_STATUS_CHOICES)
     parent = TreeForeignKey('self', null=True, blank=True, on_delete=models.CASCADE, related_name='children')
+    classification_status = models.CharField(max_length=255, null=True, blank=True, default='ICZN',
+                                          choices=CLASSIFICATION_STATUS_CHOICES)
     junior_to = TreeForeignKey('self', null=True, blank=True, on_delete=models.CASCADE, related_name='synonyms')
     rank = models.ForeignKey('TaxonRank', null=True, blank=True, on_delete=models.SET_NULL)
     name_reference = models.ForeignKey(publications.models.Publication, null=True, blank=True,
