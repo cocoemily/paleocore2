@@ -543,14 +543,22 @@ class ExcavatedBiology(ExcavationOccurrence):
         verbose_name_plural = f"{app_label.upper()} Excavated Biology"
 
 
-
-
 # Media Classes
 class Image(models.Model):
     occurrence = models.ForeignKey("Occurrence", related_name='psr_occurrences_image', on_delete=models.CASCADE, default="", null=True, blank=True,)
     locality = models.ForeignKey("GeologicalContext", related_name='psr_contexts_image', on_delete=models.CASCADE, default="")
     image = models.ImageField(upload_to="uploads/images", null=True, blank=True)
     description = models.TextField(null=True, blank=True)
+
+    def image_preview(self):
+        # ex. the name of column is "image"
+        if self.image:
+            return mark_safe(
+                '<img src="{0}" width="150" height="150" style="object-fit:contain" />'.format(self.image.url))
+        else:
+            return '(No image)'
+
+    image_preview.short_description = 'Preview'
 
 
 class File(models.Model):

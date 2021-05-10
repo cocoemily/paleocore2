@@ -15,88 +15,13 @@ from .views import *
 from .utilities import *
 
 psrformfield = {
-        models.CharField: {'widget': TextInput(attrs={'size': '20'})},
+        models.CharField: {'widget': TextInput(attrs={'size': '50'})},
         models.TextField: {'widget': Textarea(attrs={'rows': 5, 'cols': 75})},
         models.PointField: {"widget": GooglePointFieldWidget}
     }
 
 default_read_only_fields = ('id', 'geom', 'point_x', 'point_y', 'easting', 'northing', 'date_last_modified',
                             'name', 'date_created', 'last_import', 'collecting_method',)
-
-aggregate_display = (
-        ('Record Details', {
-            'fields': [('field_id', 'type',),
-                       ('cat_number', 'date_collected',),
-                       ('date_created', 'date_last_modified')]
-        }),
-        ('Find Details', {
-            'fields': [('screen_size', 'counts'),
-                       ('burning', 'bone', 'microfauna', 'molluscs', 'pebbles'),
-                       ('smallplatforms', 'smalldebris', 'tinyplatforms', 'tinydebris'),
-                       ('level', 'prism'),
-                       ('excavator'),
-                       ]
-        }),
-        ('Location', {
-            'fields': [('point'), ('geological_context', 'unit')]
-        })
-    )
-
-biology_display = (
-        ('Record Details', {
-            'fields': [('field_id', 'type',),
-                       ('cat_number', 'date_collected',),
-                       ('date_created', 'date_last_modified')]
-        }),
-        ('Find Details', {
-            'fields': [('biology_type', ),
-                       ('sex', 'life_stage', 'size_class', ),
-                       ('taxon', 'identification_qualifier'),
-                       ('level', 'prism'),
-                       ('excavator'),
-                       ]
-        }),
-        ('Location', {
-            'fields': [('point'), ('geological_context', 'unit')]
-        })
-    )
-
-geology_display = (
-        ('Record Details', {
-            'fields': [('field_id', 'type',),
-                       ('cat_number', 'date_collected',),
-                       ('date_created', 'date_last_modified')]
-        }),
-        ('Find Details', {
-            'fields': [('geology_type'),
-                       ('color', 'texture'),
-                       ('level', 'prism'),
-                       ('excavator'),
-                       ]
-        }),
-        ('Location', {
-            'fields': [('point'), ('geological_context', 'unit')]
-        })
-    )
-
-archaeology_display = (
-        ('Record Details', {
-            'fields': [('field_id', 'type',),
-                       ('cat_number', 'date_collected',),
-                       ('date_created', 'date_last_modified')]
-        }),
-        ('Find Details', {
-            'fields': [('archaeology_type', 'period'),
-                       ('length_mm', 'width_mm', 'thick_mm', 'weight', ),
-                       ('archaeology_preparation', 'archaeology_remarks', ),
-                       ('level', 'prism'),
-                       ('excavator'),
-                       ]
-        }),
-        ('Location', {
-            'fields': [('point'), ('geological_context', 'unit')]
-        })
-    )
 
 default_occurrence_filter = ['geological_context', 'collector', 'finder',]
 
@@ -122,27 +47,15 @@ agg_export_fields = ['occurrence_ptr_id', 'counts',
                         'tinyplatforms', 'tinydebris',
                         'bull_find_remarks']
 
-
-#from stackoverflow
-#TODO fix thumbnails
-class AdminImageWidget(AdminFileWidget):
-    def render(self, name, value, attrs=None, renderer=None):
-        html = super().render(name, value, attrs, renderer)
-        if value and getattr(value, 'url', None):
-            html = format_html('<a href="{0}" target="_blank"><img src="{0}" alt="{1}" width="150" height="150" style="object-fit: contain;"/></a>', value.url, str(value)) + html
-        return html
-
-
+#from Django Forum from user kazukiyo923
 class ImagesInline(admin.TabularInline):
     model = Image
     extra = 1
-    #image_display = AdminThumbnail(image_field='image')
 
-    readonly_fields = ("id", "image")
-    fields = ("id", "image", "description")
-    formfield_overrides = {
-        models.ImageField: {'widget': AdminImageWidget}
-    }
+    readonly_fields = ("id", "image", "image_preview",)
+    fields = ("id", "image_preview", "image", "description", )
+
+    formfield_overrides = { models.TextField: {'widget': Textarea(attrs={'rows': 3, 'cols': 25})} }
 
 
 class FilesInline(admin.TabularInline):
@@ -521,7 +434,17 @@ class ArchaeologyAdmin(OccurrenceAdmin):
     list_filter = ['archaeology_type'] + default_occurrence_filter
 
     formfield_overrides = psrformfield
-    fieldsets = archaeology_display
+    fieldsets = (OccurrenceAdmin.fieldsets[0],
+                 ('Find Details', {
+                     'fields': [('archaeology_type', 'period'),
+                                ('length_mm', 'width_mm', 'thick_mm', 'weight', ),
+                                ('archaeology_remarks', ),
+                                ('collecting_method',),
+                                ('collector', 'finder', 'found_by'),
+                                ('item_count', 'field_number',),
+                                ]
+                 }),
+                 OccurrenceAdmin.fieldsets[2])
 
     actions = ['export_simple_csv', 'subtype_lithic', 'subtype_bone', 'subtype_ceramic']
 
@@ -603,7 +526,17 @@ class BiologyAdmin(OccurrenceAdmin):
     list_filter = ['biology_type'] + default_occurrence_filter
 
     formfield_overrides = psrformfield
-    fieldsets = biology_display
+    fieldsets = (OccurrenceAdmin.fieldsets[0],
+                 ('Find Details', {
+                     'fields': [('biology_type', ),
+                                ('sex', 'life_stage', 'size_class',),
+                                ('taxon', 'identification_qualifier'),
+                                ('collecting_method',),
+                                ('collector', 'finder', 'found_by'),
+                                ('item_count', 'field_number',),
+                                ]
+                 }),
+                 OccurrenceAdmin.fieldsets[2])
 
     fields_to_export = bio_export_fields
 
@@ -650,7 +583,16 @@ class GeologyAdmin(OccurrenceAdmin):
     list_filter = ['geology_type'] + default_occurrence_filter
 
     formfield_overrides = psrformfield
-    fieldsets = geology_display
+    fieldsets = (OccurrenceAdmin.fieldsets[0],
+                 ('Find Details', {
+                     'fields': [('geology_type',),
+                                ('dip', 'strike', 'color', 'texture'),
+                                ('collecting_method',),
+                                ('collector', 'finder', 'found_by'),
+                                ('item_count', 'field_number',),
+                                ]
+                 }),
+                 OccurrenceAdmin.fieldsets[2])
 
     fields_to_export = geo_export_fields
 
@@ -697,7 +639,17 @@ class AggregateAdmin(OccurrenceAdmin):
     list_filter = default_occurrence_filter
 
     formfield_overrides = psrformfield
-    fieldsets = aggregate_display
+    fieldsets = (OccurrenceAdmin.fieldsets[0],
+                 ('Find Details', {
+                     'fields': [('screen_size', 'counts'),
+                                ('burning', 'bone', 'microfauna', 'molluscs', 'pebbles'),
+                                ('smallplatforms', 'smalldebris', 'tinyplatforms', 'tinydebris'),
+                                ('collecting_method',),
+                                ('collector', 'finder', 'found_by'),
+                                ('item_count', 'field_number',),
+                                ]
+                 }),
+                 OccurrenceAdmin.fieldsets[2])
 
     fields_to_export = agg_export_fields
 
@@ -767,7 +719,16 @@ class ExcavatedArchaeologyAdmin(ExcavationOccurrenceAdmin):
     list_display = ('excavationoccurrence_ptr_id', 'archaeology_type', 'geological_context')
 
     formfield_overrides = psrformfield
-    fieldsets = archaeology_display
+    fieldsets = (ExcavationOccurrenceAdmin.fieldsets[0],
+                 ('Find Details', {
+                     'fields': [('archaeology_type', 'period'),
+                                ('length_mm', 'width_mm', 'thick_mm', 'weight', ),
+                                ('archaeology_remarks', ),
+                                ('level', 'prism'),
+                                ('excavator'),
+                                ]
+                 }),
+                 ExcavationOccurrenceAdmin.fieldsets[2])
 
     fields_to_export = arch_export_fields
 
@@ -846,7 +807,16 @@ class ExcavatedBiologyAdmin(ExcavationOccurrenceAdmin):
     list_display = ('excavationoccurrence_ptr_id', 'biology_type', 'geological_context')
 
     formfield_overrides = psrformfield
-    fieldsets = biology_display
+    fieldsets = (ExcavationOccurrenceAdmin.fieldsets[0],
+                 ('Find Details', {
+                     'fields': [('biology_type', ),
+                                ('sex', 'life_stage', 'size_class', ),
+                                ('taxon', 'identification_qualifier'),
+                                ('level', 'prism'),
+                                ('excavator'),
+                                ]
+                 }),
+                 ExcavationOccurrenceAdmin.fieldsets[2])
 
     actions = ['export_simple_csv']
 
@@ -888,7 +858,15 @@ class ExcavatedGeologyAdmin(ExcavationOccurrenceAdmin):
     list_display = ('excavationoccurrence_ptr_id', 'geology_type', 'geological_context')
 
     formfield_overrides = psrformfield
-    fieldsets = geology_display
+    fieldsets = (ExcavationOccurrenceAdmin.fieldsets[0],
+                 ('Find Details', {
+                     'fields': [('geology_type'),
+                                ('color', 'texture'),
+                                ('level', 'prism'),
+                                ('excavator'),
+                                ]
+                 }),
+                 ExcavationOccurrenceAdmin.fieldsets[2])
 
     actions = ['export_simple_csv']
 
@@ -930,7 +908,16 @@ class ExcavatedAggregateAdmin(ExcavationOccurrenceAdmin):
     list_display = ('excavationoccurrence_ptr_id', 'screen_size', 'geological_context')
 
     formfield_overrides = psrformfield
-    fieldsets = aggregate_display
+    fieldsets = (ExcavationOccurrenceAdmin.fieldsets[0],
+                 ('Find Details', {
+                     'fields': [('screen_size', 'counts'),
+                                ('burning', 'bone', 'microfauna', 'molluscs', 'pebbles'),
+                                ('smallplatforms', 'smalldebris', 'tinyplatforms', 'tinydebris'),
+                                ('level', 'prism'),
+                                ('excavator'),
+                                ]
+                 }),
+                 ExcavationOccurrenceAdmin.fieldsets[2])
 
     actions = ['export_simple_csv']
 

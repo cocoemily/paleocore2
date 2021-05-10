@@ -65,7 +65,16 @@ Importing Data
 
 #### Importing Survey Occurrences from Shapefile
 * Run server on local host
-* Choose which type of data to be import
+* Choose which type of data to be imported
 * Click "Import New Dataset" button in upper right corner
 * Choose a .shp file to upload
 * Click "Upload"
+
+
+Exporting Data
+--------------------
+#### Exporting Selected Data
+* Run server on local host
+* Choose what type of data to exported
+* Select items to export
+* Select "Export simple report to csv" and click go
