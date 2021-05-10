@@ -14,45 +14,6 @@ from mapwidgets.widgets import GooglePointFieldWidget
 from .views import *
 from .utilities import *
 
-psr_gc_fieldsets = (
-    ('Record Details', {
-        'fields': [('name', 'context_type',),
-                   ('basis_of_record', 'collecting_method'),
-                   ('recorded_by'),
-                   ('remarks',),
-                   ('date_collected', 'date_created', 'date_last_modified')]
-    }),
-    ('Geology Details', {
-        'fields': [('geology_type'), ('description'),
-                   ]
-    }),
-    ('Cave Details', {
-        'fields': [('dip', 'strike', 'color', 'texture', 'height', 'width', 'depth'),
-                   ('slope_character'), ('sediment_presence', 'sediment_character',),
-                   ('cave_mouth_character'), ('rockfall_character'), ('speleothem_character')
-                   ],
-        'classes': ['collapse']
-    }),
-    ('Section Details', {
-        'fields': [('size_of_loess', 'loess_mean_thickness', 'loess_max_thickness'),
-                   ('loess_landscape_position', 'loess_surface_inclination'),
-                   ('loess_presence_coarse_components', 'loess_amount_coarse_components'),
-                   ('loess_number_sediment_layers', 'loess_number_soil_horizons', 'loess_number_cultural_horizons',
-                    'loess_number_coarse_layers'),
-                   ],
-        'classes': ['collapse']
-    }),
-    ('Location', {
-        'fields': [('geom', 'point')]
-    }),
-    ('Problems', {
-        'fields': [('problem', 'problem_comment'),
-                   ('error_notes')
-                   ],
-        'classes': ['collapse']
-    }),
-)
-
 psrformfield = {
         models.CharField: {'widget': TextInput(attrs={'size': '20'})},
         models.TextField: {'widget': Textarea(attrs={'rows': 5, 'cols': 75})},
@@ -62,6 +23,81 @@ psrformfield = {
 default_read_only_fields = ('id', 'geom', 'point_x', 'point_y', 'easting', 'northing', 'date_last_modified',
                             'name', 'date_created', 'last_import', 'collecting_method',)
 
+aggregate_display = (
+        ('Record Details', {
+            'fields': [('field_id', 'type',),
+                       ('cat_number', 'date_collected',),
+                       ('date_created', 'date_last_modified')]
+        }),
+        ('Find Details', {
+            'fields': [('screen_size', 'counts'),
+                       ('burning', 'bone', 'microfauna', 'molluscs', 'pebbles'),
+                       ('smallplatforms', 'smalldebris', 'tinyplatforms', 'tinydebris'),
+                       ('level', 'prism'),
+                       ('excavator'),
+                       ]
+        }),
+        ('Location', {
+            'fields': [('point'), ('geological_context', 'unit')]
+        })
+    )
+
+biology_display = (
+        ('Record Details', {
+            'fields': [('field_id', 'type',),
+                       ('cat_number', 'date_collected',),
+                       ('date_created', 'date_last_modified')]
+        }),
+        ('Find Details', {
+            'fields': [('biology_type', ),
+                       ('sex', 'life_stage', 'size_class', ),
+                       ('taxon', 'identification_qualifier'),
+                       ('level', 'prism'),
+                       ('excavator'),
+                       ]
+        }),
+        ('Location', {
+            'fields': [('point'), ('geological_context', 'unit')]
+        })
+    )
+
+geology_display = (
+        ('Record Details', {
+            'fields': [('field_id', 'type',),
+                       ('cat_number', 'date_collected',),
+                       ('date_created', 'date_last_modified')]
+        }),
+        ('Find Details', {
+            'fields': [('geology_type'),
+                       ('color', 'texture'),
+                       ('level', 'prism'),
+                       ('excavator'),
+                       ]
+        }),
+        ('Location', {
+            'fields': [('point'), ('geological_context', 'unit')]
+        })
+    )
+
+archaeology_display = (
+        ('Record Details', {
+            'fields': [('field_id', 'type',),
+                       ('cat_number', 'date_collected',),
+                       ('date_created', 'date_last_modified')]
+        }),
+        ('Find Details', {
+            'fields': [('archaeology_type', 'period'),
+                       ('length_mm', 'width_mm', 'thick_mm', 'weight', ),
+                       ('archaeology_preparation', 'archaeology_remarks', ),
+                       ('level', 'prism'),
+                       ('excavator'),
+                       ]
+        }),
+        ('Location', {
+            'fields': [('point'), ('geological_context', 'unit')]
+        })
+    )
+
 default_occurrence_filter = ['geological_context', 'collector', 'finder',]
 
 lithic_fields = ('dataclass', 'type1', 'type2', 'technique', 'form', 'raw_material', 'raw_material1',
@@ -70,6 +106,21 @@ lithic_fields = ('dataclass', 'type1', 'type2', 'technique', 'form', 'raw_materi
               'platsurf', 'extplat', 'lip', 'pointimpact', 'platwidth', 'platthick', 'epa',
               'scarlength', 'tqwidth', 'tqthick', 'midwidth', 'midthick', 'tipwidth','tipthick',
               'lentowid', 'lentothick', 'roew1', 'roet1', 'roew3', 'roet3')
+
+arch_export_fields = ['occurrence_ptr_id', 'archaeology_type',
+                        'length_mm', 'width_mm', 'thick_mm', 'weight',
+                        'archaeology_remarks', 'archaeology_notes']
+bio_export_fields = ['occurrence_ptr_id', 'biology_type',
+                        'sex', 'life_stage', 'size_class',
+                        'taxon', 'verbatim_taxon', 'identification_qualifier', 'verbatim_identification_qualifier',
+                        'taxonomy_remarks', 'type_status', 'fauna_notes']
+geo_export_fields = ['occurrence_ptr_id', 'geology_type',
+                        'dip', 'strike', 'color', 'texture']
+agg_export_fields = ['occurrence_ptr_id', 'counts',
+                        'screen_size', 'burning', 'bone', 'microfauna', 'molluscs', 'pebbles',
+                        'smallplatforms', 'smalldebris',
+                        'tinyplatforms', 'tinydebris',
+                        'bull_find_remarks']
 
 
 #from stackoverflow
@@ -88,12 +139,10 @@ class ImagesInline(admin.TabularInline):
     #image_display = AdminThumbnail(image_field='image')
 
     readonly_fields = ("id", "image")
-    fields = ("id", "image_display", "description")
-    # formfield_overrides = {
-    #     models.ImageField: {'widget': AdminImageWidget}
-    # }
-
-
+    fields = ("id", "image", "description")
+    formfield_overrides = {
+        models.ImageField: {'widget': AdminImageWidget}
+    }
 
 
 class FilesInline(admin.TabularInline):
@@ -113,43 +162,76 @@ class OccurrenceAdmin(projects.admin.PaleoCoreOccurrenceAdmin):
     change_list_template = 'admin/psr/psr_change_list.html'
 
     readonly_fields = default_read_only_fields + (
-    'date_recorded', 'field_number', 'basis_of_record', 'found_by', 'collector', 'finder') + \
-                      ('field_id', 'item_type', 'find_type', 'name')
+        'date_recorded', 'field_number', 'basis_of_record',
+        'found_by', 'collector', 'finder',
+        'field_id', 'item_type', 'find_type', 'name')
     list_filter = ['item_type'] + default_occurrence_filter
     search_fields = ['id', 'item_type', 'item_description', 'barcode', 'field_id']
     list_per_page = 500
 
     list_display = ('field_id', 'item_type', 'find_type', 'geological_context')
     fieldsets = (
-    ('Record Details', {
-        'fields': [('field_id', 'item_type', 'find_type', 'name'),
-                   ('item_description'),
-                   ('basis_of_record',),
-                   ('remarks',),
-                   ('date_recorded', 'date_created', 'date_last_modified')]
-    }),  # lgrp_occurrence_fieldsets[0]
-    ('Find Details', {
-        'fields': [('collecting_method',),
-                   ('collector', 'finder', 'found_by'),
-                   ('item_count', 'field_number',),
-                   ]
-    }),
-    ('Location', {
-        'fields': [('geom',), ('point')]
-    }),  # lgrp_occurrence_fieldsets[4]
-    ('Problems', {
-        'fields': [('problem', 'problem_comment'),
-                   ],
-        'classes': ['collapse']
-    }),  # lgrp_occurrence_fieldsets[5]
-)
+        ('Record Details', {
+            'fields': [('field_id', 'item_type', 'find_type', 'name'),
+                       ('item_description'),
+                       ('basis_of_record',),
+                       ('remarks',),
+                       ('date_recorded', 'date_created', 'date_last_modified')]
+        }),
+        ('Find Details', {
+            'fields': [('collecting_method',),
+                       ('collector', 'finder', 'found_by'),
+                       ('item_count', 'field_number',),
+                       ]
+        }),
+        ('Location', {
+            'fields': [('geom',), ('point')]
+        }),
+        ('Problems', {
+            'fields': [('problem', 'problem_comment'),
+                       ],
+            'classes': ['collapse']
+        }),
+    )
 
     inlines = [ImagesInline]
 
     save_as = True
     formfield_overrides = psrformfield
 
-    actions = ['subtype_arch', 'subtype_bio', 'subtype_geo', 'subtype_agg']
+    actions = ['export_simple_csv', 'subtype_arch', 'subtype_bio', 'subtype_geo', 'subtype_agg']
+
+    def export_simple_csv(self, request, queryset):
+        fields_to_export = ['id', 'field_id', 'find_type', 'item_description', 'item_type', 'item_count',
+                             'finder', 'collector',
+                            'basis_of_record', 'collecting_method', 'collection_remarks',
+                            'date_collected', 'date_created', 'date_last_modified',
+                            'problem', 'problem_comment', 'remarks', 'georeference_remarks',
+                            'point', 'geom',]
+
+        response = HttpResponse(content_type='text/csv')  # declare the response type
+        response['Content-Disposition'] = 'attachment; filename="PSR_Survey-Occurrences.csv"'  # declare the file name
+        writer = unicodecsv.writer(response)  # open a .csv writer
+
+        writer.writerow(fields_to_export + ['longitude', 'latitude', 'geological_context', 'found_by', 'recorded_by'])  # write column headers
+        for o in queryset.order_by('field_id', 'geological_context_id'):
+            try:
+                row_list = [o.__dict__.get(k) for k in fields_to_export]
+                row_list.append(o.point_x())
+                row_list.append(o.point_y())
+                gc = GeologicalContext.objects.get(id=o.geological_context_id)
+                row_list.append(gc.name)
+                if o.found_by_id is not None:
+                    fb = Person.objects.get(id=o.found_by_id)
+                    row_list.append(fb.__str__())
+                if o.recorded_by_id is not None:
+                    rb = Person.objects.get(id=o.recorded_by_id)
+                    row_list.append(rb.__str__())
+                writer.writerow(row_list)
+            except:
+                writer.writerow(o.id)
+        return response
+    export_simple_csv.short_description = "Export simple report to csv"
 
     def subtype_arch(self, request, queryset):
         for q in queryset:
@@ -181,10 +263,7 @@ class OccurrenceAdmin(projects.admin.PaleoCoreOccurrenceAdmin):
 
     def get_urls(self):
         tool_item_urls = [
-            path(r'import_data/', psr.views.ImportShapefile.as_view()),
-            # path(r'^summary/$',permission_required('mlp.change_occurrence',
-            #                         login_url='login/')(self.views.Summary.as_view()),
-            #     name="summary"),
+            path(r'import_data/', psr.views.ImportShapefile.as_view())
         ]
         return tool_item_urls + super(OccurrenceAdmin, self).get_urls()
 
@@ -198,9 +277,10 @@ class ExcavationOccurrenceAdmin(projects.admin.PaleoCoreOccurrenceAdmin):
     resource_class = ExcavationOccurrenceResource
     change_list_template = 'admin/psr/psr_change_list.html'
 
-    readonly_fields = ('id', 'point', 'date_collected', 'field_id', 'unit', 'type', 'cat_number', 'date_created',
-                       'date_last_modified') + \
-                      ('excavator', 'geological_context')
+    readonly_fields = ('id', 'point', 'date_collected', 'field_id',
+                       'unit', 'type', 'cat_number', 'date_created',
+                       'date_last_modified',
+                       'excavator', 'geological_context', 'prism')
 
     list_display = ('type', 'geological_context', 'cat_number')
     list_filter = ['type', 'geological_context']
@@ -210,7 +290,7 @@ class ExcavationOccurrenceAdmin(projects.admin.PaleoCoreOccurrenceAdmin):
             'fields': [('field_id', 'type',),
                        ('cat_number', 'date_collected',),
                        ('date_created', 'date_last_modified')]
-        }),  # lgrp_occurrence_fieldsets[0]
+        }),
         ('Find Details', {
             'fields': [('level', 'prism'),
                        ('excavator'),
@@ -224,7 +304,33 @@ class ExcavationOccurrenceAdmin(projects.admin.PaleoCoreOccurrenceAdmin):
     save_as = True
     formfield_overrides = psrformfield
 
-    actions = ['subtype_arch', 'subtype_bio', 'subtype_geo', 'subtype_agg']
+    actions = ['export_simple_csv', 'subtype_arch', 'subtype_bio', 'subtype_geo', 'subtype_agg']
+
+    def export_simple_csv(self, request, queryset):
+        fields_to_export = ['id', 'field_id', 'cat_number', 'type', 'item_type',
+                            'prism', 'point', 'unit', 'level', 'excavator',
+                            'date_collected', 'date_created', 'date_last_modified']
+
+        response = HttpResponse(content_type='text/csv')  # declare the response type
+        response['Content-Disposition'] = 'attachment; filename="PSR_Excavated-Occurrences.csv"'  # declare the file name
+        writer = unicodecsv.writer(response)  # open a .csv writer
+
+        writer.writerow(fields_to_export + ['longitude', 'latitude', 'geological_context', 'found_by'])  # write column headers
+        for o in queryset.order_by('field_id', 'barcode'):
+            try:
+                row_list = [o.__dict__.get(k) for k in fields_to_export]
+                row_list.append(o.point_x())
+                row_list.append(o.point_y())
+                gc = GeologicalContext.objects.get(id=o.geological_context_id)
+                row_list.append(gc.name)
+                if o.found_by_id is not None:
+                    fb = Person.objects.get(id=o.found_by_id)
+                    row_list.append(fb.__str__())
+                writer.writerow(row_list)
+            except:
+                writer.writerow(o.id)
+        return response
+    export_simple_csv.short_description = "Export simple report to csv"
 
     def subtype_arch(self, request, queryset):
         for q in queryset:
@@ -280,12 +386,93 @@ class GeologicalContextAdmin(projects.admin.PaleoCoreLocalityAdminGoogle):
                      'context_type']
 
     list_display = ('name', 'context_type', 'geology_type')
-    fieldsets = psr_gc_fieldsets
+    fieldsets = (
+        ('Record Details', {
+            'fields': [('name', 'context_type',),
+                       ('basis_of_record', 'collecting_method'),
+                       ('recorded_by'),
+                       ('remarks',),
+                       ('date_collected', 'date_created', 'date_last_modified')]
+        }),
+        ('Geology Details', {
+            'fields': [('geology_type'), ('description'),
+                       ]
+        }),
+        ('Cave Details', {
+            'fields': [('dip', 'strike', 'color', 'texture', 'height', 'width', 'depth'),
+                       ('slope_character'), ('sediment_presence', 'sediment_character',),
+                       ('cave_mouth_character'), ('rockfall_character'), ('speleothem_character')
+                       ],
+            'classes': ['collapse']
+        }),
+        ('Section Details', {
+            'fields': [('size_of_loess', 'loess_mean_thickness', 'loess_max_thickness'),
+                       ('loess_landscape_position', 'loess_surface_inclination'),
+                       ('loess_presence_coarse_components', 'loess_amount_coarse_components'),
+                       ('loess_number_sediment_layers', 'loess_number_soil_horizons', 'loess_number_cultural_horizons',
+                        'loess_number_coarse_layers'),
+                       ],
+            'classes': ['collapse']
+        }),
+        ('Location', {
+            'fields': [('geom', 'point')]
+        }),
+        ('Problems', {
+            'fields': [('problem', 'problem_comment'),
+                       ('error_notes')
+                       ],
+            'classes': ['collapse']
+        }),
+    )
+
+    cave_attributes = ['dip', 'strike', 'color', 'texture', 'height', 'width', 'depth',
+                       'slope_character', 'sediment_presence', 'sediment_character',
+                       'cave_mouth_character', 'rockfall_character', 'speleothem_character']
+    profile_attributes = ['size_of_loess', 'loess_mean_thickness', 'loess_max_thickness',
+                          'loess_landscape_position', 'loess_surface_inclination',
+                          'loess_presence_coarse_components', 'loess_amount_coarse_components',
+                          'loess_number_sediment_layers', 'loess_number_soil_horizons',
+                          'loess_number_cultural_horizons', 'loess_number_coarse_layers',
+                          'loess_presence_vertical_profile']
 
     save_as = True
     formfield_overrides = psrformfield
 
     inlines = [ImagesInline]
+
+    def export_simple_csv(self, request, queryset):
+        fields_to_export = ['id', 'name', 'context_type', 'geology_type', 'description',
+                            'dip', 'strike', 'color', 'texture', 'height', 'width', 'depth',
+                            'slope_character', 'sediment_presence', 'sediment_character',
+                            'cave_mouth_character', 'rockfall_character', 'speleothem_character',
+                            'size_of_loess', 'loess_mean_thickness', 'loess_max_thickness',
+                            'loess_landscape_position', 'loess_surface_inclination',
+                            'loess_presence_coarse_components', 'loess_amount_coarse_components',
+                            'loess_number_sediment_layers', 'loess_number_soil_horizons',
+                            'loess_number_cultural_horizons', 'loess_number_coarse_layers',
+                            'loess_presence_vertical_profile',
+                            'point', 'geom','basis_of_record', 'collecting_method',
+                            'date_collected', 'date_created', 'date_last_modified',
+                            'problem', 'problem_comment', 'remarks', 'georeference_remarks']
+
+        response = HttpResponse(content_type='text/csv')  # declare the response type
+        response['Content-Disposition'] = 'attachment; filename="PSR_Geological-Contexts.csv"'  # declare the file name
+        writer = unicodecsv.writer(response)  # open a .csv writer
+
+        writer.writerow(fields_to_export + ['longitude', 'latitude', 'found_by'])  # write column headers
+        for o in queryset.order_by('field_id', 'barcode'):
+            try:
+                row_list = [o.__dict__.get(k) for k in fields_to_export]
+                row_list.append(o.point_x())
+                row_list.append(o.point_y())
+                if o.found_by_id is not None:
+                    fb = Person.objects.get(id=o.found_by_id)
+                    row_list.append(fb.__str__())
+                writer.writerow(row_list)
+            except:
+                writer.writerow(o.id)
+        return response
+    export_simple_csv.short_description = "Export simple report to csv"
 
     def get_urls(self):
         tool_item_urls = [
@@ -334,8 +521,58 @@ class ArchaeologyAdmin(OccurrenceAdmin):
     list_filter = ['archaeology_type'] + default_occurrence_filter
 
     formfield_overrides = psrformfield
+    fieldsets = archaeology_display
 
-    actions = ['subtype_lithic', 'subtype_bone', 'subtype_ceramic']
+    actions = ['export_simple_csv', 'subtype_lithic', 'subtype_bone', 'subtype_ceramic']
+
+    inlines = [LithicInline, BoneInline, CeramicInline, ImagesInline]
+
+    def export_simple_csv(self, request, queryset):
+        fields_to_export = arch_export_fields
+        occurrence_export = ['field_id', 'find_type', 'item_description', 'item_type', 'item_count',
+                             'finder', 'collector', 'collecting_method', 'date_collected',
+                             'point', 'geom']
+        lithic_export = list(lithic_fields)
+        ceramic_export = ['type', 'decorated']
+        bone_export = ['cutmarks', 'burning', 'part']
+
+        response = HttpResponse(content_type='text/csv')  # declare the response type
+        response['Content-Disposition'] = 'attachment; filename="PSR_Survey-Archaeology.csv"'  # declare the file name
+        writer = unicodecsv.writer(response)  # open a .csv writer
+
+        writer.writerow(fields_to_export + ['longitude', 'latitude', 'found_by'] + occurrence_export + lithic_export + ceramic_export + bone_export +
+                        ['geological_context'])  # write column headers
+        for o in queryset.order_by('field_id', 'barcode'):
+            try:
+                row_list = [o.__dict__.get(k) for k in fields_to_export]
+                row_list.append(o.point_x())
+                row_list.append(o.point_y())
+                if o.found_by_id is not None:
+                    fb = Person.objects.get(id=o.found_by_id)
+                    row_list.append(fb.__str__())
+                row_list = row_list + [o.__dict__.get(k) for k in occurrence_export]
+                if o.__dict__.get('find_type') in PSR_LITHIC_VOCABULARY:
+                    l = Lithic.objects.get(id=o.__dict__.get('id'))
+                    row_list = row_list + [l.__dict__.get(k) for k in lithic_export]
+                else:
+                    row_list = row_list + [None for k in lithic_export]
+                if o.__dict__.get('find_type') in PSR_CERAMIC_VOCABULARY:
+                    c = Ceramic.objects.get(id=o.__dict__.get('id'))
+                    row_list = row_list + [c.__dict__.get(k) for k in ceramic_export]
+                else:
+                    row_list = row_list + [None for k in ceramic_export]
+                if o.__dict__.get('find_type') in PSR_BONE_VOCABULARY:
+                    b = Ceramic.objects.get(id=o.__dict__.get('id'))
+                    row_list = row_list + [b.__dict__.get(k) for k in ceramic_export]
+                else:
+                    row_list = row_list + [None for k in bone_export]
+                gc = GeologicalContext.objects.get(id=o.geological_context_id)
+                row_list.append(gc.name)
+                writer.writerow(row_list)
+            except:
+                writer.writerow(o.id)
+        return response
+    export_simple_csv.short_description = "Export simple report to csv"
 
     def subtype_lithic(self, request, queryset):
         for q in queryset:
@@ -352,10 +589,6 @@ class ArchaeologyAdmin(OccurrenceAdmin):
             archaeology2ceramic(q, survey=True)
     subtype_ceramic.short_description = "Subtype selected as survey ceramic(s)"
 
-    inlines = [LithicInline, BoneInline, CeramicInline, ImagesInline]
-
-    #TODO figure out how to do conditional inline statement
-
 
 class BiologyResource(resources.ModelResource):
     class Meta:
@@ -370,6 +603,38 @@ class BiologyAdmin(OccurrenceAdmin):
     list_filter = ['biology_type'] + default_occurrence_filter
 
     formfield_overrides = psrformfield
+    fieldsets = biology_display
+
+    fields_to_export = bio_export_fields
+
+    actions = ['export_simple_csv']
+
+    def export_simple_csv(self, request, queryset):
+        fields_to_export = bio_export_fields
+        occurrence_export = ['field_id', 'find_type', 'item_description', 'item_type', 'item_count',
+                             'finder', 'collector', 'collecting_method', 'date_collected',
+                             'point', 'geom']
+        response = HttpResponse(content_type='text/csv')  # declare the response type
+        response['Content-Disposition'] = 'attachment; filename="PSR_Survey-Bio.csv"'  # declare the file name
+        writer = unicodecsv.writer(response)  # open a .csv writer
+
+        writer.writerow(
+            fields_to_export + ['found_by'] + occurrence_export + ['geological_context'])  # write column headers
+        for o in queryset.order_by('field_id', 'barcode'):
+            try:
+                row_list = [o.__dict__.get(k) for k in fields_to_export]
+                if o.found_by_id is not None:
+                    fb = Person.objects.get(id=o.found_by_id)
+                    row_list.append(fb.__str__())
+                row_list = row_list + [o.__dict__.get(k) for k in occurrence_export]
+                gc = GeologicalContext.objects.get(id=o.geological_context_id)
+                row_list.append(gc.name)
+                writer.writerow(row_list)
+            except:
+                writer.writerow(o.id)
+        return response
+
+    export_simple_csv.short_description = "Export simple report to csv"
 
 
 class GeologyResource(resources.ModelResource):
@@ -385,6 +650,38 @@ class GeologyAdmin(OccurrenceAdmin):
     list_filter = ['geology_type'] + default_occurrence_filter
 
     formfield_overrides = psrformfield
+    fieldsets = geology_display
+
+    fields_to_export = geo_export_fields
+
+    actions = ['export_simple_csv']
+
+    def export_simple_csv(self, request, queryset):
+        fields_to_export = geo_export_fields
+        occurrence_export = ['field_id', 'find_type', 'item_description', 'item_type', 'item_count',
+                             'finder', 'collector', 'collecting_method', 'date_collected',
+                             'point', 'geom']
+        response = HttpResponse(content_type='text/csv')  # declare the response type
+        response['Content-Disposition'] = 'attachment; filename="PSR_Survey-Geo.csv"'  # declare the file name
+        writer = unicodecsv.writer(response)  # open a .csv writer
+
+        writer.writerow(
+            fields_to_export + ['found_by'] + occurrence_export + ['geological_context'])  # write column headers
+        for o in queryset.order_by('field_id', 'barcode'):
+            try:
+                row_list = [o.__dict__.get(k) for k in fields_to_export]
+                if o.found_by_id is not None:
+                    fb = Person.objects.get(id=o.found_by_id)
+                    row_list.append(fb.__str__())
+                row_list = row_list + [o.__dict__.get(k) for k in occurrence_export]
+                gc = GeologicalContext.objects.get(id=o.geological_context_id)
+                row_list.append(gc.name)
+                writer.writerow(row_list)
+            except:
+                writer.writerow(o.id)
+        return response
+
+    export_simple_csv.short_description = "Export simple report to csv"
 
 
 class AggregateResource(resources.ModelResource):
@@ -400,6 +697,38 @@ class AggregateAdmin(OccurrenceAdmin):
     list_filter = default_occurrence_filter
 
     formfield_overrides = psrformfield
+    fieldsets = aggregate_display
+
+    fields_to_export = agg_export_fields
+
+    actions = ['export_simple_csv']
+
+    def export_simple_csv(self, request, queryset):
+        fields_to_export = agg_export_fields
+        occurrence_export = ['field_id', 'find_type', 'item_description', 'item_type', 'item_count',
+                             'finder', 'collector', 'collecting_method', 'date_collected',
+                             'point', 'geom']
+        response = HttpResponse(content_type='text/csv')  # declare the response type
+        response['Content-Disposition'] = 'attachment; filename="PSR_Survey-Aggregates.csv"'  # declare the file name
+        writer = unicodecsv.writer(response)  # open a .csv writer
+
+        writer.writerow(
+            fields_to_export + ['found_by'] + occurrence_export + ['geological_context'])  # write column headers
+        for o in queryset.order_by('field_id', 'barcode'):
+            try:
+                row_list = [o.__dict__.get(k) for k in fields_to_export]
+                if o.found_by_id is not None:
+                    fb = Person.objects.get(id=o.found_by_id)
+                    row_list.append(fb.__str__())
+                row_list = row_list + [o.__dict__.get(k) for k in occurrence_export]
+                gc = GeologicalContext.objects.get(id=o.geological_context_id)
+                row_list.append(gc.name)
+                writer.writerow(row_list)
+            except:
+                writer.writerow(o.id)
+        return response
+
+    export_simple_csv.short_description = "Export simple report to csv"
 
 
 class ExcavLithicInline(admin.StackedInline):
@@ -438,10 +767,56 @@ class ExcavatedArchaeologyAdmin(ExcavationOccurrenceAdmin):
     list_display = ('excavationoccurrence_ptr_id', 'archaeology_type', 'geological_context')
 
     formfield_overrides = psrformfield
+    fieldsets = archaeology_display
+
+    fields_to_export = arch_export_fields
 
     inlines = [ExcavLithicInline, ExcavBoneInline, ExcavCeramicInline]
 
-    actions = ['subtype_lithic', 'subtype_bone', 'subtype_ceramic']
+    actions = ['export_simple_csv', 'subtype_lithic', 'subtype_bone', 'subtype_ceramic']
+
+    def export_simple_csv(self, request, queryset):
+        fields_to_export = arch_export_fields
+        occurrence_export = ['id', 'field_id', 'cat_number', 'type', 'item_type',
+                            'prism', 'point', 'unit', 'level', 'excavator']
+        lithic_export = list(lithic_fields)
+        ceramic_export = ['type', 'decorated']
+        bone_export = ['cutmarks', 'burning', 'part']
+
+        response = HttpResponse(content_type='text/csv')  # declare the response type
+        response['Content-Disposition'] = 'attachment; filename="PSR_Excavated-Archaeology.csv"'  # declare the file name
+        writer = unicodecsv.writer(response)  # open a .csv writer
+
+        writer.writerow(fields_to_export + ['found_by'] + occurrence_export + lithic_export + ceramic_export + bone_export+ ['geological_context'])   # write column headers
+        for o in queryset.order_by('field_id', 'barcode'):
+            try:
+                row_list = [o.__dict__.get(k) for k in fields_to_export]
+                if o.found_by_id is not None:
+                    fb = Person.objects.get(id=o.found_by_id)
+                    row_list.append(fb.__str__())
+                row_list = row_list + [o.__dict__.get(k) for k in occurrence_export]
+                if o.__dict__.get('find_type') in PSR_LITHIC_VOCABULARY:
+                    l = Lithic.objects.get(id=o.__dict__.get('id'))
+                    row_list = row_list + [l.__dict__.get(k) for k in lithic_export]
+                else:
+                    row_list = row_list + [None for k in lithic_export]
+                if o.__dict__.get('find_type') in PSR_CERAMIC_VOCABULARY:
+                    c = Ceramic.objects.get(id=o.__dict__.get('id'))
+                    row_list = row_list + [c.__dict__.get(k) for k in ceramic_export]
+                else:
+                    row_list = row_list + [None for k in ceramic_export]
+                if o.__dict__.get('find_type') in PSR_BONE_VOCABULARY:
+                    b = Ceramic.objects.get(id=o.__dict__.get('id'))
+                    row_list = row_list + [b.__dict__.get(k) for k in ceramic_export]
+                else:
+                    row_list = row_list + [None for k in bone_export]
+                gc = GeologicalContext.objects.get(id=o.geological_context_id)
+                row_list.append(gc.name)
+                writer.writerow(row_list)
+            except:
+                writer.writerow(o.id)
+        return response
+    export_simple_csv.short_description = "Export simple report to csv"
 
     def subtype_lithic(self, request, queryset):
         for q in queryset:
@@ -471,6 +846,34 @@ class ExcavatedBiologyAdmin(ExcavationOccurrenceAdmin):
     list_display = ('excavationoccurrence_ptr_id', 'biology_type', 'geological_context')
 
     formfield_overrides = psrformfield
+    fieldsets = biology_display
+
+    actions = ['export_simple_csv']
+
+    def export_simple_csv(self, request, queryset):
+        fields_to_export = bio_export_fields
+        occurrence_export = ['id', 'field_id', 'cat_number', 'type', 'item_type',
+                             'prism', 'point', 'unit', 'level', 'excavator']
+
+        response = HttpResponse(content_type='text/csv')  # declare the response type
+        response['Content-Disposition'] = 'attachment; filename="PSR_Excavated-Bio.csv"'  # declare the file name
+        writer = unicodecsv.writer(response)  # open a .csv writer
+
+        writer.writerow(fields_to_export + ['found_by'] + occurrence_export + ['geological_context'])  # write column headers
+        for o in queryset.order_by('field_id', 'barcode'):
+            try:
+                row_list = [o.__dict__.get(k) for k in fields_to_export]
+                if o.found_by_id is not None:
+                    fb = Person.objects.get(id=o.found_by_id)
+                    row_list.append(fb.__str__())
+                row_list = row_list + [o.__dict__.get(k) for k in occurrence_export]
+                gc = GeologicalContext.objects.get(id=o.geological_context_id)
+                row_list.append(gc.name)
+                writer.writerow(row_list)
+            except:
+                writer.writerow(o.id)
+        return response
+    export_simple_csv.short_description = "Export simple report to csv"
 
 
 class ExcavatedGeologyResource(resources.ModelResource):
@@ -485,6 +888,34 @@ class ExcavatedGeologyAdmin(ExcavationOccurrenceAdmin):
     list_display = ('excavationoccurrence_ptr_id', 'geology_type', 'geological_context')
 
     formfield_overrides = psrformfield
+    fieldsets = geology_display
+
+    actions = ['export_simple_csv']
+
+    def export_simple_csv(self, request, queryset):
+        fields_to_export = geo_export_fields
+        occurrence_export = ['id', 'field_id', 'cat_number', 'type', 'item_type',
+                             'prism', 'point', 'unit', 'level', 'excavator']
+
+        response = HttpResponse(content_type='text/csv')  # declare the response type
+        response['Content-Disposition'] = 'attachment; filename="PSR_Excavated-Geo.csv"'  # declare the file name
+        writer = unicodecsv.writer(response)  # open a .csv writer
+
+        writer.writerow(fields_to_export + ['found_by'] + occurrence_export + ['geological_context'])  # write column headers
+        for o in queryset.order_by('field_id', 'barcode'):
+            try:
+                row_list = [o.__dict__.get(k) for k in fields_to_export]
+                if o.found_by_id is not None:
+                    fb = Person.objects.get(id=o.found_by_id)
+                    row_list.append(fb.__str__())
+                row_list = row_list + [o.__dict__.get(k) for k in occurrence_export]
+                gc = GeologicalContext.objects.get(id=o.geological_context_id)
+                row_list.append(gc.name)
+                writer.writerow(row_list)
+            except:
+                writer.writerow(o.id)
+        return response
+    export_simple_csv.short_description = "Export simple report to csv"
 
 
 class ExcavatedAggregateResource(resources.ModelResource):
@@ -499,18 +930,34 @@ class ExcavatedAggregateAdmin(ExcavationOccurrenceAdmin):
     list_display = ('excavationoccurrence_ptr_id', 'screen_size', 'geological_context')
 
     formfield_overrides = psrformfield
+    fieldsets = aggregate_display
 
+    actions = ['export_simple_csv']
 
-# class ImageResource(resources.ModelResource):
-#     class Meta:
-#         model = Image
-#
-#
-# class ImageAdmin(admin.ModelAdmin):
-#     model = Image
-#     resource_class = ImageResource
-#     list_display = ('locality', 'occurrence_id')
-#     fields = ('locality', 'occurrence', 'image')
+    def export_simple_csv(self, request, queryset):
+        fields_to_export = agg_export_fields
+        occurrence_export = ['id', 'field_id', 'cat_number', 'type', 'item_type',
+                             'prism', 'point', 'unit', 'level', 'excavator']
+
+        response = HttpResponse(content_type='text/csv')  # declare the response type
+        response['Content-Disposition'] = 'attachment; filename="PSR_Excavated-Buckets.csv"'  # declare the file name
+        writer = unicodecsv.writer(response)  # open a .csv writer
+
+        writer.writerow(fields_to_export + ['found_by'] + occurrence_export + ['geological_context'])  # write column headers
+        for o in queryset.order_by('field_id', 'barcode'):
+            try:
+                row_list = [o.__dict__.get(k) for k in fields_to_export]
+                if o.found_by_id is not None:
+                    fb = Person.objects.get(id=o.found_by_id)
+                    row_list.append(fb.__str__())
+                row_list = row_list + [o.__dict__.get(k) for k in occurrence_export]
+                gc = GeologicalContext.objects.get(id=o.geological_context_id)
+                row_list.append(gc.name)
+                writer.writerow(row_list)
+            except:
+                writer.writerow(o.id)
+        return response
+    export_simple_csv.short_description = "Export simple report to csv"
 
 
 admin.site.register(Biology, BiologyAdmin)
@@ -524,5 +971,4 @@ admin.site.register(ExcavatedArchaeology, ExcavatedArchaeologyAdmin)
 admin.site.register(ExcavatedGeology, ExcavatedGeologyAdmin)
 admin.site.register(Aggregate, AggregateAdmin)
 admin.site.register(ExcavatedAggregate, ExcavatedAggregateAdmin)
-#admin.site.register(Taxon, projects.admin.TaxonomyAdmin)
-# admin.site.register(Image, ImageAdmin)
+

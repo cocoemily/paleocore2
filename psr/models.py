@@ -1,5 +1,6 @@
 from django.contrib.gis.db import models
 from django.utils.safestring import mark_safe
+from django.contrib.postgres.fields import ArrayField
 
 import projects.models
 from django.db.models import Manager as GeoManager
@@ -388,7 +389,8 @@ class ExcavationOccurrence(projects.models.PaleoCoreOccurrenceBaseClass):
     unit = models.ForeignKey("ExcavationUnit", null=True, blank=True, on_delete=models.SET_NULL)
     field_id = models.CharField("Field ID", max_length=50, null=True, blank=True)
     cat_number = models.CharField("Cat Number", max_length=255, blank=True, null=True)  # unit + newplot_id
-    prism = models.CharField(max_length=50, null=True, blank=True)
+    prism = ArrayField(models.CharField(max_length=50), null=True, blank=True)
+    #prism = models.CharField(max_length=50, null=True, blank=True)
     level = models.CharField(max_length=100, null=True, blank=True)
 
     item_type = models.CharField("Item Type", max_length=255, blank=True, null=False)

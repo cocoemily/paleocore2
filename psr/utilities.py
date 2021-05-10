@@ -1,4 +1,5 @@
 from django.core.files.base import ContentFile
+from django.http import HttpResponse, HttpResponseRedirect
 
 from psr.models import *
 from django.core.exceptions import MultipleObjectsReturned, ObjectDoesNotExist
@@ -16,6 +17,7 @@ import shapefile
 from django.contrib.gis.geos import GEOSGeometry
 from decimal import Decimal
 from mdb_parser import MDBTable
+import unicodecsv
 
 geo_filename = "/Users/emilycoco/Desktop/NYU/Kazakhstan/PSR-Paleo-Core/PaleoCore-upload/geo_points/geology_21_09_20"
 arch_filename = "/Users/emilycoco/Desktop/NYU/Kazakhstan/PSR-Paleo-Core/PaleoCore-upload/arch_points/archaeology_21_09_20"
@@ -100,8 +102,10 @@ def get_taxon_from_scientific_name(scientific_name):
     return taxon
 
 
+'''
+SUBTYPING FUNCTIONS
+'''
 
-##SUBTYPING FUNCTIONS##
 
 def occurrence2biology(oi, survey):
     """
@@ -321,7 +325,10 @@ def subtype_archaeology(survey=True):
             pass
 
 
-##CHECKING FOR DUPLICATES##
+'''
+CHECKING FOR DUPLICATES
+'''
+
 
 def show_duplicate_rows(data_list):
     print("\nChecking for duplicate records.")
@@ -545,31 +552,6 @@ def update_matches(match_list):
     print("{} records updated successfully.".format(counter))
 
 
-# def main():
-#     existing, converted = update_occurrence2biology()  # convert all faunal and floral occurrences to biology
-#     # import header and data list from file
-#     hl, dl = import_dg_updates(file_path='/home/dnr266/paleocore/mlp/fixtures/DG_updates.txt')
-#     # hl, dl = import_dg_updates()  # import header and data list from file
-#     udl, du, dls = show_duplicate_rows(dl)  # check for duplicates
-#     ml, cl, pl = match(udl)
-#     validate_matches(ml, cl, pl)
-#     update_matches(ml)
-#     update_matches(cl)
-#
-#     return existing, converted, hl, dl, udl, du, dls, ml, cl, pl
-
-
-# def find_duplicate_catalog_number(mylist):
-#     unique_list = []
-#     duplicate_list = []
-#     for i in mylist:
-#         if i not in unique_list:
-#             unique_list.append(i)
-#         else:
-#             duplicate_list.append(i)
-#     return unique_list, duplicate_list
-
-
 def get_parent_name(taxon_name_list):
     index = -2
     parent_name = taxon_name_list[index]
@@ -630,7 +612,11 @@ def html_escape(text):
     return "".join(html_escape_table.get(c, c) for c in text)
 
 
-### PRE 2020 PSR IMPORT FUNCTIONS ###
+'''
+PRE 2020 PSR IMPORT FUNCTIONS
+'''
+
+
 def import_pre2020_geology_shapefile(filename):
     sf = shapefile.Reader(filename)
     sr = sf.shapeRecords()
@@ -878,6 +864,20 @@ def import_pre2020_locality_points_shapefile(filename):
         upload_pictures(photonames, psr_l, photodir)
 
 
+def import_pre2020_data():
+    import_pre2020_geology_shapefile(geo_filename)
+    import_pre2020_archaeology_shapefile(arch_filename)
+    import_pre2020_locality_points_shapefile(lo_filename)
+
+    for d in databases:
+        parse_mdb(d, get_locality_name(d))
+
+    subtype_finds(survey=True)
+    subtype_finds(survey=False)
+    subtype_archaeology(survey=True)
+    subtype_archaeology(survey=False)
+
+
 #photodir = "/Users/emilycoco/Desktop/NYU/Kazakhstan/PSR-Paleo-Core/PaleoCore-upload/geo_points"
 def upload_pictures(photonames, obj, photodir):
     if not 'N/A' in photonames[0]:
@@ -897,7 +897,11 @@ def upload_pictures(photonames, obj, photodir):
                 im.save()
 
 
-### IMPORT FUNCTIONS ###
+'''
+IMPORT FUNCTIONS
+'''
+
+
 def get_locality_name(file_path):
     dbname = file_path.split("/")
     db = dbname[dbname.__len__() - 1]
@@ -944,7 +948,11 @@ def parse_mdb(file_path, site_name, locality_names=locality_names):
         psr_eo.excavator = obj[4]
         psr_eo.cat_number = obj[0] + " " + obj[1]
 
-        #TODO create method for pulling Person foreign key
+        mdb_name = obj[4]
+        full_name = [val for key, val in PERSON_DICTIONARY.items() if mdb_name.lower().capitalize() in key]
+        if full_name.__len__() is not 0:
+            name = full_name[0].split(" ")
+            psr_eo.found_by = Person.objects.get_or_create(last_name=name[1], first_name=name[0])[0]
 
         # set item type code for subtyping
         if psr_eo.type in PSR_ARCHAEOLOGY_VOCABULARY:
@@ -966,7 +974,14 @@ def parse_mdb(file_path, site_name, locality_names=locality_names):
         eo = ExcavationOccurrence.objects.get_or_create(unit=un, field_id=p[1], geological_context=locality)
         obj = eo[0]
         is_new = eo[1]
-        obj.prism = p[3] ## TODO multiple different prism heights for different points
+
+        if obj.prism is None:
+            prism_list = []
+        else:
+            prism_list = obj.prism
+        prism_list.append(p[3])
+        obj.prism = prism_list
+
         if (p[7] + " " + p[8]) is not " ":
             obj.date_collected = datetime.strptime(p[7] + " " + p[8], '%m/%d/%Y %I:%M:%S %p')
 
@@ -990,24 +1005,23 @@ def import_geo_contexts(filename):
     sr = sf.shapeRecords()
 
     for r in sr: #TODO update with new form information
-        psr_g = GeologicalContext(
-            basis_of_record=r.record["Basis Of R"],
-            collecting_method=r.record["Collecting"],
-            name=r.record["Name"],
-            context_type=r.record["Item Type"],
-            description=r.record["Descriptio"],
-            dip=r.record["Dip"],
-            strike=r.record["Strike"],
-            texture=r.record["Texture"],
-            color=r.record["Color"],
-            context_remarks=r.record["Remarks"],
-            rockfall_character=r.record["Rockfall C"],
-            sediment_character=r.record["Sediment C"],
-            slope_character=r.record["Slope Char"],
-            speleothem_character=r.record["Speleothem"],
-            cave_mouth_character=r.record["Cave Mouth"],
-            geology_type=r.record["Geology Ty"]
-        )
+        psr_g = GeologicalContext.objects.get_or_create(name=r.record["Name"])
+
+        psr_g.basis_of_record=r.record["Basis Of R"]
+        psr_g.collecting_method=r.record["Collecting"]
+        psr_g.context_type=r.record["Item Type"]
+        psr_g.description=r.record["Descriptio"]
+        psr_g.dip=r.record["Dip"]
+        psr_g.strike=r.record["Strike"]
+        psr_g.texture=r.record["Texture"]
+        psr_g.color=r.record["Color"]
+        psr_g.context_remarks=r.record["Remarks"]
+        psr_g.rockfall_character=r.record["Rockfall C"]
+        psr_g.sediment_character=r.record["Sediment C"]
+        psr_g.slope_character=r.record["Slope Char"]
+        psr_g.speleothem_character=r.record["Speleothem"]
+        psr_g.cave_mouth_character=r.record["Cave Mouth"]
+        psr_g.geology_type=r.record["Geology Ty"]
 
         if r.record["Height"] not in ("", None):
             psr_g.height = Decimal(r.record["Height"])
@@ -1046,7 +1060,11 @@ def import_geo_contexts(filename):
         psr_g.last_import = True
         psr_g.save()
 
-        # TODO how to add pictures?
+        #TODO how to assign photo directory from uploaded file
+
+        # photodir = ""
+        # photonames = r.record["Photo"].split(",")
+        # upload_pictures(photonames, psr_g, photodir)
 
 
 def import_survey_occurrences(filename):
@@ -1054,17 +1072,16 @@ def import_survey_occurrences(filename):
     sr = sf.shapeRecords()
 
     for r in sr:  # TODO update with new form information
-        psr_a = Occurrence(
-            basis_of_record=r.record["Basis Of R"],
-            item_count=r.record["Item Count"],
-            find_type=r.record["Item Type"],
-            item_description=r.record["Descriptio"],
-            # collector=r.record["Identified"],
-            # finder=r.record["Identified"],
-            collecting_method=r.record["Collecting"],
-            field_id=r.record["Name"],
-            collection_remarks=r.record["Remarks"]
-        )
+        psr_a = Occurrence.objects.get_or_create(field_id=r.record["Name"])
+
+        psr_a.basis_of_record=r.record["Basis Of R"]
+        psr_a.item_count=r.record["Item Count"]
+        psr_a.find_type=r.record["Item Type"]
+        psr_a.item_description=r.record["Descriptio"]
+        psr_a.collecting_method=r.record["Collecting"]
+        psr_a.field_id=r.record["Name"]
+        psr_a.collection_remarks=r.record["Remarks"]
+
         # set item type code
         if psr_a.find_type in PSR_ARCHAEOLOGY_VOCABULARY:
             psr_a.item_type = "Archaeological"
@@ -1114,6 +1131,10 @@ def import_survey_occurrences(filename):
         psr_a.last_import = True
         psr_a.save()  # last step to add it to the database
 
-        # TODO how to add pictures?
+        # TODO how to assign photo directory from uploaded file
+
+        # photodir = ""
+        # photonames = r.record["Photo"].split(",")
+        # upload_pictures(photonames, psr_a, photodir)
 
 

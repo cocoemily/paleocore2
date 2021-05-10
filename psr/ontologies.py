@@ -56,6 +56,11 @@ aris_varis = 'Aris Varis'
 emily_coco = "Emily Coco"
 zhaken_taimagambetov = "Zhaken Taimagambetov"
 talgat_mamirov = "Talgat Mamirov"
+gani_iskakov = "Gani Iskakov"
+tabasa_ozawa = "Tabasa Ozawa"
+alice_rodriguez = "Alice Rodriguez"
+tiago_attorre = "Tiago Attorre"
+
 COLLECTOR_CHOICES = (
     (radu_iovita, "Radu Iovita"),
     (patrick_cuthbertson, "Patrick Cuthbertson"),
@@ -63,8 +68,26 @@ COLLECTOR_CHOICES = (
     (aris_varis, "Aris Varis"),
     (emily_coco, "Emily Coco"),
     (zhaken_taimagambetov, "Zhaken Taimagambetov"),
-    (talgat_mamirov, "Talgat Mamirov")
+    (talgat_mamirov, "Talgat Mamirov"),
+    (gani_iskakov, "Gani Iskakov"),
+    (tabasa_ozawa, "Tabasa Ozawa"),
+    (alice_rodriguez, "Alice Rodriguez"),
+    (tiago_attorre, "Tiago Attorre")
 )
+
+PERSON_DICTIONARY = {
+    "Radu Iovita": radu_iovita,
+    "Patrick Cuthbertson": patrick_cuthbertson,
+    "Abay Namen": abay_namen,
+    "Aris Varis": aris_varis,
+    "Emily Coco": emily_coco,
+    "Zhaken Taimagambetov": zhaken_taimagambetov,
+    "Talgat Mamirov": talgat_mamirov,
+    "Gani Iskakov": gani_iskakov,
+    "Tabasa Ozawa": tabasa_ozawa,
+    "Alice Rodriguez": alice_rodriguez,
+    "Tiago Attorre": tiago_attorre
+}
 
 # Field Season Vocabulary
 jun2017 = 'Jun 2017'
