@@ -73,7 +73,7 @@ class TaxonListView(generic.ListView):
     def get_queryset(self):
         """Return a list of taxa """
         # get just the non-class paleocore terms, which get added to the context as terms
-        taxa = TTaxon.objects.filter(nomenclatural_status='accepted')
+        taxa = TTaxon.objects.filter(classification_status='accepted')
         return taxa
 
     # def get_context_data(self, **kwargs):
