@@ -27,8 +27,7 @@
                 {% if publication.institution %} {{ publication.institution }},{% endif %}
                 {% if publication.volume %} <b>{{ publication.volume }}</b>{% endif %}
                 {% if publication.number %} ({{ publication.number }}){% endif %}:
-                {% if publication.pages %} pages {{ publication.pages }},{% endif %}
-                {% if publication.month %} {{ publication.month_long }}{% endif %}.<br/>
+                {% if publication.pages %} pages {{ publication.pages }}{% endif %}.
           {% endwith %}
           {% endif %}
           </p>
