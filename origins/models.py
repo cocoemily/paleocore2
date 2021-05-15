@@ -47,7 +47,9 @@ class IdentificationQualifier(projects.models.IdentificationQualifier):
 class TTaxon(MPTTModel, projects.models.Taxon):
     """
     Modified Preordered Tree Traversal Taxon class
+    Inherits name, parent, rank, references from projects.models.Taxon
     """
+    verbatim_name = models.CharField(max_length=255, null=True, blank=True)  # name as it appears in 1st publication
     zoobank_id = models.CharField(max_length=255, null=True, blank=True)
     epithet = models.CharField(max_length=255, null=True, blank=True)
     abbreviation = models.CharField(max_length=255, null=True, blank=True)
