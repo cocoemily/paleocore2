@@ -463,6 +463,7 @@ class TTaxonAdmin(MPTTModelAdmin, TaxonomyAdmin):
               'nomenclatural_code', 'nomenclatural_status', 'remarks']
     inlines = [TTaxonPublicationsInline]
     list_filter = ['nomenclatural_status', 'classification_status', 'rank']
+    save_as = True
 
 
 # Register your models here.
