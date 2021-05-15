@@ -19,7 +19,8 @@
           <!-- main reference -->
           <p>
           {% if name.name_reference %}
-          {% with name.name_reference as publication %}
+              {% with name.name_reference as publication %}
+                {% if publication.url %}<a href="{{publication.url}}" target="_blank">{% endif %}
                 {{ publication.authors }}. {{ publication.year }}. {{ publication.title }}{% if not publication.title_ends_with_punct %}.{% endif %}
                 {% if publication.journal %}<i>{{ publication.journal }}</i>.{% endif %}
                 {% if publication.book_title %} <i>{{ publication.book_title }}</i>,{% endif %}
@@ -27,8 +28,9 @@
                 {% if publication.institution %} {{ publication.institution }},{% endif %}
                 {% if publication.volume %} <b>{{ publication.volume }}</b>{% endif %}
                 {% if publication.number %} ({{ publication.number }}){% endif %}:
-                {% if publication.pages %} pages {{ publication.pages }}{% endif %}.
-          {% endwith %}
+                {% if publication.pages %}{{ publication.pages }}{% endif %}
+                {% if publication.url %}</a>{% endif %}
+              {% endwith %}
           {% endif %}
           </p>
           {% if name.type_specimen %}
