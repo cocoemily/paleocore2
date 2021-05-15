@@ -15,7 +15,7 @@
       <div>
         <ul>
           {% for name in taxa %}
-          <h4><a href="{% url 'origins:taxon_detail_view' name.id %}">{{ name.scientific_name }}</a></h4>
+          <h4><a href="{% url 'origins:taxon_detail_view' name.id %}">{{ name.verbatim_name }}</a></h4>
           <!-- main reference -->
           <p>
           {% if name.name_reference %}
