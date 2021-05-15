@@ -27,8 +27,8 @@
                 {% if publication.publisher %} {{ publication.publisher }},{% endif %}
                 {% if publication.institution %} {{ publication.institution }},{% endif %}
                 {% if publication.volume %} <b>{{ publication.volume }}</b>{% endif %}
-                {% if publication.number %} ({{ publication.number }}){% endif %}:
-                {% if publication.pages %}{{ publication.pages }}{% endif %}
+                {% if publication.number %} ({{ publication.number }}){% endif %}
+                {% if publication.pages %}: {{ publication.pages }}{% endif %}
                 {% if publication.url %}</a>{% endif %}
               {% endwith %}
           {% endif %}
