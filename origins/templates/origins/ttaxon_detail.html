@@ -34,10 +34,10 @@
   {% if ttaxon.nomenclatural_status %}
   <p>Nomenclatural Status: {{ttaxon.nomenclatural_status | title }}</p>
   {% endif %}
-  {% if ttaxon.remarks %}}
+  {% if ttaxon.remarks %}
   <p>Remarks:<br/>
       {{ ttaxon.remarks | safe }}</p>
-  {% endif %}}
+  {% endif %}
       <p>References:<br/>
   <ol>
   {% for publication in ttaxon.references.all %}
