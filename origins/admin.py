@@ -262,7 +262,7 @@ class FossilAdmin(admin.ModelAdmin):
                        ('origins',)],
         }),
         ('Remarks', {
-            'fields': [('Remarks',)]
+            'fields': [('remarks',)]
         }),
         ('Events', {
             'fields': [('date_discovered', 'discovered_by'),
