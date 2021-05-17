@@ -3,7 +3,7 @@
 {% block content %}
 <div id="content" class="grid-container">
   <div class="grid-x grid-margin-x">
-    <p class="medium-10 cell">
+    <div class="medium-10 cell">
     <h4>{{ttaxon.verbatim_name | safe}}</h4>
     <!-- main reference -->
     <p>
@@ -22,38 +22,44 @@
         {% endwith %}
     {% endif %}
     </p>
-    {% if ttaxon.type_specimen %}
     <p>
+    {% if ttaxon.type_specimen %}
+
       {% if ttaxon.type_status %}
       {{ ttaxon.type_status | title}}
       {% else %}Type{% endif %}:
       {{ ttaxon.type_specimen }}
-    </p>
+
     {% endif %}
+    </p>
     {% if ttaxon.nomenclatural_status %}
     <p>
       Nomenclatural Status: {{ttaxon.nomenclatural_status | title }}
     </p>
     {% endif %}
     {% if ttaxon.remarks %}
-    <p>Remarks:<br/>
-        {{ ttaxon.remarks | safe }}</p>
+    <p>
+      Remarks:<br/>
+      {{ ttaxon.remarks | safe }}
+    </p>
     {% endif %}
-    <p>References:<br/>
-    <ol>
-    {% for publication in ttaxon.references.all %}
-      <li>{{ publication.authors }}. {{ publication.title }}{% if not publication.title_ends_with_punct %}.{% endif %}
-        {% if publication.journal %} {{ publication.journal }},{% endif %}
-        {% if publication.book_title %} {{ publication.book_title }},{% endif %}{% if publication.publisher %}
-        {{ publication.publisher }},{% endif %}
-        {% if publication.institution %} {{ publication.institution }},{% endif %}
-        {% if publication.volume %} volume {{ publication.volume }},{% endif %}
-        {% if publication.number %} issue {{ publication.number }},{% endif %}
-        {% if publication.pages %} pages {{ publication.pages }},{% endif %}
-        {% if publication.month %} {{ publication.month_long }}{% endif %} {{ publication.year }}.<br/>
-      </li>
-    {% endfor %}
-    </ol></p>
+    <p>
+      References:<br/>
+      <ol>
+      {% for publication in ttaxon.references.all %}
+        <li>{{ publication.authors }}. {{ publication.title }}{% if not publication.title_ends_with_punct %}.{% endif %}
+          {% if publication.journal %} {{ publication.journal }},{% endif %}
+          {% if publication.book_title %} {{ publication.book_title }},{% endif %}{% if publication.publisher %}
+          {{ publication.publisher }},{% endif %}
+          {% if publication.institution %} {{ publication.institution }},{% endif %}
+          {% if publication.volume %} volume {{ publication.volume }},{% endif %}
+          {% if publication.number %} issue {{ publication.number }},{% endif %}
+          {% if publication.pages %} pages {{ publication.pages }},{% endif %}
+          {% if publication.month %} {{ publication.month_long }}{% endif %} {{ publication.year }}.<br/>
+        </li>
+      {% endfor %}
+      </ol>
+    </p>
 
     </div>
   </div>
