@@ -4,43 +4,44 @@
 <div id="content" class="grid-container">
   <div class="grid-x grid-margin-x">
     <p class="medium-10 cell">
-<h4>{{ttaxon.verbatim_name | safe}}</h4>
-  <!-- main reference -->
-  <p>
-  {% if ttaxon.name_reference %}
-      {% with ttaxon.name_reference as publication %}
-        {% if publication.url %}<a href="{{publication.url}}" target="_blank">{% endif %}
-        {{ publication.authors }}. {{ publication.year }}. {{ publication.title }}{% if not publication.title_ends_with_punct %}.{% endif %}
-        {% if publication.journal %}<i>{{ publication.journal }}</i>.{% endif %}
-        {% if publication.book_title %} <i>{{ publication.book_title }}</i>.{% endif %}
-        {% if publication.publisher %} {{ publication.publisher }},{% endif %}
-        {% if publication.institution %} {{ publication.institution }}.{% endif %}
-        {% if publication.volume %} <b>{{ publication.volume }}</b>{% endif %}
-        {% if publication.number %} ({{ publication.number }}){% endif %}
-        {% if publication.pages %}:{{ publication.pages }}{% endif %}
-        {% if publication.url %}</a>{% endif %}
-      {% endwith %}
-  {% endif %}
-  </p>
-  {% if ttaxon.type_specimen %}
-      <p>
-        {% if ttaxon.type_status %}
-        {{ ttaxon.type_status | title}}
-        {% else %}Type{% endif %}:
-        {{ ttaxon.type_specimen }}
-      </p>
-  {% endif %}
-  {% comment %}}<h5>Zoobank LSID: {{ttaxon.zoobank_id}}</h5>{% endcomment %}
-  {% if ttaxon.nomenclatural_status %}
-  <p>Nomenclatural Status: {{ttaxon.nomenclatural_status | title }}</p>
-  {% endif %}
-  {% if ttaxon.remarks %}
-  <p>Remarks:<br/>
-      {{ ttaxon.remarks | safe }}</p>
-  {% endif %}
-      <p>References:<br/>
-  <ol>
-  {% for publication in ttaxon.references.all %}
+    <h4>{{ttaxon.verbatim_name | safe}}</h4>
+    <!-- main reference -->
+    <p>
+    {% if ttaxon.name_reference %}
+        {% with ttaxon.name_reference as publication %}
+          {% if publication.url %}<a href="{{publication.url}}" target="_blank">{% endif %}
+          {{ publication.authors }}. {{ publication.year }}. {{ publication.title }}{% if not publication.title_ends_with_punct %}.{% endif %}
+          {% if publication.journal %}<i>{{ publication.journal }}</i>.{% endif %}
+          {% if publication.book_title %} <i>{{ publication.book_title }}</i>.{% endif %}
+          {% if publication.publisher %} {{ publication.publisher }},{% endif %}
+          {% if publication.institution %} {{ publication.institution }}.{% endif %}
+          {% if publication.volume %} <b>{{ publication.volume }}</b>{% endif %}
+          {% if publication.number %} ({{ publication.number }}){% endif %}
+          {% if publication.pages %}:{{ publication.pages }}{% endif %}
+          {% if publication.url %}</a>{% endif %}
+        {% endwith %}
+    {% endif %}
+    </p>
+    {% if ttaxon.type_specimen %}
+    <p>
+      {% if ttaxon.type_status %}
+      {{ ttaxon.type_status | title}}
+      {% else %}Type{% endif %}:
+      {{ ttaxon.type_specimen }}
+    </p>
+    {% endif %}
+    {% if ttaxon.nomenclatural_status %}
+    <p>
+      Nomenclatural Status: {{ttaxon.nomenclatural_status | title }}
+    </p>
+    {% endif %}
+    {% if ttaxon.remarks %}
+    <p>Remarks:<br/>
+        {{ ttaxon.remarks | safe }}</p>
+    {% endif %}
+    <p>References:<br/>
+    <ol>
+    {% for publication in ttaxon.references.all %}
       <li>{{ publication.authors }}. {{ publication.title }}{% if not publication.title_ends_with_punct %}.{% endif %}
         {% if publication.journal %} {{ publication.journal }},{% endif %}
         {% if publication.book_title %} {{ publication.book_title }},{% endif %}{% if publication.publisher %}
@@ -51,10 +52,8 @@
         {% if publication.pages %} pages {{ publication.pages }},{% endif %}
         {% if publication.month %} {{ publication.month_long }}{% endif %} {{ publication.year }}.<br/>
       </li>
-        {% endfor %}
-      </ol>
-    </p>
-
+    {% endfor %}
+    </ol></p>
 
     </div>
   </div>
