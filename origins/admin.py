@@ -251,13 +251,22 @@ class FossilAdmin(admin.ModelAdmin):
 
     fieldsets = [
         ('Fossil Details', {
-            'fields': [('id', 'catalog_number', 'source'),
-                       ('guid', 'organism_id'),
+            'fields': [('id', 'catalog_number', 'organism_id'),
+                       ('naan', 'guid', ),
+                       ('source', ),
                        ('description',),
                        ('short_description',),
                        ('nickname', 'other_catalog_numbers'),
-                       ('holotype', 'lifestage', 'sex'),
+                       ('lifestage', 'sex'),
+                       ('holotype',),
                        ('origins',)],
+        }),
+        ('Remarks', {
+            'fields': [('Remarks',)]
+        }),
+        ('Events', {
+            'fields': [('date_discovered', 'discovered_by'),
+                       ('year_collected', 'collected_by')]
         }),
         ('Taxon', {
             'fields': [('ttaxon',)]

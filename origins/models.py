@@ -321,12 +321,18 @@ class Fossil(models.Model):
     # Fossil(Find)
     guid = models.URLField(null=True, blank=True)
     uuid = models.UUIDField(default=uuid.uuid4)
+    # catalog_number provides the full catalog number as formatted in the first publication, including suffixes
     catalog_number = models.CharField(max_length=40, null=True, blank=True)
+    # other_catalog_number lists alternative typographic versions of the catalog number
+    # e.g. OH 7 | O.H. 7 | OH-7 etc,
     other_catalog_numbers = models.CharField(max_length=255, null=True, blank=True)
+    date_discovered = models.DateField(null=True, blank=True)
+    # TODO change year_collected to year_discovered or just migrate to date_discovered
     year_collected = models.IntegerField("Year", blank=True, null=True,
                                          help_text='The year, event or field campaign during which the item was found.')
     organism_id = models.CharField(max_length=40, null=True, blank=True)
     nickname = models.CharField(max_length=40, null=True, blank=True)
+    # TODO change holotyp to is_type_specimen or change to type_status
     holotype = models.BooleanField(default=False)
     lifestage = models.CharField(max_length=20, null=True, blank=True)
     sex = models.CharField(max_length=10, null=True, blank=True)
@@ -342,6 +348,12 @@ class Fossil(models.Model):
     project_name = models.CharField(max_length=100, null=True, blank=True)
     project_abbreviation = models.CharField(max_length=10, null=True, blank=True)
     collection_code = models.CharField(max_length=10, null=True, blank=True)
+    # NAAN is the name assigning authority number, often the shoulder of the guid
+    naan = models.CharField(max_length=10, null=True, blank=True)
+    # discovere_by refers to the person or agent that first located the fossil
+    discovered_by = models.CharField(max_length=255, null=True, blank=True)
+    # collected by refers to the person or agent that collected the fossil and is responsible for its sci. documtn.
+    collected_by = models.CharField(max_length=255, null=True, blank=True)  # The person or agent that collected the
 
     # Location
     place_name = models.CharField(max_length=100, null=True, blank=True)
