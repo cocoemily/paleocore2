@@ -6,6 +6,42 @@ BASIS_OF_RECORD_VOCABULARY = ontologies.BASIS_OF_RECORD_VOCABULARY
 # Item Type Vocabulary
 ITEM_TYPE_VOCABULARY = ontologies.ITEM_TYPE_VOCABULARY
 
+geosample = "Geosample" #geology
+lithics = "Lithics" #archaeology
+lithic = "Lithic" #archaeology
+burial = "Burial" #archaeology?
+bones = "Bones" #archaeology/biology
+bone = "Bone" #archaeology/biology
+enclosure = "Enclosure" #geology
+hearth = "Hearth" #geology
+petroglyphs = "Petroglyphs" #geology
+trench = "Trench" #excavation unit?
+ceramic = "Ceramic" #archaeology
+ceramics = "Ceramics" #archaeology
+fauna = "Fauna" #biology/archaeology
+flora = "Flora" #biology
+microfauna = "Microfauna" #biology
+
+
+
+PSR_ARCHAEOLOGY_VOCABULARY = ( lithics, lithic, ceramic, ceramics, burial, bones, bone , "BONE", "Bone", "C14", "LITHIC",
+                               "bead", "dent", "manuport", "woodid")
+
+PSR_GEOLOGY_VOCABULARY = ( hearth, petroglyphs, geosample , "ERT", "GPR", "GPRGRID", "OSL", "ROCK", "Rock", "TOPO", "geosample",
+                           "micromorph", "red_thing", "sediment", )
+
+PSR_BIOLOGY_VOCABULARY = ( microfauna, flora )
+
+PSR_AGGREGATE_VOCABULARY = ("Bucket", "BUCKET")
+
+PSR_LITHIC_VOCABULARY = (lithics, lithic, "LITHIC", "manuport")
+
+PSR_BONE_VOCABULARY = (bone, bones, "BONE", "dent", fauna, microfauna)
+
+PSR_CERAMIC_VOCABULARY = (ceramic, ceramics, "CERAMIC")
+
+
+
 # Collection Method Vocabulary
 COLLECTING_METHOD_VOCABULARY = ontologies.COLLECTING_METHOD_VOCABULARY
 
@@ -13,43 +49,68 @@ COLLECTING_METHOD_VOCABULARY = ontologies.COLLECTING_METHOD_VOCABULARY
 SIDE_VOCABULARY = ontologies.SIDE_VOCABULARY
 
 # Collector Vocabulary
-zeresenay_alemseged = 'Zeresenay Alemseged'
-denis_geraads = 'Denis Geraads'
-yared_asseffa = 'Yared Asseffa'
-andrew_barr = 'Andrew Barr'
-rene_bobe = "Rene Bobe"
-tomas_getachew = "Tomas Getachew"
-weldeyared_hailu = "Waldeyared Hailu"
-shannon_mcpherron = "Shannon McPherron"
-denne_reed = "Denne Reed"
-peter_stamos = "Peter Stamos"
-jonathan_wynn = "Jonathan Wynn"
+radu_iovita = 'Radu Iovita'
+patrick_cuthbertson = 'Patrick Cuthbertson'
+abay_namen = 'Abay Namen'
+aris_varis = 'Aris Varis'
+emily_coco = "Emily Coco"
+zhaken_taimagambetov = "Zhaken Taimagambetov"
+talgat_mamirov = "Talgat Mamirov"
+gani_iskakov = "Gani Iskakov"
+tabasa_ozawa = "Tabasa Ozawa"
+alice_rodriguez = "Alice Rodriguez"
+tiago_attorre = "Tiago Attorre"
+
 COLLECTOR_CHOICES = (
-    (zeresenay_alemseged, "Zeresenay Alemseged"),
-    (yared_asseffa, "Yared Assefa"),
-    (andrew_barr, "Andrew Barr"),
-    (rene_bobe, "Rene Bobe"),
-    (denis_geraads, "Denis Geraads"),
-    (tomas_getachew, "Tomas Getachew"),
-    (weldeyared_hailu, "Waldeyared Hailu"),
-    (shannon_mcpherron, "Shannon McPherron"),
-    (denne_reed, "Denne Reed"),
-    (peter_stamos, "Peter Stamos"),
-    (jonathan_wynn, "Jonathan Wynn")
+    (radu_iovita, "Radu Iovita"),
+    (patrick_cuthbertson, "Patrick Cuthbertson"),
+    (abay_namen, "Abay Namen"),
+    (aris_varis, "Aris Varis"),
+    (emily_coco, "Emily Coco"),
+    (zhaken_taimagambetov, "Zhaken Taimagambetov"),
+    (talgat_mamirov, "Talgat Mamirov"),
+    (gani_iskakov, "Gani Iskakov"),
+    (tabasa_ozawa, "Tabasa Ozawa"),
+    (alice_rodriguez, "Alice Rodriguez"),
+    (tiago_attorre, "Tiago Attorre")
 )
 
+PERSON_DICTIONARY = {
+    "Radu Iovita": radu_iovita,
+    "Patrick Cuthbertson": patrick_cuthbertson,
+    "Abay Namen": abay_namen,
+    "Aris Varis": aris_varis,
+    "Emily Coco": emily_coco,
+    "Zhaken Taimagambetov": zhaken_taimagambetov,
+    "Talgat Mamirov": talgat_mamirov,
+    "Gani Iskakov": gani_iskakov,
+    "Tabasa Ozawa": tabasa_ozawa,
+    "Alice Rodriguez": alice_rodriguez,
+    "Tiago Attorre": tiago_attorre
+}
+
 # Field Season Vocabulary
-jan2014 = 'January 2014'
-nov2014 = 'Nov 2014'
-nov2015 = 'Nov 2015'
-jan2018 = 'Jan 2018'
-jan2019 = 'Jan 2019'
-jan2020 = 'Jan 2020'
+jun2017 = 'Jun 2017'
+aug2017 = 'Aug 2017'
+may2018 = 'May 2018'
+jun2018 = 'Jun 2018'
+aug2018 = 'Aug 2018'
+may2019 = 'May 2019'
+jun2019 = 'Jun 2019'
+aug2019 = 'Aug 2019'
 FIELD_SEASON_CHOICES = (
-    (jan2014, 'Jan 2014'),
-    (nov2014, 'Nov 2014'),
-    (nov2015, 'Nov 2015'),
-    (jan2018, 'Jan 2018'),
-    (jan2019, 'Jan 2019'),
-    (jan2020, 'Jan 2020')
+    (jun2017, 'Jun 2017'),
+    (aug2017, 'Aug 2017'),
+    (may2018, 'May 2018'),
+    (jun2018, 'Jun 2018'),
+    (aug2018, 'Aug 2018'),
+    (may2019, 'May 2019'),
+    (jun2019, 'Jun 2019'),
+    (aug2019, 'Aug 2019')
 )
+
+locality_names = {
+    "Kyzylzhartas": "Qyzyljartas",
+    "Tuttybulaq Upper": "Tuttybulaq 2",
+    "Zhetiotau": "Jetiotau Cave"
+}
