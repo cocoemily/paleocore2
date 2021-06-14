@@ -8,6 +8,8 @@ from djgeojson.serializers import Serializer as GeoJSONSerializer
 from django.contrib.auth.mixins import LoginRequiredMixin
 from django.http import HttpResponse
 
+from pyzotero import zotero
+
 
 class UpdateSites(generic.FormView):
     template_name = 'admin/origins/site/update_sites.html'
@@ -104,3 +106,15 @@ class NominaListView(generic.ListView):
         species = TaxonRank.objects.get(name='Species')
         taxa = TTaxon.objects.filter(rank=species).order_by('name')
         return taxa
+
+
+class ZoteroListView(generic.ListView):
+    template_name = 'origins/zotero_list.html'
+    context_object_name = 'zotero'
+
+    def get_queryset(self):
+        """Get a queryset from Zotero"""
+        zot = zotero.Zotero(2207794, 'user', 'ZRvebf2xkInRdYxVGtALHvzZ')
+        items = zot.top(limit=20)
+        return items
+
