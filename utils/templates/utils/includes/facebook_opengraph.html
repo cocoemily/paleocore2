@@ -1,8 +1,9 @@
 {% load wagtailcore_tags wagtailimages_tags %}
+{% wagtail_site as current_site %}
 
 <meta property="og:title" content="{% if self.seo_title %}{{ self.seo_title }}{% else %}{{ self.title }}{% endif %}"/>
 <meta property="og:url" content="{{ request.build_absolute_uri }}" />
-<meta property="og:site_name" content="{{ request.site.site_name }}" />
+<meta property="og:site_name" content="{{ current_site.site_name }}" />
 <meta property="og:description" content="{% if self.search_description %}{{ self.search_description }}{% endif %}"/>
 {% if self.feed_image %}
 	{% image self.feed_image width-1200 as img %}

@@ -1,6 +1,7 @@
 {% load wagtailimages_tags wagtailcore_tags navigation_tags i18n wagtailsettings_tags static %}
 {% get_settings %}
 {% get_site_root as site_root %}
+{% wagtail_site as current_site %}
 
 <div class="hide-for-print" data-sticky-container>
 <div data-sticky data-options="marginTop:0;" style="width:100%;z-index:10000;">
@@ -22,9 +23,10 @@
   		</div>
 	</div>
 
-	<div class="title-bar" data-responsive-toggle="menu" data-hide-for="large">
+	<!-- title bar with site name, visible on small screens -->
+  <div class="title-bar" data-responsive-toggle="menu" data-hide-for="large">
   		<button class="menu-icon" type="button" style="background: transparent;"data-toggle></button>
-  		<div class="title-bar-title"><a href="{% pageurl site_root %}">{{request.site.site_name}}</a></div>
+  		<div class="title-bar-title"><a href="{% pageurl site_root %}">{{current_site.site_name}}</a></div>
 	</div>
 
     <div class="top-bar" id="menu">
@@ -38,7 +40,7 @@
                 </a>
               </li>
               <!-- Paleo Core title upper left corner-->
-              <li class="menu-text"><a href="{% pageurl site_root %}" style="padding-left: 0;">Paleo Core</a></li>
+              <li class="menu-text"><a href="{% pageurl site_root %}" style="padding-left: 0;">{{current_site.site_name}}</a></li>
         	</ul>
       	</div>
       	<div class="top-bar-right">

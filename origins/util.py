@@ -391,6 +391,13 @@ def taxon2mptt(taxon):
     return match
 
 
+def ttaxa2nomina():
+    ttaxa = TTaxon.objects.all()
+    for t in ttaxa:
+        n = Nomen()
+        n.from_ttaxon(t)
+
+
 def fossil_taxa():
     fossils = Fossil.objects.all()
     fossil_taxa = []

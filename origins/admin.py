@@ -475,6 +475,21 @@ class TTaxonAdmin(MPTTModelAdmin, TaxonomyAdmin):
     save_as = True
 
 
+class NomenPublicationsInline(admin.TabularInline):
+    model = Nomen.references.through
+    extra = 1
+    verbose_name = "Publication"
+    verbose_name_plural = "Publications"
+
+
+class NomenAdmin(admin.ModelAdmin):
+    readonly_fields = ['full_name_html']
+    list_display = ['name', 'authorship', 'full_name_html', 'rank', 'nomenclatural_status']
+    list_filter = ['rank', 'nomenclatural_status']
+    inlines = [NomenPublicationsInline]
+    exclude = ['last_import', 'references']
+
+
 # Register your models here.
 admin.site.register(Context, ContextAdmin)
 admin.site.register(Reference, ReferenceAdmin)
@@ -483,3 +498,4 @@ admin.site.register(Site, SiteAdmin)
 #admin.site.register(Taxon, TaxonAdmin)
 admin.site.register(TTaxon, TTaxonAdmin)
 admin.site.register(TaxonRank)
+admin.site.register(Nomen, NomenAdmin)

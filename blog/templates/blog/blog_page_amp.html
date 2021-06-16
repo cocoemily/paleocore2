@@ -1,5 +1,6 @@
 {% extends 'amp_base.html' %}
 {% load wagtailcore_tags wagtailimages_tags %}
+{% wagtail_site as current_site %}
 
 {% block canonical_url %}
     <link rel="canonical" href="{{ page.full_url }}"/>
@@ -7,7 +8,7 @@
 
 {% block schema %}
     {% image self.feed_image fill-100x100 as feed_img %}
-    
+
     <script type="application/ld+json">
       {
         "@context": "http://schema.org",
@@ -15,10 +16,10 @@
         "headline": "{{ self.title }}",
         "datePublished": "{{ self.date }}",
         "image": [
-          "{{ request.site.root_url }}{{ feed_img.url }}"
+          "{{ current_site.root_url }}{{ feed_img.url }}"
         ],
         "author": "{{ user.first_name }} {{ user.last_name }}",
-        "publisher": "{{ request.site.site_name }}",
+        "publisher": "{{ current_site.site_name }}",
       }
     </script>
 {% endblock %}
