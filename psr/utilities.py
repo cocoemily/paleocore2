@@ -1067,7 +1067,7 @@ def import_geo_contexts(filename):
         # upload_pictures(photonames, psr_g, photodir)
 
 
-def import_survey_occurrences(filename):
+def import_survey_occurrences(filename): # tODO will need to add in subtyping to first level of subclass here
     sf = shapefile.Reader(filename)
     sr = sf.shapeRecords()
 

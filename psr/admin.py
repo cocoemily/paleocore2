@@ -353,6 +353,8 @@ class GeologicalContextAdmin(projects.admin.PaleoCoreLocalityAdminGoogle):
 
     inlines = [ImagesInline]
 
+    actions = ['export_simple_csv', 'export_shapefile']
+
     def export_simple_csv(self, request, queryset):
         fields_to_export = ['id', 'name', 'context_type', 'geology_type', 'description',
                             'dip', 'strike', 'color', 'texture', 'height', 'width', 'depth',
@@ -386,6 +388,41 @@ class GeologicalContextAdmin(projects.admin.PaleoCoreLocalityAdminGoogle):
                 writer.writerow(o.id)
         return response
     export_simple_csv.short_description = "Export simple report to csv"
+
+    def export_shapefile(self, request, queryset):
+        response = HttpResponse(content_type='application/vnd.shp')  # declare the response type
+        response['Content-Disposition'] = 'attachment; filename="PSR_Geological-Contexts.shp"'  # declare the file name
+        w = shapefile.Writer(response) #doesn't like this, needs to have a filepath not a response object for this writer
+        #TODO figure out how to save the file locally and then output the file via response?
+        fields_to_export = ['id', 'name', 'context_type', 'geology_type', 'description',
+                            'dip', 'strike', 'color', 'texture', 'height', 'width', 'depth',
+                            'slope_character', 'sediment_presence', 'sediment_character',
+                            'cave_mouth_character', 'rockfall_character', 'speleothem_character',
+                            'size_of_loess', 'loess_mean_thickness', 'loess_max_thickness',
+                            'loess_landscape_position', 'loess_surface_inclination',
+                            'loess_presence_coarse_components', 'loess_amount_coarse_components',
+                            'loess_number_sediment_layers', 'loess_number_soil_horizons',
+                            'loess_number_cultural_horizons', 'loess_number_coarse_layers',
+                            'loess_presence_vertical_profile',
+                            'point', 'geom', 'basis_of_record', 'collecting_method',
+                            'date_collected', 'date_created', 'date_last_modified',
+                            'problem', 'problem_comment', 'remarks', 'georeference_remarks']
+
+        #create fields
+        for f in fields_to_export:
+            w.field(f, 'C')
+
+        #create records
+        for o in queryset.order_by('field_id', 'barcode'):
+            w.point(o.point_x(), o.point_y())
+            data = [o.__dict__.get(k) for k in fields_to_export]
+            w.record(data)
+
+        w.close()
+        #figure out how to output to Download like CSV does
+        return response
+
+    export_shapefile.short_description = "Export shapefile"
 
     def get_urls(self):
         tool_item_urls = [
