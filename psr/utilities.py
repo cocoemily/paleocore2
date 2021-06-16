@@ -1119,7 +1119,7 @@ def import_survey_occurrences(filename):
     sf = shapefile.Reader(filename)
     sr = sf.shapeRecords()
 
-    for r in sr:  # TODO update with new form information
+    for r in sr:
         psr_a = Occurrence(field_id=r.record["Name"])
 
         psr_a.basis_of_record=r.record["Basis_of_r"]
@@ -1169,13 +1169,13 @@ def import_survey_occurrences(filename):
                 name = full_name[0].split(" ")
                 psr_a.found_by = Person.objects.get_or_create(last_name=name[1], first_name=name[0])[0]
 
-        if r.record["Date Recor"] not in ("", None):
-            if "at" in r.record["Date Recor"]:
-                psr_a.date_collected = datetime.strptime(r.record["Date Recor"], '%d. %b %Y at %H:%M')
-            elif "," in r.record["Date Recor"]:
-                psr_a.date_collected = datetime.strptime(r.record["Date Recor"], '%d. %b %Y, %H:%M')
+        if r.record["Date_colle"] not in ("", None):
+            if "at" in r.record["Date_colle"]:
+                psr_a.date_collected = datetime.strptime(r.record["Date_colle"], '%d. %b %Y at %H:%M')
+            elif "," in r.record["Date_colle"]:
+                psr_a.date_collected = datetime.strptime(r.record["Date_colle"], '%d. %b %Y, %H:%M')
             else:
-                psr_a.date_collected = datetime.strptime(r.record["Date Recor"], '%d. %b %Y')
+                psr_a.date_collected = datetime.strptime(r.record["Date_colle"], '%d. %b %Y')
         else:
             psr_a.date_collected = None
 
@@ -1185,21 +1185,50 @@ def import_survey_occurrences(filename):
             new_arch = Archaeology(geom=psr_a.geom)
             for key in list(psr_a.__dict__.keys()):
                 new_arch.__dict__[key] = psr_a.__dict__[key]
-            #TODO add archaeology attributes
+
+            new_arch.archaeology_type=r.record["Archaeolog"]
+            new_arch.period=r.record["Period"]
+            new_arch.length_mm=Decimal(r.record["Length_mm"])
+            new_arch.width_mm=Decimal(r.record["Width_mm"])
+            new_arch.thick_mm=Decimal(r.record["Thick_mm"])
+            new_arch.weigth=Decimal(r.record["Weight"])
+            if r.record["Remarks"] not in ("", None):
+                new_arch.archaeology_notes=r.record["Remarks"]
+            else:
+                new_arch.archaeology_notes=r.record["Notes"]
+
+            new_arch.last_import=True
+            new_arch.save()
 
         elif psr_a.find_type in PSR_BIOLOGY_VOCABULARY:
             psr_a.item_type = "Biological"
             new_bio = Biology(geom=psr_a.geom)
             for key in list(psr_a.__dict__.keys()):
                 new_bio.__dict__[key] = psr_a.__dict__[key]
-            # TODO add biology  attributes
+
+            new_bio.biology_type=r.record["Biology_ty"]
+            new_bio.sex=r.record["Sex"]
+            new_bio.life_stage=r.record["Life_stage"]
+            new_bio.size_class=r.record["Size_class"]
+            new_bio.verbatim_taxon=r.record["Taxon"]
+
+            new_bio.last_import=True
+            new_bio.save()
 
         elif psr_a.find_type in PSR_GEOLOGY_VOCABULARY:
             psr_a.item_type = "Geological"
             new_geo = Geology(geom=psr_a.geom)
             for key in list(psr_a.__dict__.keys()):
                 new_geo.__dict__[key] = psr_a.__dict__[key]
-            #TODO add geology attributes
+
+            new_geo.geology_type=r.record["Geology_ty"]
+            new_geo.dip=Decimal(r.record["Dip"])
+            new_geo.strike=Decimal(r.record["Strike"])
+            new_geo.color=r.record["Color"]
+            new_geo.texture=r.record["Texture"]
+
+            new_geo.last_import=True
+            new_geo.save()
 
         elif psr_a.find_type in PSR_AGGREGATE_VOCABULARY:
             psr_a.item_type = "Aggregate"
@@ -1218,12 +1247,16 @@ def import_survey_occurrences(filename):
             new_aggr.tinydebris=Decimal(r.record["Tinydebris"])
             new_aggr.counts=r.record["Counts"]
             new_aggr.bull_find_remarks=r.record["Remarks"]
+
+            new_aggr.last_import=True
+            new_aggr.save()
+
         else:
             pass
 
         psr_a.last_import = True
-        return psr_a
-        #psr_a.save()  # last step to add it to the database
+        #return psr_a #for testing purposes
+        psr_a.save()  # last step to add it to the database
 
         # TODO how to assign photo directory from uploaded file
 
