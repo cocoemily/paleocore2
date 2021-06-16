@@ -22,7 +22,9 @@ fauna = "Fauna" #biology/archaeology
 flora = "Flora" #biology
 microfauna = "Microfauna" #biology
 
+PSR_CAVE_RS_VOCABULARY = ("Cave", "Rockshelter", "Cave/Rockshelter", "cave", "rockshelter")
 
+PSR_LOESS_PROF_VOCABULARY = ("Loess Profile", "Loess", "Profile", "loess", "profile", "loess profile")
 
 PSR_ARCHAEOLOGY_VOCABULARY = ( lithics, lithic, ceramic, ceramics, burial, bones, bone , "BONE", "Bone", "C14", "LITHIC",
                                "bead", "dent", "manuport", "woodid")
@@ -32,7 +34,7 @@ PSR_GEOLOGY_VOCABULARY = ( hearth, petroglyphs, geosample , "ERT", "GPR", "GPRGR
 
 PSR_BIOLOGY_VOCABULARY = ( microfauna, flora )
 
-PSR_AGGREGATE_VOCABULARY = ("Bucket", "BUCKET")
+PSR_AGGREGATE_VOCABULARY = ("Bucket", "BUCKET", "Aggregate", "Bulk Find", "aggregate", "bulk", "Bulk")
 
 PSR_LITHIC_VOCABULARY = (lithics, lithic, "LITHIC", "manuport")
 

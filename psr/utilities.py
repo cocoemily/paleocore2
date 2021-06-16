@@ -999,41 +999,81 @@ def parse_mdb(file_path, site_name, locality_names=locality_names):
 
         obj.save()
 
-
+testcave = "/Users/emilycoco/Desktop/NYU/Kazakhstan/PSR-Paleo-Core/PSR FCLs/Cave_Rockshelter/Cave_Rockshelter"
+testloess = "/Users/emilycoco/Desktop/NYU/Kazakhstan/PSR-Paleo-Core/PSR FCLs/Loess Profile/Loess Profile"
 def import_geo_contexts(filename):
     sf = shapefile.Reader(filename)
     sr = sf.shapeRecords()
 
-    for r in sr: #TODO update with new form information
-        psr_g = GeologicalContext.objects.get_or_create(name=r.record["Name"])
+    for r in sr:
+        psr_g = GeologicalContext(name=r.record["Name"])
 
-        psr_g.basis_of_record=r.record["Basis Of R"]
+        psr_g.context_type = r.record["Context_ty"]
+        psr_g.basis_of_record=r.record["Basis_of_r"]
         psr_g.collecting_method=r.record["Collecting"]
-        psr_g.context_type=r.record["Item Type"]
         psr_g.description=r.record["Descriptio"]
-        psr_g.dip=r.record["Dip"]
-        psr_g.strike=r.record["Strike"]
-        psr_g.texture=r.record["Texture"]
-        psr_g.color=r.record["Color"]
-        psr_g.context_remarks=r.record["Remarks"]
-        psr_g.rockfall_character=r.record["Rockfall C"]
-        psr_g.sediment_character=r.record["Sediment C"]
-        psr_g.slope_character=r.record["Slope Char"]
-        psr_g.speleothem_character=r.record["Speleothem"]
-        psr_g.cave_mouth_character=r.record["Cave Mouth"]
-        psr_g.geology_type=r.record["Geology Ty"]
+        psr_g.stratigraphic_section=r.record["Stratigrap"]
+        psr_g.stratigraphic_formation=r.record[10] #Stratigrap_1
+        psr_g.stratigraphic_member=r.record[11] #Stratigrap_2
+        psr_g.upper_limit_in_section=r.record["Upper_limi"]
+        psr_g.lower_limit_in_section = r.record["Lower_limi"]
 
-        if r.record["Height"] not in ("", None):
-            psr_g.height = Decimal(r.record["Height"])
-        if r.record["Width"] not in ("", None):
-            psr_g.width = Decimal(r.record["Width"])
-        if r.record["Depth"] not in ("", None):
-            psr_g.depth = Decimal(r.record["Depth"])
+        if psr_g.context_type in PSR_CAVE_RS_VOCABULARY: #TODO figure out how to do this more eloquently
+            psr_g.geology_type = r.record["Geology_ty"]
+            psr_g.dip=r.record["Dip"]
+            psr_g.strike=r.record["Strike"]
+            psr_g.texture=r.record["Texture"]
+            psr_g.color=r.record["Color"]
 
-        if r.record["Sediment P"] in ('-None Selected-'):
-            psr_g.sediment_presence = None
-        else:
-            psr_g.sediment_presence = r.record["Sediment P"]
+            if r.record["Height"] not in ("", None):
+                psr_g.height = Decimal(r.record["Height"])
+            if r.record["Width"] not in ("", None):
+                psr_g.width = Decimal(r.record["Width"])
+            if r.record["Depth"] not in ("", None):
+                psr_g.depth = Decimal(r.record["Depth"])
+
+            psr_g.slope_character = r.record["Slope_char"]
+
+            if r.record["Sediment_p"] in ('-None Selected-'):
+                psr_g.sediment_presence = None
+            else:
+                psr_g.sediment_presence = r.record["Sediment_p"]
+
+            psr_g.sediment_character = r.record["Sediment_c"]
+            psr_g.cave_mouth_character = r.record["Cave_mouth"]
+            psr_g.rockfall_character = r.record["Rockfall_c"]
+            psr_g.speleothem_character = r.record["Speleothem"]
+
+        if psr_g.context_type in PSR_LOESS_PROF_VOCABULARY: #TODO figure out how to do this more eloquently
+            psr_g.size_of_loess=r.record["Size_of_lo"]
+
+            if r.record["Loess_mean"] not in ("", None):
+                psr_g.loess_mean_thickness = Decimal(r.record["Loess_mean"])
+            if r.record["Loess_max_"] not in ("", None):
+                psr_g.loess_max_thickness = Decimal(r.record["Loess_max_"])
+
+            psr_g.loess_landscape_position=r.record["Loess_land"]
+            psr_g.loess_surface_inclination=r.record["Loess_surf"]
+
+            if r.record["Loess_pres"] in ('-None Selected-'):
+                psr_g.loess_presence_coarse_components = None
+            else:
+                psr_g.loess_presence_coarse_components = r.record["Loess_pres"]
+
+            psr_g.loess_amount_coarse_components=Decimal(r.record["Loess_amou"])
+            psr_g.loess_number_sediment_layers=r.record["Loess_numb"]
+            psr_g.loess_number_soil_horizons=r.record[22] #Loess_numb_1
+            psr_g.loess_number_cultural_horizons=r.record[23] #Loess_numb_2
+            psr_g.loess_number_coarse_layers=r.record[24] #Loess_numb_3
+
+            if r.record["Loess_pres_1"] in ('-None Selected-'): #Loess_pres_1
+                psr_g.loess_presence_vertical_profile = None
+            else:
+                psr_g.loess_presence_vertical_profile = r.record[25]
+
+        psr_g.context_remarks=r.record["Context_re"]
+        psr_g.error_notes=r.record["Error_note"]
+        psr_g.notes=r.record["Notes"]
 
         if r.shape.shapeType is 1:  # point
             coords = r.shape.points[0]
@@ -1043,21 +1083,25 @@ def import_geo_contexts(filename):
         psr_g.geom = geom
         psr_g.point = geom
 
-        if r.record["Date Recor"] is not "":
-            if "at" in r.record["Date Recor"]:
-                psr_g.date_collected = datetime.strptime(r.record["Date Recor"], '%d. %b %Y at %H:%M')
-            elif "," in r.record["Date Recor"]:
-                psr_g.date_collected = datetime.strptime(r.record["Date Recor"], '%d. %b %Y, %H:%M')
+        if r.record["Date_colle"] is not "":
+            if "at" in r.record["Date_colle"]:
+                psr_g.date_collected = datetime.strptime(r.record["Date_colle"], '%d. %b %Y at %H:%M')
+            elif "," in r.record["Date_colle"]:
+                psr_g.date_collected = datetime.strptime(r.record["Date_colle"], '%d. %b %Y, %H:%M')
             else:
-                psr_g.date_collected = datetime.strptime(r.record["Date Recor"], '%d. %b %Y')
+                psr_g.date_collected = datetime.strptime(r.record["Date_colle"], '%d. %b %Y')
         else:
             psr_g.date_collected = None
 
-        if r.record["Recorded B"] not in ('-None Selected-', "", None):
-            name = r.record["Recorded B"].split(" ")
-            psr_g.recorded_by = Person.objects.get_or_create(last_name=name[1], first_name=name[0])[0]
+        if r.record["Recorded_b"] not in ('-None Selected-', "", None):
+            r_name=r.record["Recorded_b"]
+            full_name = [val for key, val in PERSON_DICTIONARY.items() if r_name.lower().capitalize() in key]
+            if full_name.__len__() is not 0:
+                name = full_name[0].split(" ")
+                psr_g.recorded_by = Person.objects.get_or_create(last_name=name[1], first_name=name[0])[0]
 
         psr_g.last_import = True
+        #return psr_g #for testing
         psr_g.save()
 
         #TODO how to assign photo directory from uploaded file
@@ -1067,30 +1111,28 @@ def import_geo_contexts(filename):
         # upload_pictures(photonames, psr_g, photodir)
 
 
-def import_survey_occurrences(filename): # tODO will need to add in subtyping to first level of subclass here
+testarch = "/Users/emilycoco/Desktop/NYU/Kazakhstan/PSR-Paleo-Core/PSR FCLs/Archaeology/Archaeology"
+testagg = "/Users/emilycoco/Desktop/NYU/Kazakhstan/PSR-Paleo-Core/PSR FCLs/Aggregate/Aggregate"
+testbio = "/Users/emilycoco/Desktop/NYU/Kazakhstan/PSR-Paleo-Core/PSR FCLs/Biology/Biology"
+testgeo = "/Users/emilycoco/Desktop/NYU/Kazakhstan/PSR-Paleo-Core/PSR FCLs/Geology/Geology"
+def import_survey_occurrences(filename):
     sf = shapefile.Reader(filename)
     sr = sf.shapeRecords()
 
     for r in sr:  # TODO update with new form information
-        psr_a = Occurrence.objects.get_or_create(field_id=r.record["Name"])
+        psr_a = Occurrence(field_id=r.record["Name"])
 
-        psr_a.basis_of_record=r.record["Basis Of R"]
-        psr_a.item_count=r.record["Item Count"]
-        psr_a.find_type=r.record["Item Type"]
-        psr_a.item_description=r.record["Descriptio"]
+        psr_a.basis_of_record=r.record["Basis_of_r"]
+        psr_a.item_count=r.record["Item_count"]
+        psr_a.find_type=r.record["Find_type"]
+        psr_a.item_description=r.record["Item_descr"]
         psr_a.collecting_method=r.record["Collecting"]
-        psr_a.field_id=r.record["Name"]
-        psr_a.collection_remarks=r.record["Remarks"]
-
-        # set item type code
-        if psr_a.find_type in PSR_ARCHAEOLOGY_VOCABULARY:
-            psr_a.item_type = "Archaeological"
-        elif psr_a.find_type in PSR_BIOLOGY_VOCABULARY:
-            psr_a.item_type = "Biological"
-        elif psr_a.find_type in PSR_GEOLOGY_VOCABULARY:
-            psr_a.item_type = "Geological"
-        else:
-            pass
+        psr_a.item_part=r.record["Item_part"]
+        psr_a.disposition=r.record["Dispositio"]
+        psr_a.preparation_status=r.record["Preparatio"]
+        psr_a.collection_remarks=r.record["Collection"]
+        psr_a.problem=r.record["Problem"]
+        psr_a.problem_remarks=r.record["Problem_re"]
 
         # set point
         if r.shape.shapeType is 1:  # point
@@ -1101,18 +1143,31 @@ def import_survey_occurrences(filename): # tODO will need to add in subtyping to
 
         # set geological context
         try:
-            psr_a.geological_context = GeologicalContext.objects.get(name=r.record["Locality"])
+            psr_a.geological_context = GeologicalContext.objects.get(name=r.record["Geological"])
         except:
-            psr_a.geological_context = \
-                GeologicalContext.objects.get_or_create(name=r.record["Locality"], geom=geom, point=geom)[0]
+            psr_a.geological_context = GeologicalContext.objects.get_or_create(name=r.record["Geological"],
+                                                                               geom=geom, point=geom)[0]
+
+        if r.record["Unit"] not in ("Null", None, ""):
+            psr_a.unit = ExcavationUnit.objects.get_or_create(unit=r.record["Unit"],
+                                                              geological_context=psr_a.geological_context)[0]
 
         # set people
-        if r.record["Identified"] not in ('-None Selected-', "", None):
-            name1 = r.record["Identified"].split(" ")
-            psr_a.found_by = Person.objects.get_or_create(last_name=name1[1], first_name=name1[0])[0]
-            psr_a.collector = r.record["Identified"]
-            psr_a.finder = r.record["Identified"]
+        psr_a.collector = r.record["Collector"]
+        if r.record["Collector"] not in ('-None Selected-', "", None, "Null"):
+            r_name = r.record["Collector"]
+            full_name = [val for key, val in PERSON_DICTIONARY.items() if r_name.lower().capitalize() in key]
+            if full_name.__len__() is not 0:
+                name = full_name[0].split(" ")
+                psr_a.recorded_by = Person.objects.get_or_create(last_name=name[1], first_name=name[0])[0]
 
+        psr_a.collector = r.record["Finder"]
+        if r.record["Finder"] not in ('-None Selected-', "", None, "Null"):
+            r_name = r.record["Finder"]
+            full_name = [val for key, val in PERSON_DICTIONARY.items() if r_name.lower().capitalize() in key]
+            if full_name.__len__() is not 0:
+                name = full_name[0].split(" ")
+                psr_a.found_by = Person.objects.get_or_create(last_name=name[1], first_name=name[0])[0]
 
         if r.record["Date Recor"] not in ("", None):
             if "at" in r.record["Date Recor"]:
@@ -1124,12 +1179,51 @@ def import_survey_occurrences(filename): # tODO will need to add in subtyping to
         else:
             psr_a.date_collected = None
 
-        if r.record["Recorded B"] not in ('-None Selected-', "", None):
-            name = r.record["Recorded B"].split(" ")
-            psr_a.recorded_by = Person.objects.get_or_create(last_name=name[1], first_name=name[0])[0]
+        # set item type code
+        if psr_a.find_type in PSR_ARCHAEOLOGY_VOCABULARY:
+            psr_a.item_type = "Archaeological"
+            new_arch = Archaeology(geom=psr_a.geom)
+            for key in list(psr_a.__dict__.keys()):
+                new_arch.__dict__[key] = psr_a.__dict__[key]
+            #TODO add archaeology attributes
+
+        elif psr_a.find_type in PSR_BIOLOGY_VOCABULARY:
+            psr_a.item_type = "Biological"
+            new_bio = Biology(geom=psr_a.geom)
+            for key in list(psr_a.__dict__.keys()):
+                new_bio.__dict__[key] = psr_a.__dict__[key]
+            # TODO add biology  attributes
+
+        elif psr_a.find_type in PSR_GEOLOGY_VOCABULARY:
+            psr_a.item_type = "Geological"
+            new_geo = Geology(geom=psr_a.geom)
+            for key in list(psr_a.__dict__.keys()):
+                new_geo.__dict__[key] = psr_a.__dict__[key]
+            #TODO add geology attributes
+
+        elif psr_a.find_type in PSR_AGGREGATE_VOCABULARY:
+            psr_a.item_type = "Aggregate"
+            new_aggr = Aggregate(geom=psr_a.geom)
+            for key in list(psr_a.__dict__.keys()):
+                new_aggr.__dict__[key] = psr_a.__dict__[key]
+
+            new_aggr.screen_size=r.record["Screen_siz"]
+            new_aggr.burning=r.record["Burning"]
+            new_aggr.bone=r.record["Bone"]
+            new_aggr.microfauna=r.record["Microfauna"]
+            new_aggr.pebbles=r.record["Pebbles"]
+            new_aggr.smallplatforms=Decimal(r.record["Smallplatf"])
+            new_aggr.smalldebris=Decimal(r.record["Smalldebri"])
+            new_aggr.tinyplatforms=Decimal(r.record["Tinyplatfo"])
+            new_aggr.tinydebris=Decimal(r.record["Tinydebris"])
+            new_aggr.counts=r.record["Counts"]
+            new_aggr.bull_find_remarks=r.record["Remarks"]
+        else:
+            pass
 
         psr_a.last_import = True
-        psr_a.save()  # last step to add it to the database
+        return psr_a
+        #psr_a.save()  # last step to add it to the database
 
         # TODO how to assign photo directory from uploaded file
 
@@ -1138,3 +1232,4 @@ def import_survey_occurrences(filename): # tODO will need to add in subtyping to
         # upload_pictures(photonames, psr_a, photodir)
 
 
+# tODO functions for importing shapefiles from subtyped pages?
