@@ -7,8 +7,8 @@ Installation
 ------------------
 * Clone repository from GitHub and move into that directory
 ```
-git clone https://github.com/paleocore/paleocore2.git
-cd paleocore2
+git clone https://github.com/paleocore/paleocore2.git paleocore
+cd paleocore
 ```
 
 * Create virtual Python environment
@@ -27,12 +27,12 @@ pip install -r requirements/dev.txt
 createdb paleocore2
 ```
 
-* Update the following librarys manual:
-```
+* Update the following libraries manually:
+<!---```
 cd venv/lib/python3.7/site-packages
 ```
 ..* djgeojson
-...Edit __init__.py:
+...Edit \__init\__.py:
 ```
 #: Module version, as defined in PEP-0396.
 #from pkg_resources import DistributionNotFound
@@ -52,7 +52,7 @@ GEOJSON_DEFAULT_SRID = 4326
 ```
 
 ..* fastkml
-...Edit __init__.py:
+...Edit \__init\__.py:
 ```
 # -*- coding: utf-8 -*-
 # Copyright (C) 2012  Christian Ledermann
@@ -110,10 +110,9 @@ __all__ = [
     'LabelStyle', 'BalloonStyle',
     'Link', 'Author', 'Contributor',
 ]
-```
-
-..* tablib
-... Edit __init__.py:
+```--->
+1. tablib
+    * Edit \__init\__.py:
 ```
 """ Tablib. """
 #from pkg_resources import DistributionNotFound, get_distribution
@@ -138,7 +137,7 @@ __version__ = '2.0.2'
 
 * Run migrations.
 ```
-python manage.py migrate
+manage.py migrate
 ```
 
 Run Server
@@ -147,12 +146,12 @@ Run Server
 
 * Create superuser.
 ```
-python manage.py createsuperuser
+manage.py createsuperuser
 ```
 
 * Run server on local host.
 ```
-python manage.py runserver localhost:8000
+manage.py runserver localhost:8000
 ```
 
 * Open localhost:8000/django-admin in a web browswer.
