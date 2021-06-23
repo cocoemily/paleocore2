@@ -41,8 +41,11 @@ class ContextInline(admin.TabularInline):
     model = Context
 
 
-# fields = ['id', 'collection_name', 'collection_subset', 'collection_aka', 'n_occs', 'formation', 'member',
-#              'max_ma', 'min_ma']
+class SitePublicationsInline(admin.TabularInline):
+    model = Site.references.through
+    extra = 1
+    verbose_name = "Publication"
+    verbose_name_plural = "Publications"
 
 
 class SiteAdmin(PaleoCoreLocalityAdminGoogle):
@@ -73,7 +76,7 @@ class SiteAdmin(PaleoCoreLocalityAdminGoogle):
                      ]
     list_filter = ['origins', 'country']
     list_per_page = 500
-    # inlines = [ContextInline]
+    inlines = [SitePublicationsInline]
 
     fieldsets = [
         ('Occurrence Details', {
