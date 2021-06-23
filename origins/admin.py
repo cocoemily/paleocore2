@@ -498,7 +498,7 @@ class NomenAdmin(admin.ModelAdmin):
         :return:
         """
         if db_field.name == "type_object":
-            kwargs["queryset"] = Fossil.objects.filter(holotype=True).order_by('catalog_number')
+            kwargs["queryset"] = Fossil.objects.filter(is_type_specimen=True).order_by('catalog_number')
 
         return super(NomenAdmin, self).formfield_for_foreignkey(db_field, request, **kwargs)
 
