@@ -56,17 +56,22 @@ class Nomen(projects.models.PaleoCoreBaseClass):
     """
     authorship_help = 'The authors of the naming publication, date included, e.g. King, 1864'
     year_help = 'The year the name was published in yyyy format.'
-    type_help = 'The catalog number of the type specimen, e.g. OH 7'
+    type_help = 'The catalog number of the type specimen entered as a string, e.g. OH 7'
+    type_object_help = 'The type specimen fossil, select from choice list'
     paratypes_help = 'A comma delimited list of catalog number for paratype specimens as given in the source text'
 
     authorship = models.CharField(max_length=255, null=True, blank=True, help_text=authorship_help)
     year = models.IntegerField(null=True, blank=True, help_text=year_help)
     rank = models.ForeignKey('TaxonRank', null=True, blank=True, on_delete=models.SET_NULL)
+    # TODO move type spcimen data to type object
     type_specimen = models.CharField(max_length=255, null=True, blank=True, help_text=type_help)
-    type_status = models.CharField(max_length=255, null=True, blank=True, choices=TYPE_CHOICES)
+    # TODO delete type_specimen and rename type_object to type specimen
+    type_object = models.ForeignKey('Fossil', null=True, blank=True, on_delete=models.SET_NULL,
+                                    help_text=type_object_help)
     paratypes = models.CharField(max_length=255, null=True, blank=True)
     nomenclatural_status = models.CharField('Nom. Status', max_length=255, null=True, blank=True,
                                             choices=NOMENCLATURAL_STATUS_CHOICES)
+    is_objective_synonym = models.BooleanField(default=False)
     name_reference = models.ForeignKey(publications.models.Publication, null=True, blank=True,
                                        on_delete=models.SET_NULL, related_name='name_reference')
     references = models.ManyToManyField(publications.models.Publication, blank=True)
@@ -402,12 +407,14 @@ class Fossil(models.Model):
     other_catalog_numbers = models.CharField(max_length=255, null=True, blank=True)
     date_discovered = models.DateField(null=True, blank=True)
     # TODO change year_collected to year_discovered or just migrate to date_discovered
-    year_collected = models.IntegerField("Year", blank=True, null=True,
+    year_collected = models.IntegerField('Year', blank=True, null=True,
                                          help_text='The year, event or field campaign during which the item was found.')
     organism_id = models.CharField(max_length=40, null=True, blank=True)
     nickname = models.CharField(max_length=40, null=True, blank=True)
-    # TODO change holotyp to is_type_specimen or change to type_status
+    # TODO copy holotype data to is_type_specimen then delete holotype
     holotype = models.BooleanField(default=False)
+    is_type_specimen = models.BooleanField('Type Specimen', default=False)
+    type_status = models.CharField(max_length=255, null=True, blank=True, choices=TYPE_CHOICES)
     lifestage = models.CharField(max_length=20, null=True, blank=True)
     sex = models.CharField(max_length=10, null=True, blank=True)
     short_description = models.TextField(null=True, blank=True)
@@ -579,8 +586,8 @@ class Photo(models.Model):
 
     class Meta:
         managed = True
-        verbose_name = "Image"
-        verbose_name_plural = "Images"
+        verbose_name = 'Image'
+        verbose_name_plural = 'Images'
 
 
 class WorldBorder(models.Model):

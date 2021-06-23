@@ -227,13 +227,13 @@ class FossilPublicationsInline(admin.TabularInline):
 
 
 class FossilAdmin(admin.ModelAdmin):
-    list_display = ['id', 'catalog_number', 'site_link', 'context_link', 'taxon_link',
+    list_display = ['id', 'catalog_number', 'is_type_specimen', 'holotype', 'site_link', 'context_link', 'taxon_link',
                     'country', 'context__best_age',
                     'short_description',
                     'default_image',
                     # 'element_description',
                     ]
-    list_filter = ['origins', 'holotype', 'source', 'site__name', 'country', ]
+    list_filter = ['origins', 'is_type_specimen', 'type_status', 'source', 'site__name', 'country', ]
     list_display_links = ['id', 'catalog_number']
     list_select_related = ['site', 'context', 'taxon']
     search_fields = ['catalog_number', 'place_name', 'country', 'locality',
@@ -484,10 +484,23 @@ class NomenPublicationsInline(admin.TabularInline):
 
 class NomenAdmin(admin.ModelAdmin):
     readonly_fields = ['full_name_html']
-    list_display = ['name', 'authorship', 'full_name_html', 'rank', 'nomenclatural_status']
+    list_display = ['name', 'authorship', 'full_name_html', 'rank', 'is_objective_synonym', 'nomenclatural_status']
     list_filter = ['rank', 'nomenclatural_status']
     inlines = [NomenPublicationsInline]
     exclude = ['last_import', 'references']
+
+    def formfield_for_foreignkey(self, db_field, request=None, **kwargs):
+        """
+        Simplify choice list for type_object to only those context objects occurring at the site.
+        :param db_field:
+        :param request:
+        :param kwargs:
+        :return:
+        """
+        if db_field.name == "type_object":
+            kwargs["queryset"] = Fossil.objects.filter(holotype=True).order_by('catalog_number')
+
+        return super(NomenAdmin, self).formfield_for_foreignkey(db_field, request, **kwargs)
 
 
 # Register your models here.
