@@ -71,7 +71,7 @@ class Nomen(projects.models.PaleoCoreBaseClass):
     paratypes = models.CharField(max_length=255, null=True, blank=True)
     nomenclatural_status = models.CharField('Nom. Status', max_length=255, null=True, blank=True,
                                             choices=NOMENCLATURAL_STATUS_CHOICES)
-    is_objective_synonym = models.BooleanField(default=False)
+    is_objective_synonym = models.BooleanField('Objective Synonym', default=False)
     name_reference = models.ForeignKey(publications.models.Publication, null=True, blank=True,
                                        on_delete=models.SET_NULL, related_name='name_reference')
     references = models.ManyToManyField(publications.models.Publication, blank=True)
@@ -411,8 +411,6 @@ class Fossil(models.Model):
                                          help_text='The year, event or field campaign during which the item was found.')
     organism_id = models.CharField(max_length=40, null=True, blank=True)
     nickname = models.CharField(max_length=40, null=True, blank=True)
-    # TODO copy holotype data to is_type_specimen then delete holotype
-    holotype = models.BooleanField(default=False)
     is_type_specimen = models.BooleanField('Type Specimen', default=False)
     type_status = models.CharField(max_length=255, null=True, blank=True, choices=TYPE_CHOICES)
     lifestage = models.CharField(max_length=20, null=True, blank=True)

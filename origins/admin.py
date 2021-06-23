@@ -485,7 +485,7 @@ class NomenPublicationsInline(admin.TabularInline):
 class NomenAdmin(admin.ModelAdmin):
     readonly_fields = ['full_name_html']
     list_display = ['name', 'authorship', 'full_name_html', 'rank', 'is_objective_synonym', 'nomenclatural_status']
-    list_filter = ['rank', 'nomenclatural_status']
+    list_filter = ['rank', 'is_objective_synonym', 'nomenclatural_status']
     inlines = [NomenPublicationsInline]
     exclude = ['last_import', 'references']
 
