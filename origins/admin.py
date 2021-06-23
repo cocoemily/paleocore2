@@ -258,7 +258,7 @@ class FossilAdmin(admin.ModelAdmin):
                        ('short_description',),
                        ('nickname', 'other_catalog_numbers'),
                        ('lifestage', 'sex'),
-                       ('holotype',),
+                       ('is_type_specimen', 'type_status'),
                        ('origins',)],
         }),
         ('Remarks', {
