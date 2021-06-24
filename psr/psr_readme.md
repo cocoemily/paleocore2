@@ -6,48 +6,48 @@ Instructions for installing and using Paleo Core for the PSR database locally
 Installation
 ------------------
 * Install PyCharm
-* Install Postgres.app, DBVis and PGAdmin
-* Fork repository from paleocore/paleocore2 on GitHub
+* Install Postgres.app/PostgreSQL, DBVis and PGAdmin
+  * For Mac: easiest way is to use Homebrew
+  * For PC: 
+  * https://docs.djangoproject.com/en/3.2/ref/contrib/gis/install/
 
-* Clone repository from GitHub and move into that directory
+* Clone repository from GitHub
 ```
-git clone https://github.com/<your_username>/paleocore2.git paleocore
-cd paleocore
+git clone https://github.com/cocoemily/paleocore2.git paleocore
 ```
+* Open newly created folder with PyCharm
+* Create virtual Python environment in PyCharm 
+    * https://www.jetbrains.com/help/pycharm/creating-virtual-environment.html
 
-* Create virtual Python environment
-```
-virtualenv -p python3 venv
-```
 
-* Start the virtual environment and install the python libraries stipulated in the requirements file. Separate files stipulate a base set of libraries which are imported into dev and production requirement files.
+* In the terminal window in PyCharm, run the following code to install the necessary Python libraries for running Paleo Core.
 ```
-source venv/bin/activate
 pip install -r requirements/dev.txt
 ```
 
-* Create the database. Assuming the database software is installed. The default database for this project uses postgreSQL. The simplest method of implementing the database is using postgres.app.
+* In the terminal window, create the database. 
+    * This command assumes the database software is installed (see above). The default database for this project uses postgreSQL.
 ```
 createdb paleocore2
 ```
 
-* Run migrations.
+* From the Tools menu in PyCharm, select "Run manage.py Tasks." This will open a manage.py@paleocore window. 
+* In the manage.py@paleocore window, make migrations.
 ```
-manage.py migrate
+migrate
 ```
 
 Run Server
 --------------------
-* Start virtual environment.
-
-* Create superuser.
+* From the Tools menu in PyCharm, select "Run manage.py Tasks." This will open a manage.py@paleocore window. 
+* Create superuser by running the following command and inputting your desired username and password.
 ```
-manage.py createsuperuser
+createsuperuser
 ```
 
 * Run server on local host.
 ```
-manage.py runserver localhost:8000
+runserver localhost:8000
 ```
 
 * Open localhost:8000/django-admin/psr in a web browswer.
@@ -55,26 +55,37 @@ manage.py runserver localhost:8000
 
 Importing Data
 --------------------
-#### Importing Excavated Objects from Access Database
+#### Importing Excavation Data from Access Database
 * Run server on local host
 * Open PSR Excavated Occurrence
 * Click "Import New Dataset" button in upper right corner
 * Choose a .mdb file to upload
 * Click "Upload"
 
+After upload is clicked, the server should display all of the data that you just imported.
 
-#### Importing Survey Occurrences from Shapefile
+#### Importing Survey Data from Shapefile
 * Run server on local host
 * Choose which type of data to be imported
+  * If importing from the _Cave/Rockshelter_ or _Loess Profile_ forms, import from the Geological Context page
+  * If importing from the _Archaeology_, _Biology_, _Geology_, or _Aggregate_ forms, import from the PSR Survey Occurrence page
 * Click "Import New Dataset" button in upper right corner
-* Choose a .shp file to upload
+* Choose a .shp file and a .dbf to upload. These should have the same name and refer to the same data.
 * Click "Upload"
+
+After upload is clicked, the server should display all of the data that you just imported. 
 
 
 Exporting Data
 --------------------
-#### Exporting Selected Data
+#### Exporting Selected Data as CSV
 * Run server on local host
 * Choose what type of data to exported
 * Select items to export
 * Select "Export simple report to csv" and click go
+
+#### Exporting Selected Data as Shapefile
+* Run server on local host
+* Choose what type of data to exported (for now, either Geological Contexts or Survey Occurrences)
+* Select items to export
+* Select "Export to shapefile" and click go

@@ -3,6 +3,12 @@ import projects.ontologies as ontologies
 # Basis of Record Vocabulary
 BASIS_OF_RECORD_VOCABULARY = ontologies.BASIS_OF_RECORD_VOCABULARY
 
+# Numeric Model Fields
+NUMERICS = ('id', 'dip', 'strike', 'height', 'width', 'depth', 'upper_limit_in_section', 'lower_limit_in_section',
+            'loess_mean_thickness', 'loess_max_thickness', 'loess_amount_coarse_components', 'loess_number_sediment_layers',
+            'loess_number_soil_horizons', 'loess_number_coarse_layers', 'loess_number_cultural_horizons', 'item_count',
+            'length_mm', 'width_mm', 'thick_mm', 'weight', 'smallplatforms', 'smalldebris', 'tinyplatforms', 'tinydebris', 'counts',)
+
 # Item Type Vocabulary
 ITEM_TYPE_VOCABULARY = ontologies.ITEM_TYPE_VOCABULARY
 
@@ -27,7 +33,7 @@ PSR_CAVE_RS_VOCABULARY = ("Cave", "Rockshelter", "Cave/Rockshelter", "cave", "ro
 PSR_LOESS_PROF_VOCABULARY = ("Loess Profile", "Loess", "Profile", "loess", "profile", "loess profile")
 
 PSR_ARCHAEOLOGY_VOCABULARY = ( lithics, lithic, ceramic, ceramics, burial, bones, bone , "BONE", "Bone", "C14", "LITHIC",
-                               "bead", "dent", "manuport", "woodid")
+                               "bead", "dent", "manuport", "woodid", "lithic", "lithics")
 
 PSR_GEOLOGY_VOCABULARY = ( hearth, petroglyphs, geosample , "ERT", "GPR", "GPRGRID", "OSL", "ROCK", "Rock", "TOPO", "geosample",
                            "micromorph", "red_thing", "sediment", )

@@ -5,7 +5,9 @@ from django.utils.html import format_html
 #from imagekit.admin import AdminThumbnail
 
 from import_export import resources
+import tempfile
 import unicodecsv
+import os
 
 from .models import *  # import database models from models.py
 import projects.admin
@@ -112,7 +114,7 @@ class OccurrenceAdmin(projects.admin.PaleoCoreOccurrenceAdmin):
     save_as = True
     formfield_overrides = psrformfield
 
-    actions = ['export_simple_csv', 'subtype_arch', 'subtype_bio', 'subtype_geo', 'subtype_agg']
+    actions = ['export_simple_csv', 'export_shapefile', 'subtype_arch', 'subtype_bio', 'subtype_geo', 'subtype_agg']
 
     def export_simple_csv(self, request, queryset):
         fields_to_export = ['id', 'field_id', 'find_type', 'item_description', 'item_type', 'item_count',
@@ -145,6 +147,64 @@ class OccurrenceAdmin(projects.admin.PaleoCoreOccurrenceAdmin):
                 writer.writerow(o.id)
         return response
     export_simple_csv.short_description = "Export simple report to csv"
+
+    def export_shapefile(self, request, queryset):
+        try:
+            from StringIO import StringIO
+        except ImportError:
+            from io import BytesIO as StringIO
+
+        shp = StringIO()
+        shx = StringIO()
+        dbf = StringIO()
+        w = shapefile.Writer(shp=shp, shx=shx, dbf=dbf)
+
+        #TODO figure out the workflow for this to understand what fields need to be exported
+        fields_to_export = ['id', 'field_id', 'find_type', 'item_description', 'item_type', 'item_count',
+                            'finder', 'collector',
+                            'basis_of_record', 'collecting_method', 'collection_remarks',
+                            'date_collected', 'date_created', 'date_last_modified',
+                            'problem', 'problem_comment', 'remarks', 'georeference_remarks',]
+
+        #create fields
+        for f in fields_to_export:
+            if f in NUMERICS:
+                w.field(f, 'N')
+            else:
+                w.field(f, 'C')
+
+        #create records
+        for o in queryset.order_by('id'):
+            w.point(o.point_x(), o.point_y())
+            data = [o.__dict__.get(k) for k in fields_to_export]
+            w.record(data[0], data[1], data[2], data[3], data[4],
+                     data[5], data[6], data[7], data[8], data[9],
+                     data[10], data[11], data[12], data[13], data[14],
+                     data[15], data[16], data[17])
+
+        w.close()
+
+        #zip all all three StringIO objects and write to an HttpResponse
+        response = HttpResponse(content_type='application/zip')  # declare the response type
+        response['Content-Disposition'] = 'attachment; filename="PSR_Survey-Occurrences.zip"'  # declare the file name
+        with ZipFile(response, 'w') as zip_response:
+            # Create three files
+            with zip_response.open('PSR_Survey-Occurrences.shp', 'w') as file1:
+                file1.write(shp.getvalue())
+            with zip_response.open('PSR_Survey-Occurrences.shx', 'w') as file2:
+                file2.write(shx.getvalue())
+            with zip_response.open('PSR_Survey-Occurrences.dbf', 'w') as file3:
+                file3.write(dbf.getvalue())
+            with zip_response.open('PSR_Survey-Occurrences.prj', 'w') as file4:
+                epsg = 'GEOGCS["WGS 84",'
+                epsg += 'DATUM["WGS_1984",'
+                epsg += 'SPHEROID["WGS 84",6378137,298.257223563]]'
+                epsg += ',PRIMEM["Greenwich",0],'
+                epsg += 'UNIT["degree",0.0174532925199433]]'
+                file4.write(epsg.encode())
+
+        return response
+    export_shapefile.short_description = "Export shapefile"
 
     def subtype_arch(self, request, queryset):
         for q in queryset:
@@ -390,10 +450,17 @@ class GeologicalContextAdmin(projects.admin.PaleoCoreLocalityAdminGoogle):
     export_simple_csv.short_description = "Export simple report to csv"
 
     def export_shapefile(self, request, queryset):
-        response = HttpResponse(content_type='application/vnd.shp')  # declare the response type
-        response['Content-Disposition'] = 'attachment; filename="PSR_Geological-Contexts.shp"'  # declare the file name
-        w = shapefile.Writer(response) #doesn't like this, needs to have a filepath not a response object for this writer
-        #TODO figure out how to save the file locally and then output the file via response?
+        try:
+            from StringIO import StringIO
+        except ImportError:
+            from io import BytesIO as StringIO
+
+        shp = StringIO()
+        shx = StringIO()
+        dbf = StringIO()
+        w = shapefile.Writer(shp=shp, shx=shx, dbf=dbf)
+
+        #TODO figure out the workflow for this to understand what fields need to be exported
         fields_to_export = ['id', 'name', 'context_type', 'geology_type', 'description',
                             'dip', 'strike', 'color', 'texture', 'height', 'width', 'depth',
                             'slope_character', 'sediment_presence', 'sediment_character',
@@ -410,18 +477,46 @@ class GeologicalContextAdmin(projects.admin.PaleoCoreLocalityAdminGoogle):
 
         #create fields
         for f in fields_to_export:
-            w.field(f, 'C')
+            if f in NUMERICS:
+                w.field(f, 'N')
+            else:
+                w.field(f, 'C')
 
         #create records
-        for o in queryset.order_by('field_id', 'barcode'):
+        for o in queryset.order_by('id'):
             w.point(o.point_x(), o.point_y())
             data = [o.__dict__.get(k) for k in fields_to_export]
-            w.record(data)
+            w.record(data[0], data[1], data[2], data[3], data[4],
+                     data[5], data[6], data[7], data[8], data[9],
+                     data[10], data[11], data[12], data[13], data[14],
+                     data[15], data[16], data[17], data[18], data[19],
+                     data[20], data[21], data[22], data[23], data[24],
+                     data[25], data[26], data[27], data[28], data[29],
+                     data[30], data[31], data[32], data[33], data[34],
+                     data[35], data[36], data[37], data[38], data[39],
+                     data[40])
 
         w.close()
-        #figure out how to output to Download like CSV does
-        return response
 
+        #zip all all three StringIO objects and write to an HttpResponse
+        response = HttpResponse(content_type='application/zip')  # declare the response type
+        response['Content-Disposition'] = 'attachment; filename="PSR_Geological-Contexts.zip"'  # declare the file name
+        with ZipFile(response, 'w') as zip_response:
+            with zip_response.open('PSR_Geological-Contexts.shp', 'w') as file1:
+                file1.write(shp.getvalue())
+            with zip_response.open('PSR_Geological-Contexts.shx', 'w') as file2:
+                file2.write(shx.getvalue())
+            with zip_response.open('PSR_Geological-Contexts.dbf', 'w') as file3:
+                file3.write(dbf.getvalue())
+            with zip_response.open('PSR_Geological-Contexts.prj', 'w') as file4:
+                epsg = 'GEOGCS["WGS 84",'
+                epsg += 'DATUM["WGS_1984",'
+                epsg += 'SPHEROID["WGS 84",6378137,298.257223563]]'
+                epsg += ',PRIMEM["Greenwich",0],'
+                epsg += 'UNIT["degree",0.0174532925199433]]'
+                file4.write(epsg.encode())
+
+        return response
     export_shapefile.short_description = "Export shapefile"
 
     def get_urls(self):
