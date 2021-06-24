@@ -642,7 +642,7 @@ def import_pre2020_geology_shapefile(filename):
                 pass
 
             #set point
-            if r.shape.shapeType is 1:  # point
+            if r.shape.shapeType == 1:  # point
                 coords = r.shape.points[0]
                 geom = GEOSGeometry("POINT(" + str(coords[0]) + " " + str(coords[1]) + ")", 4326)
             psr_g.point = geom
@@ -685,7 +685,7 @@ def import_pre2020_geology_shapefile(filename):
             else:
                 psr_g.sediment_presence = r.record["Sediment P"]
 
-            if r.shape.shapeType is 1:  # point
+            if r.shape.shapeType == 1:  # point
                 coords = r.shape.points[0]
                 geom = GEOSGeometry("POINT(" + str(coords[0]) + " " + str(coords[1]) + ")", 4326)
             # elif r.shape.shapeType is 5: #polygon
@@ -751,7 +751,7 @@ def import_pre2020_archaeology_shapefile(filename):
             else:
                 psr_a.sediment_presence = r.record["Sediment P"]
 
-            if r.shape.shapeType is 1:  # point
+            if r.shape.shapeType == 1:  # point
                 coords = r.shape.points[0]
                 geom = GEOSGeometry("POINT(" + str(coords[0]) + " " + str(coords[1]) + ")", 4326)
             # elif r.shape.shapeType is 5: #polygon
@@ -782,7 +782,7 @@ def import_pre2020_archaeology_shapefile(filename):
                 pass
 
             # set point
-            if r.shape.shapeType is 1:  # point
+            if r.shape.shapeType == 1:  # point
                 coords = r.shape.points[0]
                 geom = GEOSGeometry("POINT(" + str(coords[0]) + " " + str(coords[1]) + ")", 4326)
             psr_a.point = geom
@@ -844,7 +844,7 @@ def import_pre2020_locality_points_shapefile(filename):
             pass
 
         # set point
-        if r.shape.shapeType is 1:  # point
+        if r.shape.shapeType == 1:  # point
             coords = r.shape.points[0]
             geom = GEOSGeometry("POINT (" + str(coords[0]) + " " + str(coords[1]) + ")", 4326)
         psr_l.point = geom
@@ -930,6 +930,9 @@ def parse_mdb(file_path, site_name, locality_names=locality_names):
         elif not any(char.isdigit() for char in lname):
             lname2 = lname + " 1"
             locality = GeologicalContext.objects.get(name=lname2)
+        else:
+            print("Need to import Geological Context first!")
+            return
 
     context = MDBTable(file_path, "Context")
     xyz = MDBTable(file_path, "xyz")
@@ -950,7 +953,7 @@ def parse_mdb(file_path, site_name, locality_names=locality_names):
 
         mdb_name = obj[4]
         full_name = [val for key, val in PERSON_DICTIONARY.items() if mdb_name.lower().capitalize() in key]
-        if full_name.__len__() is not 0:
+        if full_name.__len__() != 0:
             name = full_name[0].split(" ")
             psr_eo.found_by = Person.objects.get_or_create(last_name=name[1], first_name=name[0])[0]
 
@@ -1001,8 +1004,12 @@ def parse_mdb(file_path, site_name, locality_names=locality_names):
 
 testcave = "/Users/emilycoco/Desktop/NYU/Kazakhstan/PSR-Paleo-Core/PSR FCLs/Cave_Rockshelter/Cave_Rockshelter"
 testloess = "/Users/emilycoco/Desktop/NYU/Kazakhstan/PSR-Paleo-Core/PSR FCLs/Loess Profile/Loess Profile"
-def import_geo_contexts(filename):
-    sf = shapefile.Reader(filename)
+
+
+def import_geo_contexts(s, d):
+    myshp = open(s, "rb")
+    mydbf = open(d, "rb")
+    sf = shapefile.Reader(shp=myshp, dbf=mydbf)
     sr = sf.shapeRecords()
 
     for r in sr:
@@ -1075,7 +1082,7 @@ def import_geo_contexts(filename):
         psr_g.error_notes=r.record["Error_note"]
         psr_g.notes=r.record["Notes"]
 
-        if r.shape.shapeType is 1:  # point
+        if r.shape.shapeType == 1:  # point
             coords = r.shape.points[0]
             geom = GEOSGeometry("POINT(" + str(coords[0]) + " " + str(coords[1]) + ")", 4326)
         # elif r.shape.shapeType is 5: #polygon
@@ -1096,7 +1103,7 @@ def import_geo_contexts(filename):
         if r.record["Recorded_b"] not in ('-None Selected-', "", None):
             r_name=r.record["Recorded_b"]
             full_name = [val for key, val in PERSON_DICTIONARY.items() if r_name.lower().capitalize() in key]
-            if full_name.__len__() is not 0:
+            if full_name.__len__() != 0:
                 name = full_name[0].split(" ")
                 psr_g.recorded_by = Person.objects.get_or_create(last_name=name[1], first_name=name[0])[0]
 
@@ -1115,8 +1122,12 @@ testarch = "/Users/emilycoco/Desktop/NYU/Kazakhstan/PSR-Paleo-Core/PSR FCLs/Arch
 testagg = "/Users/emilycoco/Desktop/NYU/Kazakhstan/PSR-Paleo-Core/PSR FCLs/Aggregate/Aggregate"
 testbio = "/Users/emilycoco/Desktop/NYU/Kazakhstan/PSR-Paleo-Core/PSR FCLs/Biology/Biology"
 testgeo = "/Users/emilycoco/Desktop/NYU/Kazakhstan/PSR-Paleo-Core/PSR FCLs/Geology/Geology"
-def import_survey_occurrences(filename):
-    sf = shapefile.Reader(filename)
+
+
+def import_survey_occurrences(s, d):
+    myshp = open(s, "rb")
+    mydbf = open(d, "rb")
+    sf = shapefile.Reader(shp=myshp, dbf=mydbf)
     sr = sf.shapeRecords()
 
     for r in sr:
@@ -1135,7 +1146,7 @@ def import_survey_occurrences(filename):
         psr_a.problem_remarks=r.record["Problem_re"]
 
         # set point
-        if r.shape.shapeType is 1:  # point
+        if r.shape.shapeType == 1:  # point
             coords = r.shape.points[0]
             geom = GEOSGeometry("POINT(" + str(coords[0]) + " " + str(coords[1]) + ")", 4326)
         psr_a.point = geom
@@ -1157,7 +1168,7 @@ def import_survey_occurrences(filename):
         if r.record["Collector"] not in ('-None Selected-', "", None, "Null"):
             r_name = r.record["Collector"]
             full_name = [val for key, val in PERSON_DICTIONARY.items() if r_name.lower().capitalize() in key]
-            if full_name.__len__() is not 0:
+            if full_name.__len__() != 0:
                 name = full_name[0].split(" ")
                 psr_a.recorded_by = Person.objects.get_or_create(last_name=name[1], first_name=name[0])[0]
 
@@ -1165,7 +1176,7 @@ def import_survey_occurrences(filename):
         if r.record["Finder"] not in ('-None Selected-', "", None, "Null"):
             r_name = r.record["Finder"]
             full_name = [val for key, val in PERSON_DICTIONARY.items() if r_name.lower().capitalize() in key]
-            if full_name.__len__() is not 0:
+            if full_name.__len__() != 0:
                 name = full_name[0].split(" ")
                 psr_a.found_by = Person.objects.get_or_create(last_name=name[1], first_name=name[0])[0]
 

@@ -6,6 +6,7 @@ from datetime import datetime
 from django.contrib.gis.geos import GEOSGeometry
 from pygeoif import geometry
 from zipfile import ZipFile
+import tempfile
 
 # Django Libraries
 from django.conf import settings
@@ -30,8 +31,31 @@ class ImportShapefile(generic.FormView):
     context_object_name = 'upload'
     success_url = '../?last_import__exact=1'
 
-    def get_import_file(self):
-        return self.request.FILES['shpUpload']
+    # def get_import_files(self):
+    #     return self.request.FILES['shapefileUpload']
+    #
+    # def get_import_file_paths(self):
+    #     import_files = self.get_import_files()
+    #     file_extensions = self.get_import_file_extensions()  # get the file extension
+    #     file_path = os.path.join(settings.MEDIA_ROOT)
+    #     paths = []
+    #     for f in import_files:
+    #         paths.append(file_path + "/" + f.name)
+    #     return paths
+    #
+    # def get_import_file_extensions(self):
+    #     import_files = self.get_import_files()
+    #     file_extensions = []
+    #     for f in import_files:
+    #         import_file_name = f.name
+    #         file_extensions.append(import_file_name[import_file_name.rfind('.') + 1:]) # get the file extension
+    #     return file_extensions
+
+    def get_import_shp_file(self):
+        return self.request.FILES['shpfileUpload']
+
+    def get_import_dbf_file(self):
+        return self.request.FILES['shpfileDataUpload']
 
     def get_import_file_path(self):
         import_file = self.get_import_file()
@@ -45,17 +69,41 @@ class ImportShapefile(generic.FormView):
         return import_file_name[import_file_name.rfind('.') + 1:]  # get the file extension
 
     def import_shapefile_data(self):
-        file = self.get_import_file()
+        # files = self.request.FILES.getlist("file")
+        # for tmp_file, full_path in files:
+        #     print(full_path)
+
+        shp = self.get_import_shp_file()
+        #TODO need to save a temporary copy of the file that can then be accessed by the shapefileReader
+        tempshp, tempshpname = tempfile.mkstemp()
+        try:
+            for chunk in shp.chunks():
+                os.write(tempshp, chunk)
+        except:
+            raise Exception("Problem with input file %s" % shp.name)
+        finally:
+            os.close(tempshp)
+
+        dbf = self.get_import_dbf_file()
+        tempdbf, tempdbfname = tempfile.mkstemp()
+        try:
+            for chunk in dbf.chunks():
+                os.write(tempdbf, chunk)
+        except:
+            raise Exception("Problem with input file %s" % dbf.name)
+        finally:
+            os.close(tempdbf)
 
         if "geologicalcontext" in self.request.path.split("/"):
             print("GeoContext")
             GeologicalContext.objects.all().update(last_import=False)
-            import_geo_contexts(file.temporary_file_path())
+            import_geo_contexts(tempshpname, tempdbfname)
 
-        elif "occurrence" in self.request.path.split("/"):
+        #elif "occurrence" in self.request.path.split("/"):
+        else:
             print("Occurrence")
             Occurrence.objects.all().update(last_import=False)
-            import_survey_occurrences(file.temporary_file_path())
+            import_survey_occurrences(tempshpname, tempdbfname)
             subtype_archaeology(survey=True)
 
     def form_valid(self, form):
@@ -85,14 +133,15 @@ class ImportAccessDatabase(generic.FormView):
 
     def import_excavated_instances(self):
         file = self.get_import_file()
-        name = file.name.split(".")
+        fsplit = file.name.split(".")
+        name = fsplit[0].split("_")
 
-        if name.__len__() == 2:
+        if name.__len__() == 1:
             lname = name[0].capitalize()
         else:
             if name[1].isdigit():
                 lname = name[0].capitalize() + " " + name[1]
-            else:
+            else: #will there ever be geological context names with more than three?
                 lname = name[0].capitalize() + " " + name[1].capitalize()
 
         ExcavationOccurrence.objects.all().update(last_import=False)

@@ -2,21 +2,21 @@ from django import forms
 from psr.models import *
 
 
-class UploadForm(forms.Form):
-    shapefileUpload = forms.FileField(
+class UploadShapefile(forms.Form):
+    shpfileUpload = forms.FileField(
         label='Upload a shape file, *.shp',
     )
-    shapefileIndexUpload = forms.FileField(
-        label='Upload a shape file index, *.shx',
-    )
-    shapefileDataUpload = forms.FileField(
+    # shpIndexUpload = forms.FileField(
+    #     label='Upload a shape file index, *.shx',
+    # )
+    shpfileDataUpload = forms.FileField(
         label='Upload shape file data, *.dbf',
     )
 
-
-class UploadShapefile(forms.Form):
+class UploadShapefileDirectory(forms.Form):
     shapefileUpload = forms.FileField(
-        label='Upload a shape file, *.shp',
+        widget=forms.ClearableFileInput(attrs={'multiple': True, 'webkitdirectory': True, 'directory': True}),
+        label='Upload shapefile directory',
     )
 
 
