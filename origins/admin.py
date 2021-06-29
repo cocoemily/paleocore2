@@ -491,6 +491,8 @@ class NomenAdmin(admin.ModelAdmin):
     list_filter = ['rank', 'is_objective_synonym', 'nomenclatural_status']
     inlines = [NomenPublicationsInline]
     exclude = ['last_import', 'references']
+    search_fields = ['name', 'authorship', 'year']
+    list_editable = ['is_objective_synonym']
 
     def formfield_for_foreignkey(self, db_field, request=None, **kwargs):
         """
