@@ -330,6 +330,21 @@ CHECKING FOR DUPLICATES
 '''
 
 
+def find_duplicates(queryset):
+    unique_id = []
+    duplicates_id = []
+    unique_geoms = []
+
+    for i in queryset.order_by('id'):
+        if i.geom not in unique_geoms: #TODO decide if more checks need to be added
+            unique_geoms.append(i.geom)
+            unique_id.append(i.id)
+        else:
+            duplicates_id.append(i.id)
+
+    return queryset.model.objects.filter(id__in=duplicates_id)
+
+
 def show_duplicate_rows(data_list):
     print("\nChecking for duplicate records.")
     unique_data_list = []
