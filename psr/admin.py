@@ -16,11 +16,29 @@ from mapwidgets.widgets import GooglePointFieldWidget
 from .views import *
 from .utilities import *
 
+#TODO figure out why this is not deleting all the duplicates
+def find_and_delete_duplicates(modeladmin, request, queryset):
+    dups = find_duplicates(queryset)
+    numdel = dups.__len__()
+
+    for d in dups:
+        print(d.id)
+
+    if 'apply' in request.POST:
+        for d in dups:
+            d.delete()
+
+        modeladmin.message_user(request,"Deleted {} duplicates".format(numdel))
+        return HttpResponseRedirect(request.get_full_path())
+
+    return render(request, 'admin/psr/duplicates.html', context={'items': dups})
+
+
 psrformfield = {
-        models.CharField: {'widget': TextInput(attrs={'size': '50'})},
-        models.TextField: {'widget': Textarea(attrs={'rows': 5, 'cols': 75})},
-        models.PointField: {"widget": GooglePointFieldWidget}
-    }
+    models.CharField: {'widget': TextInput(attrs={'size': '50'})},
+    models.TextField: {'widget': Textarea(attrs={'rows': 5, 'cols': 75})},
+    models.PointField: {"widget": GooglePointFieldWidget}
+}
 
 default_read_only_fields = ('id', 'geom', 'point_x', 'point_y', 'easting', 'northing', 'date_last_modified',
                             'name', 'date_created', 'last_import', 'collecting_method',)
@@ -28,26 +46,27 @@ default_read_only_fields = ('id', 'geom', 'point_x', 'point_y', 'easting', 'nort
 default_occurrence_filter = ['geological_context', 'collector', 'finder',]
 
 lithic_fields = ('dataclass', 'type1', 'type2', 'technique', 'form', 'raw_material', 'raw_material1',
-              'coretype', 'biftype', 'cortex', 'retedge', 'edgedamage', 'alteration', 'scarmorph',
-              'length_mm', 'width_mm', 'thick_mm', 'weight',
-              'platsurf', 'extplat', 'lip', 'pointimpact', 'platwidth', 'platthick', 'epa',
-              'scarlength', 'tqwidth', 'tqthick', 'midwidth', 'midthick', 'tipwidth','tipthick',
-              'lentowid', 'lentothick', 'roew1', 'roet1', 'roew3', 'roet3')
+                 'coretype', 'biftype', 'cortex', 'retedge', 'edgedamage', 'alteration', 'scarmorph',
+                 'length_mm', 'width_mm', 'thick_mm', 'weight',
+                 'platsurf', 'extplat', 'lip', 'pointimpact', 'platwidth', 'platthick', 'epa',
+                 'scarlength', 'tqwidth', 'tqthick', 'midwidth', 'midthick', 'tipwidth','tipthick',
+                 'lentowid', 'lentothick', 'roew1', 'roet1', 'roew3', 'roet3')
 
 arch_export_fields = ['occurrence_ptr_id', 'archaeology_type',
-                        'length_mm', 'width_mm', 'thick_mm', 'weight',
-                        'archaeology_remarks', 'archaeology_notes']
+                      'length_mm', 'width_mm', 'thick_mm', 'weight',
+                      'archaeology_remarks', 'archaeology_notes']
 bio_export_fields = ['occurrence_ptr_id', 'biology_type',
-                        'sex', 'life_stage', 'size_class',
-                        'taxon', 'verbatim_taxon', 'identification_qualifier', 'verbatim_identification_qualifier',
-                        'taxonomy_remarks', 'type_status', 'fauna_notes']
+                     'sex', 'life_stage', 'size_class',
+                     'taxon', 'verbatim_taxon', 'identification_qualifier', 'verbatim_identification_qualifier',
+                     'taxonomy_remarks', 'type_status', 'fauna_notes']
 geo_export_fields = ['occurrence_ptr_id', 'geology_type',
-                        'dip', 'strike', 'color', 'texture']
+                     'dip', 'strike', 'color', 'texture']
 agg_export_fields = ['occurrence_ptr_id', 'counts',
-                        'screen_size', 'burning', 'bone', 'microfauna', 'molluscs', 'pebbles',
-                        'smallplatforms', 'smalldebris',
-                        'tinyplatforms', 'tinydebris',
-                        'bull_find_remarks']
+                     'screen_size', 'burning', 'bone', 'microfauna', 'molluscs', 'pebbles',
+                     'smallplatforms', 'smalldebris',
+                     'tinyplatforms', 'tinydebris',
+                     'bull_find_remarks']
+
 
 #from Django Forum from user kazukiyo923
 class ImagesInline(admin.TabularInline):
@@ -114,11 +133,11 @@ class OccurrenceAdmin(projects.admin.PaleoCoreOccurrenceAdmin):
     save_as = True
     formfield_overrides = psrformfield
 
-    actions = ['export_simple_csv', 'export_shapefile', 'subtype_arch', 'subtype_bio', 'subtype_geo', 'subtype_agg']
+    actions = [find_and_delete_duplicates, 'export_simple_csv', 'export_shapefile', 'subtype_arch', 'subtype_bio', 'subtype_geo', 'subtype_agg']
 
     def export_simple_csv(self, request, queryset):
         fields_to_export = ['id', 'field_id', 'find_type', 'item_description', 'item_type', 'item_count',
-                             'finder', 'collector',
+                            'finder', 'collector',
                             'basis_of_record', 'collecting_method', 'collection_remarks',
                             'date_collected', 'date_created', 'date_last_modified',
                             'problem', 'problem_comment', 'remarks', 'georeference_remarks',
@@ -277,7 +296,7 @@ class ExcavationOccurrenceAdmin(projects.admin.PaleoCoreOccurrenceAdmin):
     save_as = True
     formfield_overrides = psrformfield
 
-    actions = ['export_simple_csv', 'subtype_arch', 'subtype_bio', 'subtype_geo', 'subtype_agg']
+    actions = [find_and_delete_duplicates, 'export_simple_csv', 'subtype_arch', 'subtype_bio', 'subtype_geo', 'subtype_agg']
 
     def export_simple_csv(self, request, queryset):
         fields_to_export = ['id', 'field_id', 'cat_number', 'type', 'item_type',
@@ -413,7 +432,7 @@ class GeologicalContextAdmin(projects.admin.PaleoCoreLocalityAdminGoogle):
 
     inlines = [ImagesInline]
 
-    actions = ['export_simple_csv', 'export_shapefile']
+    actions = [find_and_delete_duplicates, 'export_simple_csv', 'export_shapefile']
 
     def export_simple_csv(self, request, queryset):
         fields_to_export = ['id', 'name', 'context_type', 'geology_type', 'description',
@@ -578,7 +597,7 @@ class ArchaeologyAdmin(OccurrenceAdmin):
                  }),
                  OccurrenceAdmin.fieldsets[2])
 
-    actions = ['export_simple_csv', 'subtype_lithic', 'subtype_bone', 'subtype_ceramic']
+    actions = [find_and_delete_duplicates, 'export_simple_csv', 'subtype_lithic', 'subtype_bone', 'subtype_ceramic']
 
     inlines = [LithicInline, BoneInline, CeramicInline, ImagesInline]
 
@@ -672,7 +691,7 @@ class BiologyAdmin(OccurrenceAdmin):
 
     fields_to_export = bio_export_fields
 
-    actions = ['export_simple_csv']
+    actions = [find_and_delete_duplicates, 'export_simple_csv']
 
     def export_simple_csv(self, request, queryset):
         fields_to_export = bio_export_fields
@@ -728,7 +747,7 @@ class GeologyAdmin(OccurrenceAdmin):
 
     fields_to_export = geo_export_fields
 
-    actions = ['export_simple_csv']
+    actions = [find_and_delete_duplicates, 'export_simple_csv']
 
     def export_simple_csv(self, request, queryset):
         fields_to_export = geo_export_fields
@@ -785,7 +804,7 @@ class AggregateAdmin(OccurrenceAdmin):
 
     fields_to_export = agg_export_fields
 
-    actions = ['export_simple_csv']
+    actions = [find_and_delete_duplicates, 'export_simple_csv']
 
     def export_simple_csv(self, request, queryset):
         fields_to_export = agg_export_fields
@@ -866,12 +885,12 @@ class ExcavatedArchaeologyAdmin(ExcavationOccurrenceAdmin):
 
     inlines = [ExcavLithicInline, ExcavBoneInline, ExcavCeramicInline]
 
-    actions = ['export_simple_csv', 'subtype_lithic', 'subtype_bone', 'subtype_ceramic']
+    actions = [find_and_delete_duplicates, 'export_simple_csv', 'subtype_lithic', 'subtype_bone', 'subtype_ceramic']
 
     def export_simple_csv(self, request, queryset):
         fields_to_export = arch_export_fields
         occurrence_export = ['id', 'field_id', 'cat_number', 'type', 'item_type',
-                            'prism', 'point', 'unit', 'level', 'excavator']
+                             'prism', 'point', 'unit', 'level', 'excavator']
         lithic_export = list(lithic_fields)
         ceramic_export = ['type', 'decorated']
         bone_export = ['cutmarks', 'burning', 'part']
@@ -950,7 +969,7 @@ class ExcavatedBiologyAdmin(ExcavationOccurrenceAdmin):
                  }),
                  ExcavationOccurrenceAdmin.fieldsets[2])
 
-    actions = ['export_simple_csv']
+    actions = [find_and_delete_duplicates, 'export_simple_csv']
 
     def export_simple_csv(self, request, queryset):
         fields_to_export = bio_export_fields
@@ -1000,7 +1019,7 @@ class ExcavatedGeologyAdmin(ExcavationOccurrenceAdmin):
                  }),
                  ExcavationOccurrenceAdmin.fieldsets[2])
 
-    actions = ['export_simple_csv']
+    actions = [find_and_delete_duplicates, 'export_simple_csv']
 
     def export_simple_csv(self, request, queryset):
         fields_to_export = geo_export_fields
@@ -1051,7 +1070,7 @@ class ExcavatedAggregateAdmin(ExcavationOccurrenceAdmin):
                  }),
                  ExcavationOccurrenceAdmin.fieldsets[2])
 
-    actions = ['export_simple_csv']
+    actions = [find_and_delete_duplicates, 'export_simple_csv']
 
     def export_simple_csv(self, request, queryset):
         fields_to_export = agg_export_fields
