@@ -21,9 +21,6 @@ def find_and_delete_duplicates(modeladmin, request, queryset):
     dups = find_duplicates(queryset)
     numdel = dups.__len__()
 
-    for d in dups:
-        print(d.id)
-
     if 'apply' in request.POST:
         for d in dups:
             d.delete()
@@ -503,6 +500,7 @@ class GeologicalContextAdmin(projects.admin.PaleoCoreLocalityAdminGoogle):
 
         #create records
         for o in queryset.order_by('id'):
+            #print(o.name)
             w.point(o.point_x(), o.point_y())
             data = [o.__dict__.get(k) for k in fields_to_export]
             w.record(data[0], data[1], data[2], data[3], data[4],

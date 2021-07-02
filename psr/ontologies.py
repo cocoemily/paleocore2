@@ -4,7 +4,7 @@ import projects.ontologies as ontologies
 BASIS_OF_RECORD_VOCABULARY = ontologies.BASIS_OF_RECORD_VOCABULARY
 
 # Numeric Model Fields
-NUMERICS = ('id', 'dip', 'strike', 'height', 'width', 'depth', 'upper_limit_in_section', 'lower_limit_in_section',
+NUMERICS = ('id', 'height', 'width', 'depth', 'upper_limit_in_section', 'lower_limit_in_section',
             'loess_mean_thickness', 'loess_max_thickness', 'loess_amount_coarse_components', 'loess_number_sediment_layers',
             'loess_number_soil_horizons', 'loess_number_coarse_layers', 'loess_number_cultural_horizons', 'item_count',
             'length_mm', 'width_mm', 'thick_mm', 'weight', 'smallplatforms', 'smalldebris', 'tinyplatforms', 'tinydebris', 'counts',)
