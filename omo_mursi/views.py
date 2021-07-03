@@ -14,7 +14,7 @@ from datetime import datetime
 from django.contrib.gis.geos import GEOSGeometry
 from zipfile import ZipFile
 from django.http import HttpResponse
-from django.shortcuts import render_to_response, redirect
+from django.shortcuts import render, redirect
 from django.template import RequestContext
 from django.contrib import messages
 from io import BytesIO
@@ -326,4 +326,4 @@ def change_coordinates_view(request):
                         "item_description": selected_object.item_description
                         }
         the_form = ChangeXYForm(initial=initial_data)
-        return render_to_response('projects/changeXY.html', {"theForm": the_form}, RequestContext(request))
+        return render('projects/changeXY.html', {"theForm": the_form}, RequestContext(request))
