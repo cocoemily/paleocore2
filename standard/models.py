@@ -493,3 +493,30 @@ TermsIndexPage.content_panels = [
     FieldPanel('intro', classname="full"),
     FieldPanel('project')
 ]
+
+
+class TermDetailPage(Page):
+    term = models.ForeignKey('Term', null=True, blank=True, on_delete=models.SET_NULL)
+    intro = RichTextField()
+    body = StreamField([
+        ('heading', blocks.CharBlock(classname="full title")),
+        ('paragraph', blocks.RichTextBlock()),
+        ('image', ImageChooserBlock()),
+    ])
+    date = models.DateField("Post date")
+
+    search_fields = Page.search_fields + [
+        index.SearchField('body'),
+    ]
+    is_public = models.BooleanField(default=False)
+
+
+TermDetailPage.content_panels = [
+    FieldPanel('term'),
+    FieldPanel('title', classname="full title"),
+    FieldPanel('date'),
+    FieldPanel('intro', classname="full"),
+    StreamFieldPanel('body'),
+]
+
+

@@ -148,7 +148,8 @@
 
       // Get site locations from geoJSON
       let siteSource = new ol.source.Vector({
-        url:'https://paleocore.net/origins/origins.geojson',
+        url: {% url sites_geojson %}
+        //url:'https://localhost:8000/origins/origins.geojson',
         format: new ol.format.GeoJSON(),
         projection: 'EPSG:4326'
       });
