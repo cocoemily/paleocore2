@@ -193,10 +193,17 @@ class OccurrenceAdmin(projects.admin.PaleoCoreOccurrenceAdmin):
         for o in queryset.order_by('id'):
             w.point(o.point_x(), o.point_y())
             data = [o.__dict__.get(k) for k in fields_to_export]
+            #gc = GeologicalContext.objects.get(id=o.geological_context_id)
+            images = Image.objects.get_queryset().filter(occurrence=o)
+            ilist = ""
+            for i in images:
+                name = i.description.split("/")[2]
+                ilist = ilist + name + ","
+            ilist = ilist[:-1]
             w.record(data[0], data[1], data[2], data[3], data[4],
                      data[5], data[6], data[7], data[8], data[9],
                      data[10], data[11], data[12], data[13], data[14],
-                     data[15], data[16], data[17])
+                     data[15], data[16], data[17], ilist)
 
         w.close()
 
@@ -218,6 +225,13 @@ class OccurrenceAdmin(projects.admin.PaleoCoreOccurrenceAdmin):
                 epsg += ',PRIMEM["Greenwich",0],'
                 epsg += 'UNIT["degree",0.0174532925199433]]'
                 file4.write(epsg.encode())
+
+            for o in queryset:
+                images = Image.objects.get_queryset().filter(occurrence=o)
+                for i in images:
+                    name = i.description.split("/")[2]
+                    filename = os.path.join("media/uploads/images/", i.description)
+                    zip_response.write(filename=filename, arcname=os.path.basename(filename))
 
         return response
     export_shapefile.short_description = "Export shapefile"
@@ -497,12 +511,20 @@ class GeologicalContextAdmin(projects.admin.PaleoCoreLocalityAdminGoogle):
                 w.field(f, 'N')
             else:
                 w.field(f, 'C')
+        w.field("Photo", 'C')
 
         #create records
         for o in queryset.order_by('id'):
             #print(o.name)
             w.point(o.point_x(), o.point_y())
             data = [o.__dict__.get(k) for k in fields_to_export]
+            images = Image.objects.get_queryset().filter(locality=o,occurrence__isnull=True)
+            ilist = ""
+            for i in images:
+                name = i.description.split("/")[2]
+                ilist = ilist + name + ","
+            ilist = ilist[:-1]
+
             w.record(data[0], data[1], data[2], data[3], data[4],
                      data[5], data[6], data[7], data[8], data[9],
                      data[10], data[11], data[12], data[13], data[14],
@@ -511,7 +533,7 @@ class GeologicalContextAdmin(projects.admin.PaleoCoreLocalityAdminGoogle):
                      data[25], data[26], data[27], data[28], data[29],
                      data[30], data[31], data[32], data[33], data[34],
                      data[35], data[36], data[37], data[38], data[39],
-                     data[40])
+                     data[40], ilist)
 
         w.close()
 
@@ -532,6 +554,13 @@ class GeologicalContextAdmin(projects.admin.PaleoCoreLocalityAdminGoogle):
                 epsg += ',PRIMEM["Greenwich",0],'
                 epsg += 'UNIT["degree",0.0174532925199433]]'
                 file4.write(epsg.encode())
+
+            for o in queryset:
+                images = Image.objects.get_queryset().filter(locality=o, occurrence__isnull=True)
+                for i in images:
+                    name = i.description.split("/")[2]
+                    filename = os.path.join("media/uploads/images/", i.description)
+                    zip_response.write(filename=filename, arcname=os.path.basename(filename))
 
         return response
     export_shapefile.short_description = "Export shapefile"
