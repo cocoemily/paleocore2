@@ -188,6 +188,7 @@ class OccurrenceAdmin(projects.admin.PaleoCoreOccurrenceAdmin):
                 w.field(f, 'N')
             else:
                 w.field(f, 'C')
+            w.field("Image", 'C')
 
         #create records
         for o in queryset.order_by('id'):
@@ -266,7 +267,7 @@ class OccurrenceAdmin(projects.admin.PaleoCoreOccurrenceAdmin):
 
     def get_urls(self):
         tool_item_urls = [
-            path(r'import_data/', psr.views.ImportShapefile.as_view())
+            path(r'import_data/', psr.views.ImportShapefileDirectory.as_view())
         ]
         return tool_item_urls + super(OccurrenceAdmin, self).get_urls()
 
@@ -511,7 +512,7 @@ class GeologicalContextAdmin(projects.admin.PaleoCoreLocalityAdminGoogle):
                 w.field(f, 'N')
             else:
                 w.field(f, 'C')
-        w.field("Photo", 'C')
+        w.field("Image", 'C')
 
         #create records
         for o in queryset.order_by('id'):
@@ -567,7 +568,7 @@ class GeologicalContextAdmin(projects.admin.PaleoCoreLocalityAdminGoogle):
 
     def get_urls(self):
         tool_item_urls = [
-            path(r'import_data/', psr.views.ImportShapefile.as_view()),
+            path(r'import_data/', psr.views.ImportShapefileDirectory.as_view()),
             # path(r'^summary/$',permission_required('mlp.change_occurrence',
             #                         login_url='login/')(self.views.Summary.as_view()),
             #     name="summary"),
@@ -674,6 +675,84 @@ class ArchaeologyAdmin(OccurrenceAdmin):
                 writer.writerow(o.id)
         return response
     export_simple_csv.short_description = "Export simple report to csv"
+
+    #TODO not working
+    def export_shapefile(self, request, queryset):
+        try:
+            from StringIO import StringIO
+        except ImportError:
+            from io import BytesIO as StringIO
+
+        shp = StringIO()
+        shx = StringIO()
+        dbf = StringIO()
+        w = shapefile.Writer(shp=shp, shx=shx, dbf=dbf)
+
+        #TODO figure out the workflow for this to understand what fields need to be exported
+        fields_to_export = ['field_id', 'date_collected', 'basis_of_record',
+                            'find_type', 'item_description', 'item_count',
+                            'collector', 'finder',
+                             'collecting_method', 'geological_context', 'unit',
+                            'item_part', 'disposition', 'preparation_status',
+                            'archaeology_type', 'period', 'length_mm', 'width_mm', 'thick_mm', 'weight',
+                            'collection_remarks', 'problem', 'problem_comment', 'remarks', 'notes']
+
+        #create fields
+        for f in fields_to_export:
+            if f in NUMERICS:
+                w.field(f, 'N')
+            else:
+                w.field(f, 'C')
+            w.field("Image", 'C')
+
+        #create records
+        for o in queryset.order_by('id'):
+            w.point(o.point_x(), o.point_y())
+            data = [o.__dict__.get(k) for k in fields_to_export]
+            #gc = GeologicalContext.objects.get(id=o.geological_context_id)
+            images = Image.objects.get_queryset().filter(occurrence_id=o.occurrence_ptr_id)
+            ilist = ""
+            for i in images:
+                name = i.description.split("/")[2]
+                ilist = ilist + name + ","
+            ilist = ilist[:-1]
+            w.record(data[0], data[1], data[2], data[3], data[4],
+                     data[5], data[6], data[7], data[8], data[9],
+                     data[10], data[11], data[12], data[13], data[14],
+                     data[15], data[16], data[17], data[18], data[19],
+                     data[20], data[21], data[22], data[23], data[24],
+                     ilist)
+
+        w.close()
+
+        #zip all all three StringIO objects and write to an HttpResponse
+        response = HttpResponse(content_type='application/zip')  # declare the response type
+        response['Content-Disposition'] = 'attachment; filename="PSR_Survey-Archaeology.zip"'  # declare the file name
+        with ZipFile(response, 'w') as zip_response:
+            # Create three files
+            with zip_response.open('PSR_Survey-Archaeology.shp', 'w') as file1:
+                file1.write(shp.getvalue())
+            with zip_response.open('PSR_Survey-Archaeology.shx', 'w') as file2:
+                file2.write(shx.getvalue())
+            with zip_response.open('PSR_Survey-Archaeology.dbf', 'w') as file3:
+                file3.write(dbf.getvalue())
+            with zip_response.open('PSR_Survey-Archaeology.prj', 'w') as file4:
+                epsg = 'GEOGCS["WGS 84",'
+                epsg += 'DATUM["WGS_1984",'
+                epsg += 'SPHEROID["WGS 84",6378137,298.257223563]]'
+                epsg += ',PRIMEM["Greenwich",0],'
+                epsg += 'UNIT["degree",0.0174532925199433]]'
+                file4.write(epsg.encode())
+
+            for o in queryset:
+                images = Image.objects.get_queryset().filter(occurrence=o)
+                for i in images:
+                    name = i.description.split("/")[2]
+                    filename = os.path.join("media/uploads/images/", i.description)
+                    zip_response.write(filename=filename, arcname=os.path.basename(filename))
+
+        return response
+    export_shapefile.short_description = "Export shapefile"
 
     def subtype_lithic(self, request, queryset):
         for q in queryset:
@@ -1136,4 +1215,3 @@ admin.site.register(ExcavatedArchaeology, ExcavatedArchaeologyAdmin)
 admin.site.register(ExcavatedGeology, ExcavatedGeologyAdmin)
 admin.site.register(Aggregate, AggregateAdmin)
 admin.site.register(ExcavatedAggregate, ExcavatedAggregateAdmin)
-

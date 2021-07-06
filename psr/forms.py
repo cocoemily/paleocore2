@@ -13,6 +13,12 @@ class UploadShapefile(forms.Form):
         label='Upload shape file data, *.dbf',
     )
 
+    photoUpload = forms.FileField(
+        widget=forms.ClearableFileInput(attrs={'multiple': True}),
+        label='Upload all photos',
+    )
+
+
 class UploadShapefileDirectory(forms.Form):
     shapefileUpload = forms.FileField(
         widget=forms.ClearableFileInput(attrs={'multiple': True, 'webkitdirectory': True, 'directory': True}),

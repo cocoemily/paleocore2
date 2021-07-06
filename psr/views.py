@@ -31,31 +31,14 @@ class ImportShapefile(generic.FormView):
     context_object_name = 'upload'
     success_url = '../?last_import__exact=1'
 
-    # def get_import_files(self):
-    #     return self.request.FILES['shapefileUpload']
-    #
-    # def get_import_file_paths(self):
-    #     import_files = self.get_import_files()
-    #     file_extensions = self.get_import_file_extensions()  # get the file extension
-    #     file_path = os.path.join(settings.MEDIA_ROOT)
-    #     paths = []
-    #     for f in import_files:
-    #         paths.append(file_path + "/" + f.name)
-    #     return paths
-    #
-    # def get_import_file_extensions(self):
-    #     import_files = self.get_import_files()
-    #     file_extensions = []
-    #     for f in import_files:
-    #         import_file_name = f.name
-    #         file_extensions.append(import_file_name[import_file_name.rfind('.') + 1:]) # get the file extension
-    #     return file_extensions
-
     def get_import_shp_file(self):
         return self.request.FILES['shpfileUpload']
 
     def get_import_dbf_file(self):
         return self.request.FILES['shpfileDataUpload']
+
+    def get_photos(self):
+        return self.request.FILES.getlist('photoUpload')
 
     def get_import_file_path(self):
         import_file = self.get_import_file()
@@ -69,12 +52,7 @@ class ImportShapefile(generic.FormView):
         return import_file_name[import_file_name.rfind('.') + 1:]  # get the file extension
 
     def import_shapefile_data(self):
-        # files = self.request.FILES.getlist("file")
-        # for tmp_file, full_path in files:
-        #     print(full_path)
-
         shp = self.get_import_shp_file()
-        #TODO need to save a temporary copy of the file that can then be accessed by the shapefileReader
         tempshp, tempshpname = tempfile.mkstemp()
         try:
             for chunk in shp.chunks():
@@ -97,7 +75,7 @@ class ImportShapefile(generic.FormView):
         if "geologicalcontext" in self.request.path.split("/"):
             print("GeoContext")
             GeologicalContext.objects.all().update(last_import=False)
-            import_geo_contexts(tempshpname, tempdbfname)
+            import_geo_contexts(tempshpname, tempdbfname, self.get_photos())
 
         #elif "occurrence" in self.request.path.split("/"):
         else:
@@ -109,6 +87,71 @@ class ImportShapefile(generic.FormView):
     def form_valid(self, form):
         self.import_shapefile_data()
         return super(ImportShapefile, self).form_valid(form)
+
+
+class ImportShapefileDirectory(generic.FormView):
+    template_name = "admin/psr/import_file.html"
+    form_class = UploadShapefileDirectory
+    context_object_name = 'upload'
+    success_url = '../?last_import__exact=1'
+
+    def get_import_files(self):
+        return self.request.FILES.getlist('shapefileUpload')
+
+    def get_shp_file(self):
+        for f in self.get_import_files():
+            if f.name.endswith(".shp"):
+                return f
+
+    def get_dbf_file(self):
+        for f in self.get_import_files():
+            if f.name.endswith(".dbf"):
+                return f
+
+    def get_photos(self):
+        img = []
+        for f in self.get_import_files():
+            if f.name.endswith(".jpg"):
+                img.append(f)
+
+        return img
+
+    def import_shapefile_data(self):
+        shp = self.get_shp_file()
+        tempshp, tempshpname = tempfile.mkstemp()
+        try:
+            for chunk in shp.chunks():
+                os.write(tempshp, chunk)
+        except:
+            raise Exception("Problem with input file %s" % shp.name)
+        finally:
+            os.close(tempshp)
+
+        dbf = self.get_dbf_file()
+        tempdbf, tempdbfname = tempfile.mkstemp()
+        try:
+            for chunk in dbf.chunks():
+                os.write(tempdbf, chunk)
+        except:
+            raise Exception("Problem with input file %s" % dbf.name)
+        finally:
+            os.close(tempdbf)
+
+        if "geologicalcontext" in self.request.path.split("/"):
+            print("GeoContext")
+            GeologicalContext.objects.all().update(last_import=False)
+            import_geo_contexts(tempshpname, tempdbfname, self.get_photos())
+
+        # elif "occurrence" in self.request.path.split("/"):
+        else:
+            print("Occurrence")
+            Occurrence.objects.all().update(last_import=False)
+            import_survey_occurrences(tempshpname, tempdbfname, self.get_photos())
+            subtype_archaeology(survey=True)
+
+    def form_valid(self, form):
+        self.import_shapefile_data()
+        return super(ImportShapefileDirectory, self).form_valid(form)
 
 
 class ImportAccessDatabase(generic.FormView):

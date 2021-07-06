@@ -1021,7 +1021,7 @@ testcave = "/Users/emilycoco/Desktop/NYU/Kazakhstan/PSR-Paleo-Core/PSR FCLs/Cave
 testloess = "/Users/emilycoco/Desktop/NYU/Kazakhstan/PSR-Paleo-Core/PSR FCLs/Loess Profile/Loess Profile"
 
 
-def import_geo_contexts(s, d):
+def import_geo_contexts(s, d, photos):
     myshp = open(s, "rb")
     mydbf = open(d, "rb")
     sf = shapefile.Reader(shp=myshp, dbf=mydbf)
@@ -1126,11 +1126,9 @@ def import_geo_contexts(s, d):
         #return psr_g #for testing
         psr_g.save()
 
-        #TODO how to assign photo directory from uploaded file
-
-        # photodir = ""
-        # photonames = r.record["Photo"].split(",")
-        # upload_pictures(photonames, psr_g, photodir)
+        if "Image" in sf.fields:
+            photonames = r.record["Image"].split(",")
+            upload_photo_files(photonames, psr_g, photos)
 
 
 testarch = "/Users/emilycoco/Desktop/NYU/Kazakhstan/PSR-Paleo-Core/PSR FCLs/Archaeology/Archaeology"
@@ -1139,7 +1137,7 @@ testbio = "/Users/emilycoco/Desktop/NYU/Kazakhstan/PSR-Paleo-Core/PSR FCLs/Biolo
 testgeo = "/Users/emilycoco/Desktop/NYU/Kazakhstan/PSR-Paleo-Core/PSR FCLs/Geology/Geology"
 
 
-def import_survey_occurrences(s, d):
+def import_survey_occurrences(s, d, photos):
     myshp = open(s, "rb")
     mydbf = open(d, "rb")
     sf = shapefile.Reader(shp=myshp, dbf=mydbf)
@@ -1284,11 +1282,23 @@ def import_survey_occurrences(s, d):
         #return psr_a #for testing purposes
         psr_a.save()  # last step to add it to the database
 
-        # TODO how to assign photo directory from uploaded file
-
-        # photodir = ""
-        # photonames = r.record["Photo"].split(",")
-        # upload_pictures(photonames, psr_a, photodir)
+        if "Image" in sf.fields:
+            photonames = r.record["Image"].split(",")
+            upload_photo_files(photonames, psr_a, photos)
 
 
-# tODO functions for importing shapefiles from subtyped pages?
+def upload_photo_files(photonames, obj, photos):
+     if not 'N/A' in photonames[0]:
+        for p in photos:
+            if p.name in photonames:
+                upload_dir = Image._meta.get_field('image').upload_to
+                name = os.path.join(upload_dir, str(obj.id) + '_' + p.name)
+                if type(obj) is Occurrence:
+                    o = Occurrence.objects.get_or_create(id = obj.id)[0]
+                    l = obj.geological_context
+                    im = Image.objects.get_or_create(occurrence=o, locality=l, description=name)[0]
+                elif type(obj) is GeologicalContext:
+                    l = GeologicalContext.objects.get_or_create(id = obj.id)[0]
+                    im = Image.objects.get_or_create(locality=l, description=name)[0]
+                im.image.save(name, p)
+                im.save()
