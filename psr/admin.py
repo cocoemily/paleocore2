@@ -37,8 +37,8 @@ psrformfield = {
     models.PointField: {"widget": GooglePointFieldWidget}
 }
 
-default_read_only_fields = ('id', 'geom', 'point_x', 'point_y', 'easting', 'northing', 'date_last_modified',
-                            'name', 'date_created', 'last_import', 'collecting_method',)
+default_read_only_fields = ('id', 'geom', 'point_x', 'point_y', 'easting', 'northing', 'date_last_modified', 'date_created', 'last_import', 'date_collected',
+                            'basis_of_record', 'collecting_method')
 
 default_occurrence_filter = ['geological_context', 'collector', 'finder',]
 
@@ -93,30 +93,32 @@ class OccurrenceAdmin(projects.admin.PaleoCoreOccurrenceAdmin):
     change_list_template = 'admin/psr/psr_change_list.html'
 
     readonly_fields = default_read_only_fields + (
-        'date_recorded', 'field_number', 'basis_of_record',
-        'found_by', 'collector', 'finder',
-        'field_id', 'item_type', 'find_type', 'name')
+        'date_recorded', 'field_number',
+        'found_by', 'recorded_by', 'collector', 'finder',
+         'item_type', 'find_type',)
     list_filter = ['item_type'] + default_occurrence_filter
-    search_fields = ['id', 'item_type', 'item_description', 'barcode', 'field_id']
+    search_fields = ['id', 'item_type', 'item_description', 'field_id']
     list_per_page = 500
 
     list_display = ('field_id', 'item_type', 'find_type', 'geological_context')
     fieldsets = (
         ('Record Details', {
-            'fields': [('field_id', 'item_type', 'find_type', 'name'),
+            'fields': [('field_id', 'item_type', 'find_type'),
                        ('item_description'),
                        ('basis_of_record',),
                        ('remarks',),
-                       ('date_recorded', 'date_created', 'date_last_modified')]
+                       ('date_collected', 'date_created', 'date_last_modified')]
         }),
         ('Find Details', {
             'fields': [('collecting_method',),
-                       ('collector', 'finder', 'found_by'),
-                       ('item_count', 'field_number',),
+                       ('collector', 'recorded_by', 'finder', 'found_by'),
+                       ('item_count', 'item_part', 'disposition', 'preparation_status'),
+                       ('collection_remarks')
                        ]
         }),
         ('Location', {
-            'fields': [('geom',), ('point')]
+            'fields': [ ('geological_context'), ('unit'),
+                        ('geom',), ('point')]
         }),
         ('Problems', {
             'fields': [('problem', 'problem_comment'),
@@ -226,13 +228,6 @@ class OccurrenceAdmin(projects.admin.PaleoCoreOccurrenceAdmin):
                 epsg += ',PRIMEM["Greenwich",0],'
                 epsg += 'UNIT["degree",0.0174532925199433]]'
                 file4.write(epsg.encode())
-
-            for o in queryset:
-                images = Image.objects.get_queryset().filter(occurrence=o)
-                for i in images:
-                    name = i.description.split("/")[2]
-                    filename = os.path.join("media/uploads/images/", i.description)
-                    zip_response.write(filename=filename, arcname=os.path.basename(filename))
 
         return response
     export_shapefile.short_description = "Export shapefile"
@@ -381,26 +376,29 @@ class GeologicalContextResource(resources.ModelResource):
 
 class GeologicalContextAdmin(projects.admin.PaleoCoreLocalityAdminGoogle):
     resource_class = GeologicalContextResource
-    change_list_template = 'admin/psr/psr_change_list.html'
+    change_list_template = 'admin/psr/psr_geo_change_list.html'
 
-    readonly_fields = default_read_only_fields + ('date_collected', 'context_type', 'basis_of_record', 'recorded_by')
+    readonly_fields = default_read_only_fields + ('date_collected', 'basis_of_record', 'recorded_by')
     list_filter = ['context_type', 'basis_of_record', 'collecting_method', 'geology_type', 'sediment_presence']
     list_per_page = 500
-    search_fields = ['id', 'item_scientific_name', 'item_description', 'barcode', 'cat_number', 'name', 'geology_type',
-                     'context_type']
+    search_fields = ['id',  'name', 'geology_type', 'context_type']
 
     list_display = ('name', 'context_type', 'geology_type')
     fieldsets = (
         ('Record Details', {
             'fields': [('name', 'context_type',),
-                       ('basis_of_record', 'collecting_method'),
-                       ('recorded_by'),
-                       ('remarks',),
+                       ('basis_of_record',),
+                       ('notes',),
                        ('date_collected', 'date_created', 'date_last_modified')]
+        }),
+        ('Find Details', {
+            'fields': [('collecting_method',),
+                       ('recorded_by',),
+                       ]
         }),
         ('Geology Details', {
             'fields': [('geology_type'), ('description'),
-                       ]
+                       ('context_remarks')]
         }),
         ('Cave Details', {
             'fields': [('dip', 'strike', 'color', 'texture', 'height', 'width', 'depth'),
@@ -444,7 +442,7 @@ class GeologicalContextAdmin(projects.admin.PaleoCoreLocalityAdminGoogle):
 
     inlines = [ImagesInline]
 
-    actions = [find_and_delete_duplicates, 'export_simple_csv', 'export_shapefile']
+    actions = [find_and_delete_duplicates, 'export_simple_csv', 'export_shapefile', 'export_photos']
 
     def export_simple_csv(self, request, queryset):
         fields_to_export = ['id', 'name', 'context_type', 'geology_type', 'description',
@@ -556,15 +554,28 @@ class GeologicalContextAdmin(projects.admin.PaleoCoreLocalityAdminGoogle):
                 epsg += 'UNIT["degree",0.0174532925199433]]'
                 file4.write(epsg.encode())
 
+        return response
+    export_shapefile.short_description = "Export shapefile"
+
+    def export_photos(self, request, queryset):
+        response = HttpResponse(content_type='application/zip')  # declare the response type
+        response['Content-Disposition'] = 'attachment; filename="Geological-Context_Photos.zip"'
+
+        with ZipFile(response, 'w') as zip_response:
             for o in queryset:
-                images = Image.objects.get_queryset().filter(locality=o, occurrence__isnull=True)
+                images = Image.objects.get_queryset().filter(locality=o)
+                dirname = o.name
+                print(dirname)
+
                 for i in images:
                     name = i.description.split("/")[2]
                     filename = os.path.join("media/uploads/images/", i.description)
-                    zip_response.write(filename=filename, arcname=os.path.basename(filename))
+                    print(filename)
+                    directory = dirname + "/" + os.path.basename(filename)
+                    zip_response.write(filename=filename, arcname=directory)
 
         return response
-    export_shapefile.short_description = "Export shapefile"
+    export_photos.short_description = "Export photos"
 
     def get_urls(self):
         tool_item_urls = [
@@ -572,6 +583,7 @@ class GeologicalContextAdmin(projects.admin.PaleoCoreLocalityAdminGoogle):
             # path(r'^summary/$',permission_required('mlp.change_occurrence',
             #                         login_url='login/')(self.views.Summary.as_view()),
             #     name="summary"),
+            path(r'import_json/', psr.views.ImportJSON.as_view()),
         ]
         return tool_item_urls + super(GeologicalContextAdmin, self).get_urls()
 
@@ -614,13 +626,11 @@ class ArchaeologyAdmin(OccurrenceAdmin):
 
     formfield_overrides = psrformfield
     fieldsets = (OccurrenceAdmin.fieldsets[0],
-                 ('Find Details', {
+                 OccurrenceAdmin.fieldsets[1],
+                 ('Archaeology Details', {
                      'fields': [('archaeology_type', 'period'),
                                 ('length_mm', 'width_mm', 'thick_mm', 'weight', ),
                                 ('archaeology_remarks', ),
-                                ('collecting_method',),
-                                ('collector', 'finder', 'found_by'),
-                                ('item_count', 'field_number',),
                                 ]
                  }),
                  OccurrenceAdmin.fieldsets[2])
@@ -676,84 +686,6 @@ class ArchaeologyAdmin(OccurrenceAdmin):
         return response
     export_simple_csv.short_description = "Export simple report to csv"
 
-    #TODO not working
-    def export_shapefile(self, request, queryset):
-        try:
-            from StringIO import StringIO
-        except ImportError:
-            from io import BytesIO as StringIO
-
-        shp = StringIO()
-        shx = StringIO()
-        dbf = StringIO()
-        w = shapefile.Writer(shp=shp, shx=shx, dbf=dbf)
-
-        #TODO figure out the workflow for this to understand what fields need to be exported
-        fields_to_export = ['field_id', 'date_collected', 'basis_of_record',
-                            'find_type', 'item_description', 'item_count',
-                            'collector', 'finder',
-                             'collecting_method', 'geological_context', 'unit',
-                            'item_part', 'disposition', 'preparation_status',
-                            'archaeology_type', 'period', 'length_mm', 'width_mm', 'thick_mm', 'weight',
-                            'collection_remarks', 'problem', 'problem_comment', 'remarks', 'notes']
-
-        #create fields
-        for f in fields_to_export:
-            if f in NUMERICS:
-                w.field(f, 'N')
-            else:
-                w.field(f, 'C')
-            w.field("Image", 'C')
-
-        #create records
-        for o in queryset.order_by('id'):
-            w.point(o.point_x(), o.point_y())
-            data = [o.__dict__.get(k) for k in fields_to_export]
-            #gc = GeologicalContext.objects.get(id=o.geological_context_id)
-            images = Image.objects.get_queryset().filter(occurrence_id=o.occurrence_ptr_id)
-            ilist = ""
-            for i in images:
-                name = i.description.split("/")[2]
-                ilist = ilist + name + ","
-            ilist = ilist[:-1]
-            w.record(data[0], data[1], data[2], data[3], data[4],
-                     data[5], data[6], data[7], data[8], data[9],
-                     data[10], data[11], data[12], data[13], data[14],
-                     data[15], data[16], data[17], data[18], data[19],
-                     data[20], data[21], data[22], data[23], data[24],
-                     ilist)
-
-        w.close()
-
-        #zip all all three StringIO objects and write to an HttpResponse
-        response = HttpResponse(content_type='application/zip')  # declare the response type
-        response['Content-Disposition'] = 'attachment; filename="PSR_Survey-Archaeology.zip"'  # declare the file name
-        with ZipFile(response, 'w') as zip_response:
-            # Create three files
-            with zip_response.open('PSR_Survey-Archaeology.shp', 'w') as file1:
-                file1.write(shp.getvalue())
-            with zip_response.open('PSR_Survey-Archaeology.shx', 'w') as file2:
-                file2.write(shx.getvalue())
-            with zip_response.open('PSR_Survey-Archaeology.dbf', 'w') as file3:
-                file3.write(dbf.getvalue())
-            with zip_response.open('PSR_Survey-Archaeology.prj', 'w') as file4:
-                epsg = 'GEOGCS["WGS 84",'
-                epsg += 'DATUM["WGS_1984",'
-                epsg += 'SPHEROID["WGS 84",6378137,298.257223563]]'
-                epsg += ',PRIMEM["Greenwich",0],'
-                epsg += 'UNIT["degree",0.0174532925199433]]'
-                file4.write(epsg.encode())
-
-            for o in queryset:
-                images = Image.objects.get_queryset().filter(occurrence=o)
-                for i in images:
-                    name = i.description.split("/")[2]
-                    filename = os.path.join("media/uploads/images/", i.description)
-                    zip_response.write(filename=filename, arcname=os.path.basename(filename))
-
-        return response
-    export_shapefile.short_description = "Export shapefile"
-
     def subtype_lithic(self, request, queryset):
         for q in queryset:
             archaeology2lithic(q, survey=True)
@@ -784,13 +716,11 @@ class BiologyAdmin(OccurrenceAdmin):
 
     formfield_overrides = psrformfield
     fieldsets = (OccurrenceAdmin.fieldsets[0],
-                 ('Find Details', {
+                 OccurrenceAdmin.fieldsets[1],
+                 ('Biology Details', {
                      'fields': [('biology_type', ),
                                 ('sex', 'life_stage', 'size_class',),
-                                ('taxon', 'identification_qualifier'),
-                                ('collecting_method',),
-                                ('collector', 'finder', 'found_by'),
-                                ('item_count', 'field_number',),
+                                ('verbatim_taxon', 'identification_qualifier'),
                                 ]
                  }),
                  OccurrenceAdmin.fieldsets[2])
@@ -841,12 +771,10 @@ class GeologyAdmin(OccurrenceAdmin):
 
     formfield_overrides = psrformfield
     fieldsets = (OccurrenceAdmin.fieldsets[0],
-                 ('Find Details', {
+                 OccurrenceAdmin.fieldsets[1],
+                 ('Geology Details', {
                      'fields': [('geology_type',),
                                 ('dip', 'strike', 'color', 'texture'),
-                                ('collecting_method',),
-                                ('collector', 'finder', 'found_by'),
-                                ('item_count', 'field_number',),
                                 ]
                  }),
                  OccurrenceAdmin.fieldsets[2])
@@ -897,13 +825,12 @@ class AggregateAdmin(OccurrenceAdmin):
 
     formfield_overrides = psrformfield
     fieldsets = (OccurrenceAdmin.fieldsets[0],
-                 ('Find Details', {
+                 OccurrenceAdmin.fieldsets[1],
+                 ('Aggregate Details', {
                      'fields': [('screen_size', 'counts'),
                                 ('burning', 'bone', 'microfauna', 'molluscs', 'pebbles'),
                                 ('smallplatforms', 'smalldebris', 'tinyplatforms', 'tinydebris'),
-                                ('collecting_method',),
-                                ('collector', 'finder', 'found_by'),
-                                ('item_count', 'field_number',),
+                                ('bull_find_remarks')
                                 ]
                  }),
                  OccurrenceAdmin.fieldsets[2])

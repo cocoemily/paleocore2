@@ -89,3 +89,13 @@ Exporting Data
 * Choose what type of data to exported (for now, either Geological Contexts or Survey Occurrences)
 * Select items to export
 * Select "Export to shapefile" and click go
+
+This will provide point locations for all previous data that can be used with GISPro.
+
+#### Exporting Photos for Selected Locations
+* Run server on local host
+* Choose Geological Contexts
+* Select items to export
+* Select "Export photos" and click go
+
+This will provide a folder with enclosed folders labeled by Geological Context names that can be saved in the iPad files to be accessed easily while on survey.
