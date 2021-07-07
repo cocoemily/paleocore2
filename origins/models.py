@@ -625,7 +625,7 @@ class WorldBorder(models.Model):
     def __str__(self):
         return self.name
 
-
+# Wagtail models to move to separate directory
 # Origins Wagtail models
 
 class SiteIndexPageRelatedLink(Orderable, RelatedLink):
