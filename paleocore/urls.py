@@ -37,6 +37,7 @@ urlpatterns = [
 
     # Origins
     path('origins/', include(('origins.urls', 'origins'), namespace='origins')),
+    path('paleosites/', include(('paleosites.urls', 'paleosites'), namespace="paleosites")),
 
     # Third party django-publications apps
     url(r'^publications/', include('publications.urls')),
