@@ -195,3 +195,21 @@ class ImportAccessDatabase(generic.FormView):
     def form_valid(self, form):
         self.import_excavated_instances()
         return super(ImportAccessDatabase, self).form_valid(form)
+
+
+class ImportJSON(generic.FormView):
+    template_name = "admin/psr/import_file.html"
+    form_class = UploadJSON
+    context_object_name = 'upload'
+    success_url = '../?last_import__exact=1'
+
+    def get_import_file(self):
+        return self.request.FILES['jsonUpload']
+
+    def import_geo_contexts(self):
+        GeologicalContext.objects.all().update(last_import=False)
+        import_geo_context_from_json(self.get_import_file())
+
+    def form_valid(self, form):
+        self.import_geo_contexts()
+        return super(ImportJSON, self).form_valid(form)

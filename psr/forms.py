@@ -32,6 +32,11 @@ class UploadMDB(forms.Form):
     )
 
 
+class UploadJSON(forms.Form):
+    jsonUpload = forms.FileField(
+        label='Upload a JSON file, *.json',
+    )
+
 
 
 # class UploadKMLForm(forms.Form):

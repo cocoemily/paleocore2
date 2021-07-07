@@ -18,6 +18,7 @@ from django.contrib.gis.geos import GEOSGeometry
 from decimal import Decimal
 from mdb_parser import MDBTable
 import unicodecsv
+import json
 
 geo_filename = "/Users/emilycoco/Desktop/NYU/Kazakhstan/PSR-Paleo-Core/PaleoCore-upload/geo_points/geology_21_09_20"
 arch_filename = "/Users/emilycoco/Desktop/NYU/Kazakhstan/PSR-Paleo-Core/PaleoCore-upload/arch_points/archaeology_21_09_20"
@@ -895,7 +896,7 @@ def import_pre2020_data():
 
 #photodir = "/Users/emilycoco/Desktop/NYU/Kazakhstan/PSR-Paleo-Core/PaleoCore-upload/geo_points"
 def upload_pictures(photonames, obj, photodir):
-    if not 'N/A' in photonames[0]:
+    if 'N/A' not in photonames[0]:
         for p in photonames:
             if os.path.isfile(os.path.join(photodir, p)):
                 f = open(os.path.join(photodir, p), 'rb')
@@ -1302,3 +1303,19 @@ def upload_photo_files(photonames, obj, photos):
                     im = Image.objects.get_or_create(locality=l, description=name)[0]
                 im.image.save(name, p)
                 im.save()
+
+def import_geo_context_from_json(file):
+    #f = open(file, "r") #do not need this line if importing from django admin
+    data = json.load(file)
+
+    for o in data['features']:
+        long = o['geometry']['coordinates'][0]
+        lat = o['geometry']['coordinates'][1]
+        name = o['properties']['Title']
+        psr_g = GeologicalContext(name = name)
+        geom = GEOSGeometry("POINT(" + str(long) + " " + str(lat) + ")", 4326)
+        psr_g.geom = geom
+        psr_g.point = geom
+        psr_g.last_import = True
+        psr_g.save()
+
