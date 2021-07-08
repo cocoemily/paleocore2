@@ -92,10 +92,23 @@ class OccurrenceAdmin(projects.admin.PaleoCoreOccurrenceAdmin):
     resource_class = OccurrenceResource
     change_list_template = 'admin/psr/psr_change_list.html'
 
-    readonly_fields = default_read_only_fields + (
+    # readonly_fields = default_read_only_fields + (
+    #     'date_recorded', 'field_number',
+    #     'found_by', 'recorded_by', 'collector', 'finder',
+    #      'item_type', 'find_type',)
+
+    def get_readonly_fields(self, request, obj=None):
+        readonly = []
+        fields = default_read_only_fields + (
         'date_recorded', 'field_number',
         'found_by', 'recorded_by', 'collector', 'finder',
          'item_type', 'find_type',)
+        for field in fields:
+            if obj.__dict__.get(field) not in (None, ''):
+                readonly.append(field)
+
+        return readonly
+
     list_filter = ['item_type'] + default_occurrence_filter
     search_fields = ['id', 'item_type', 'item_description', 'field_id']
     list_per_page = 500
@@ -378,7 +391,16 @@ class GeologicalContextAdmin(projects.admin.PaleoCoreLocalityAdminGoogle):
     resource_class = GeologicalContextResource
     change_list_template = 'admin/psr/psr_geo_change_list.html'
 
-    readonly_fields = default_read_only_fields + ('date_collected', 'basis_of_record', 'recorded_by')
+    #readonly_fields = default_read_only_fields + ('date_collected', 'basis_of_record', 'recorded_by')
+
+    def get_readonly_fields(self, request, obj=None):
+        readonly = []
+        for field in (default_read_only_fields + ('date_collected', 'basis_of_record', 'recorded_by')):
+            if obj.__dict__.get(field) not in (None, ''):
+                readonly.append(field)
+
+        return readonly
+
     list_filter = ['context_type', 'basis_of_record', 'collecting_method', 'geology_type', 'sediment_presence']
     list_per_page = 500
     search_fields = ['id',  'name', 'geology_type', 'context_type']
