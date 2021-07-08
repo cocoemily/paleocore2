@@ -12,6 +12,7 @@ from django.contrib.gis.geos import Point, MultiPoint
 from django.contrib.gis.measure import Distance
 import calendar
 from datetime import datetime
+import dateutil.parser as dp
 import psr.ontologies
 import shapefile
 from django.contrib.gis.geos import GEOSGeometry
@@ -1020,6 +1021,17 @@ def parse_mdb(file_path, site_name, locality_names=locality_names):
 
 testcave = "/Users/emilycoco/Desktop/NYU/Kazakhstan/PSR-Paleo-Core/PSR FCLs/Cave_Rockshelter/Cave_Rockshelter"
 testloess = "/Users/emilycoco/Desktop/NYU/Kazakhstan/PSR-Paleo-Core/PSR FCLs/Loess Profile/Loess Profile"
+testcave2 = "/Users/emilycoco/Desktop/NYU/Kazakhstan/PSR-Paleo-Core/testing/PSR Testing_Cave_Rockshelter/PSR Testing_Cave_Rockshelter"
+testloess2 = "/Users/emilycoco/Desktop/NYU/Kazakhstan/PSR-Paleo-Core/testing/Loess Profile/Loess Profile"
+
+
+def get_first_last_name(r_name):
+    if " " in r_name:
+        full_name = r_name.split(" ")
+    else:
+        full_name = [val for key, val in PERSON_DICTIONARY.items() if r_name.lower().capitalize() in key][0].split(" ")
+
+    return full_name
 
 
 def import_geo_contexts(s, d, photos):
@@ -1036,8 +1048,10 @@ def import_geo_contexts(s, d, photos):
         psr_g.collecting_method=r.record["Collecting"]
         psr_g.description=r.record["Descriptio"]
         psr_g.stratigraphic_section=r.record["Stratigrap"]
-        psr_g.stratigraphic_formation=r.record[10] #Stratigrap_1
-        psr_g.stratigraphic_member=r.record[11] #Stratigrap_2
+        #psr_g.stratigraphic_formation=r.record[10] #Stratigrap_1 with old FCL
+        #psr_g.stratigraphic_member=r.record[11] #Stratigrap_2 with old FCL
+        psr_g.stratigraphic_formation = r.record[9] #Stratigraphic_formation with new FCL
+        psr_g.stratigraphic_member = r.record[10] #Stratigraphic_member with new FCL
         psr_g.upper_limit_in_section=r.record["Upper_limi"]
         psr_g.lower_limit_in_section = r.record["Lower_limi"]
 
@@ -1071,28 +1085,32 @@ def import_geo_contexts(s, d, photos):
             psr_g.size_of_loess=r.record["Size_of_lo"]
 
             if r.record["Loess_mean"] not in ("", None):
-                psr_g.loess_mean_thickness = Decimal(r.record["Loess_mean"])
+                psr_g.loess_mean_thickness = Decimal(r.record["Mean_thick"])
             if r.record["Loess_max_"] not in ("", None):
-                psr_g.loess_max_thickness = Decimal(r.record["Loess_max_"])
+                psr_g.loess_max_thickness = Decimal(r.record["Max_thickn"])
 
-            psr_g.loess_landscape_position=r.record["Loess_land"]
-            psr_g.loess_surface_inclination=r.record["Loess_surf"]
+            psr_g.loess_landscape_position=r.record["Landscape_"]
+            psr_g.loess_surface_inclination=r.record["Surface_in"]
 
-            if r.record["Loess_pres"] in ('-None Selected-'):
+            if r.record["Presence_c"] in ('-None Selected-'):
                 psr_g.loess_presence_coarse_components = None
             else:
-                psr_g.loess_presence_coarse_components = r.record["Loess_pres"]
+                psr_g.loess_presence_coarse_components = r.record["Presence_c"]
 
-            psr_g.loess_amount_coarse_components=Decimal(r.record["Loess_amou"])
-            psr_g.loess_number_sediment_layers=r.record["Loess_numb"]
-            psr_g.loess_number_soil_horizons=r.record[22] #Loess_numb_1
-            psr_g.loess_number_cultural_horizons=r.record[23] #Loess_numb_2
-            psr_g.loess_number_coarse_layers=r.record[24] #Loess_numb_3
+            psr_g.loess_amount_coarse_components=Decimal(r.record["Amount_coa"])
+            psr_g.loess_number_coarse_layers = r.record["Number_coa"]
+            psr_g.loess_number_sediment_layers=r.record["Number_sed"]
+            #psr_g.loess_number_soil_horizons=r.record[22] #Loess_numb_1 with old FCL
+            #psr_g.loess_number_cultural_horizons=r.record[23] #Loess_numb_2 with old FCL
+            #psr_g.loess_number_coarse_layers=r.record[24] #Loess_numb_3 with old FCL
+            psr_g.loess_number_soil_horizons = r.record["Number_soi"]
+            psr_g.loess_number_cultural_horizons = r.record["Number_cult"]
 
-            if r.record["Loess_pres_1"] in ('-None Selected-'): #Loess_pres_1
+
+            if r.record["Presence_v"] in ('-None Selected-'): #Loess_pres_1
                 psr_g.loess_presence_vertical_profile = None
             else:
-                psr_g.loess_presence_vertical_profile = r.record[25]
+                psr_g.loess_presence_vertical_profile = r.record["Presence_v"]
 
         psr_g.context_remarks=r.record["Context_re"]
         psr_g.error_notes=r.record["Error_note"]
@@ -1106,28 +1124,22 @@ def import_geo_contexts(s, d, photos):
         psr_g.geom = geom
         psr_g.point = geom
 
-        if r.record["Date_colle"] is not "":
-            if "at" in r.record["Date_colle"]:
-                psr_g.date_collected = datetime.strptime(r.record["Date_colle"], '%d. %b %Y at %H:%M')
-            elif "," in r.record["Date_colle"]:
-                psr_g.date_collected = datetime.strptime(r.record["Date_colle"], '%d. %b %Y, %H:%M')
-            else:
-                psr_g.date_collected = datetime.strptime(r.record["Date_colle"], '%d. %b %Y')
-        else:
-            psr_g.date_collected = None
+        if r.record["Date_colle"] not in ("", None):
+            psr_g.date_collected = dp.parse(r.record["Date_colle"])
 
         if r.record["Recorded_b"] not in ('-None Selected-', "", None):
             r_name=r.record["Recorded_b"]
-            full_name = [val for key, val in PERSON_DICTIONARY.items() if r_name.lower().capitalize() in key]
-            if full_name.__len__() != 0:
-                name = full_name[0].split(" ")
-                psr_g.recorded_by = Person.objects.get_or_create(last_name=name[1], first_name=name[0])[0]
+            full_name = get_first_last_name(r_name)
+            if full_name.__len__() == 2:
+                psr_g.recorded_by = Person.objects.get_or_create(last_name=full_name[1], first_name=full_name[0])[0]
+            elif full_name.__len() == 1:
+                psr_g.recorded_by = Person.objects.get_or_create(last_name=full_name[0])[0]
 
         psr_g.last_import = True
         #return psr_g #for testing
         psr_g.save()
 
-        if "Image" in sf.fields:
+        if r.record["Image"]:
             photonames = r.record["Image"].split(",")
             upload_photo_files(photonames, psr_g, photos)
 
@@ -1181,28 +1193,26 @@ def import_survey_occurrences(s, d, photos):
         psr_a.collector = r.record["Collector"]
         if r.record["Collector"] not in ('-None Selected-', "", None, "Null"):
             r_name = r.record["Collector"]
-            full_name = [val for key, val in PERSON_DICTIONARY.items() if r_name.lower().capitalize() in key]
-            if full_name.__len__() != 0:
-                name = full_name[0].split(" ")
-                psr_a.recorded_by = Person.objects.get_or_create(last_name=name[1], first_name=name[0])[0]
+            full_name = get_first_last_name(r_name)
+            if full_name.__len__() == 2:
+                psr_a.recorded_by = Person.objects.get_or_create(last_name=full_name[1], first_name=full_name[0])[0]
+            elif full_name.__len() == 1:
+                psr_a.recorded_by = Person.objects.get_or_create(last_name=full_name[0])[0]
 
         psr_a.collector = r.record["Finder"]
         if r.record["Finder"] not in ('-None Selected-', "", None, "Null"):
             r_name = r.record["Finder"]
-            full_name = [val for key, val in PERSON_DICTIONARY.items() if r_name.lower().capitalize() in key]
-            if full_name.__len__() != 0:
-                name = full_name[0].split(" ")
-                psr_a.found_by = Person.objects.get_or_create(last_name=name[1], first_name=name[0])[0]
+            full_name = get_first_last_name(r_name)
+            if full_name.__len__() == 2:
+                psr_a.found_by = Person.objects.get_or_create(last_name=full_name[1], first_name=full_name[0])[0]
+            elif full_name.__len() == 1:
+                psr_a.found_by = Person.objects.get_or_create(last_name=full_name[0])[0]
 
         if r.record["Date_colle"] not in ("", None):
-            if "at" in r.record["Date_colle"]:
-                psr_a.date_collected = datetime.strptime(r.record["Date_colle"], '%d. %b %Y at %H:%M')
-            elif "," in r.record["Date_colle"]:
-                psr_a.date_collected = datetime.strptime(r.record["Date_colle"], '%d. %b %Y, %H:%M')
-            else:
-                psr_a.date_collected = datetime.strptime(r.record["Date_colle"], '%d. %b %Y')
-        else:
-            psr_a.date_collected = None
+            psr_a.date_collected = dp.parse(r.record["Date_colle"])
+
+        psr_a.date_recorded = psr_a.date_collected
+        psr_a.year_collected = psr_a.date_collected.year
 
         # set item type code
         if psr_a.find_type in PSR_ARCHAEOLOGY_VOCABULARY:
@@ -1283,13 +1293,13 @@ def import_survey_occurrences(s, d, photos):
         #return psr_a #for testing purposes
         psr_a.save()  # last step to add it to the database
 
-        if "Image" in sf.fields:
+        if r.record["Image"]:
             photonames = r.record["Image"].split(",")
             upload_photo_files(photonames, psr_a, photos)
 
 
 def upload_photo_files(photonames, obj, photos):
-     if not 'N/A' in photonames[0]:
+     if 'N/A' not in photonames[0]:
         for p in photos:
             if p.name in photonames:
                 upload_dir = Image._meta.get_field('image').upload_to

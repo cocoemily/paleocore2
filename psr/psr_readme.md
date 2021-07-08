@@ -70,7 +70,7 @@ After upload is clicked, the server should display all of the data that you just
   * If importing from the _Cave/Rockshelter_ or _Loess Profile_ forms, import from the Geological Context page
   * If importing from the _Archaeology_, _Biology_, _Geology_, or _Aggregate_ forms, import from the PSR Survey Occurrence page
 * Click "Import New Dataset" button in upper right corner
-* Choose a .shp file and a .dbf to upload. These should have the same name and refer to the same data.
+* Choose folder that contains the .shp, .dbf and photos from GISPro
 * Click "Upload"
 
 After upload is clicked, the server should display all of the data that you just imported. 
