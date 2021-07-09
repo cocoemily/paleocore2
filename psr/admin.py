@@ -640,6 +640,8 @@ class ArchaeologyResource(resources.ModelResource):
 
 
 class ArchaeologyAdmin(OccurrenceAdmin):
+    change_list_template = 'admin/change_list.html'
+
     model = Archaeology
     resource_class = ArchaeologyResource
     # empty_value_display = '-empty-'
@@ -730,6 +732,8 @@ class BiologyResource(resources.ModelResource):
 
 
 class BiologyAdmin(OccurrenceAdmin):
+    change_list_template = 'admin/change_list.html'
+
     model = Biology
     resource_class = BiologyResource
     # empty_value_display = '-empty-'
@@ -785,6 +789,8 @@ class GeologyResource(resources.ModelResource):
 
 
 class GeologyAdmin(OccurrenceAdmin):
+    change_list_template = 'admin/change_list.html'
+
     model = Geology
     resource_class = GeologyResource
     # empty_value_display = '-empty-'
@@ -839,6 +845,8 @@ class AggregateResource(resources.ModelResource):
 
 
 class AggregateAdmin(OccurrenceAdmin):
+    change_list_template = 'admin/change_list.html'
+
     model = Aggregate
     resource_class = AggregateResource
     # empty_value_display = '-empty-'
@@ -919,6 +927,8 @@ class ExcavatedArchaeologyResource(resources.ModelResource):
 
 
 class ExcavatedArchaeologyAdmin(ExcavationOccurrenceAdmin):
+    change_list_template = 'admin/change_list.html'
+
     model = ExcavatedArchaeology
     resource_class = ExcavatedArchaeologyResource
     # empty_value_display = '-empty-'
@@ -1007,6 +1017,8 @@ class ExcavatedBiologyResource(resources.ModelResource):
 
 
 class ExcavatedBiologyAdmin(ExcavationOccurrenceAdmin):
+    change_list_template = 'admin/change_list.html'
+
     model = ExcavatedBiology
     resource_class = BiologyResource
     # empty_value_display = '-empty-'
@@ -1058,6 +1070,8 @@ class ExcavatedGeologyResource(resources.ModelResource):
 
 
 class ExcavatedGeologyAdmin(ExcavationOccurrenceAdmin):
+    change_list_template = 'admin/change_list.html'
+
     model = ExcavatedGeology
     resource_class = ExcavatedGeologyResource
     # empty_value_display = '-empty-'
@@ -1108,6 +1122,8 @@ class ExcavatedAggregateResource(resources.ModelResource):
 
 
 class ExcavatedAggregateAdmin(ExcavationOccurrenceAdmin):
+    change_list_template = 'admin/change_list.html'
+
     model = ExcavatedAggregate
     resource_class = ExcavatedAggregateResource
     # empty_value_display = '-empty-'

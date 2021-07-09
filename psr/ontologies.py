@@ -42,7 +42,7 @@ PSR_BIOLOGY_VOCABULARY = ( microfauna, flora )
 
 PSR_AGGREGATE_VOCABULARY = ("Bucket", "BUCKET", "Aggregate", "Bulk Find", "aggregate", "bulk", "Bulk")
 
-PSR_LITHIC_VOCABULARY = (lithics, lithic, "LITHIC", "manuport")
+PSR_LITHIC_VOCABULARY = (lithics, lithic, "LITHIC", "manuport", "Lithic", "Lithics", "lithic", "lithics")
 
 PSR_BONE_VOCABULARY = (bone, bones, "BONE", "dent", fauna, microfauna)
 
