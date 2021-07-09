@@ -1199,7 +1199,7 @@ def import_survey_occurrences(s, d, photos):
             elif full_name.__len() == 1:
                 psr_a.recorded_by = Person.objects.get_or_create(last_name=full_name[0])[0]
 
-        psr_a.collector = r.record["Finder"]
+        psr_a.finder = r.record["Finder"]
         if r.record["Finder"] not in ('-None Selected-', "", None, "Null"):
             r_name = r.record["Finder"]
             full_name = get_first_last_name(r_name)
@@ -1221,7 +1221,7 @@ def import_survey_occurrences(s, d, photos):
             for key in list(psr_a.__dict__.keys()):
                 new_arch.__dict__[key] = psr_a.__dict__[key]
 
-            new_arch.archaeology_type=r.record["Archaeolog"]
+            new_arch.archaeology_type=psr_a.find_type
             new_arch.period=r.record["Period"]
             new_arch.length_mm=Decimal(r.record["Length_mm"])
             new_arch.width_mm=Decimal(r.record["Width_mm"])
@@ -1234,6 +1234,7 @@ def import_survey_occurrences(s, d, photos):
 
             new_arch.last_import=True
             new_arch.save()
+            subtype_archaeology(survey=True)
 
         elif psr_a.find_type in PSR_BIOLOGY_VOCABULARY:
             psr_a.item_type = "Biological"
@@ -1241,7 +1242,7 @@ def import_survey_occurrences(s, d, photos):
             for key in list(psr_a.__dict__.keys()):
                 new_bio.__dict__[key] = psr_a.__dict__[key]
 
-            new_bio.biology_type=r.record["Biology_ty"]
+            new_bio.biology_type=psr_a.find_type
             new_bio.sex=r.record["Sex"]
             new_bio.life_stage=r.record["Life_stage"]
             new_bio.size_class=r.record["Size_class"]
@@ -1256,7 +1257,7 @@ def import_survey_occurrences(s, d, photos):
             for key in list(psr_a.__dict__.keys()):
                 new_geo.__dict__[key] = psr_a.__dict__[key]
 
-            new_geo.geology_type=r.record["Geology_ty"]
+            new_geo.geology_type=psr_a.find_type
             new_geo.dip=Decimal(r.record["Dip"])
             new_geo.strike=Decimal(r.record["Strike"])
             new_geo.color=r.record["Color"]
@@ -1291,7 +1292,7 @@ def import_survey_occurrences(s, d, photos):
 
         psr_a.last_import = True
         #return psr_a #for testing purposes
-        psr_a.save()  # last step to add it to the database
+        #psr_a.save()  # last step to add it to the database
 
         if r.record["Image"]:
             photonames = r.record["Image"].split(",")
@@ -1313,6 +1314,7 @@ def upload_photo_files(photonames, obj, photos):
                     im = Image.objects.get_or_create(locality=l, description=name)[0]
                 im.image.save(name, p)
                 im.save()
+
 
 def import_geo_context_from_json(file):
     #f = open(file, "r") #do not need this line if importing from django admin

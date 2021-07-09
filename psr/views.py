@@ -147,7 +147,6 @@ class ImportShapefileDirectory(generic.FormView):
             print("Occurrence")
             Occurrence.objects.all().update(last_import=False)
             import_survey_occurrences(tempshpname, tempdbfname, self.get_photos())
-            subtype_archaeology(survey=True)
 
     def form_valid(self, form):
         self.import_shapefile_data()
