@@ -12,13 +12,18 @@
     <div class="grid-x grid-margin-x">
       <div id="standard_page" class="cell">
         {% if self.title %} <h1>{{ self.title }}</h1>
-        {% else %}<h1>References by Year</h1>
+        {% else %}<h1>Origins References by Year</h1>
         {% endif %}
           <div class="special_links">
             <a href="?plain" class="button">Plain text</a>
             <a href="?ris" class="button">RIS</a>
             <a href="?bibtex" class="button">BibTex</a>
           </div>
+          <p>Index</p>
+          {% for year, publications in years %}
+          <a href="{% url 'publications:year' year %}">{{ year }}</a> |
+          {% endfor %}
+          <hr/>
           {% for year, publications in years %}
           <a href="{% url 'publications:year' year %}"><h2>{{ year }}</h2></a>
             <hr/>

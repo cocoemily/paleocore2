@@ -28,19 +28,13 @@ urlpatterns = [
     path('search/', search_views.search, name='search'),
     path('documents/', include(wagtaildocs_urls)),
 
-    url('^sitemap.xml$', sitemap),
-    url(r'^blog/feed/basic$', BasicFeed(), name='basic_feed'),
-    url(r'^blog/feed/extended$', ExtendedFeed(), name='extended_feed'),
-
     # Paleo Core Projects
     path('projects/', include(('projects.urls', 'projects'), namespace='projects')),
 
-    # Origins
-    path('origins/', include(('origins.urls', 'origins'), namespace='origins')),
-    path('paleosites/', include(('paleosites.urls', 'paleosites'), namespace="paleosites")),
-
-    # Third party django-publications apps
-    url(r'^publications/', include('publications.urls')),
+    # Feeds
+    url('^sitemap.xml$', sitemap),
+    url(r'^blog/feed/basic$', BasicFeed(), name='basic_feed'),
+    url(r'^blog/feed/extended$', ExtendedFeed(), name='extended_feed'),
 
     # JSON feed
     url(r'^blog/feed/basic.json$', BasicJsonFeed(), name='basic_json_feed'),
@@ -50,10 +44,31 @@ urlpatterns = [
         r'^images/([^/]*)/(\d*)/([^/]*)/[^/]*$',
         ServeView.as_view(), name='wagtailimages_serve'
     ),
-    # For anything not caught by a more specific rule above, hand over to
-    # Wagtail's serving mechanism
+
+]
+
+# Add urls for the following apps if they are installed
+if 'publications' in settings.INSTALLED_APPS:
+    urlpatterns += [
+        path('publications/', include(('publications.urls', 'publications'), namespace='publications')),
+    ]
+
+if 'origins' in settings.INSTALLED_APPS:
+    urlpatterns += [
+        path('origins/', include(('origins.urls', 'origins'), namespace='origins')),
+    ]
+
+if 'paleosites' in settings.INSTALLED_APPS:
+    urlpatterns += [
+        path('paleosites/', include(('paleosites.urls', 'paleosites'), namespace="paleosites")),
+    ]
+
+# For anything not caught by a more specific rule above, hand over to
+    # Wagtail's serving mechanism. This should be the last item in the urlpatterns list.
+urlpatterns += [
     url(r'', include(wagtail_urls)),
 ]
+
 
 
 if settings.DEBUG:

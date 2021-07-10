@@ -1,5 +1,5 @@
 from django.contrib import admin
-from origins.models import *
+import origins.models
 import origins.util
 from projects.admin import PaleoCoreLocalityAdminGoogle, TaxonomyAdmin
 from django.utils.html import format_html
@@ -26,23 +26,23 @@ class ReferenceAdmin(admin.ModelAdmin):
 
 
 class ReferenceInline(admin.TabularInline):
-    model = Reference.fossil.through
+    model = origins.models.Reference.fossil.through
     extra = 1
 
 
 class ContextPublicationsInline(admin.TabularInline):
-    model = Context.references.through
+    model = origins.models.Context.references.through
     extra = 1
     verbose_name = "Publication"
     verbose_name_plural = "Publications"
 
 
 class ContextInline(admin.TabularInline):
-    model = Context
+    model = origins.models.Context
 
 
 class SitePublicationsInline(admin.TabularInline):
-    model = Site.references.through
+    model = origins.models.Site.references.through
     extra = 1
     verbose_name = "Publication"
     verbose_name_plural = "Publications"
@@ -106,7 +106,7 @@ class ActiveSiteAdmin(SiteAdmin):
     list_display = ['id', 'name', 'country', 'max_ma', 'min_ma', 'fossil_count', 'formation']
 
     def get_queryset(self, request):
-        return Site.objects.filter(origins=True)
+        return origins.models.Site.objects.filter(origins=True)
 
 
 class ContextAdmin(PaleoCoreLocalityAdminGoogle):
@@ -166,7 +166,7 @@ class ContextAdmin(PaleoCoreLocalityAdminGoogle):
 
     def create_site_from_context(self, request, queryset):
         def create_site(context):
-            new_site = Site()
+            new_site = origins.models.Site()
             for key in new_site.get_concrete_field_names():
                 try:
                     new_site.__dict__[key] = context.__dict__[key]
@@ -206,7 +206,7 @@ class ContextAdmin(PaleoCoreLocalityAdminGoogle):
 
 
 class FossilElementInline(admin.TabularInline):
-    model = FossilElement
+    model = origins.models.FossilElement
     fields = ['skeletal_element', 'skeletal_element_subunit', 'skeletal_element_subunit_descriptor',
               'skeletal_element_side', 'skeletal_element_position', 'skeletal_element_complete',
               'skeletal_element_class']
@@ -214,7 +214,7 @@ class FossilElementInline(admin.TabularInline):
 
 
 class PhotosInline(admin.StackedInline):
-    model = Photo
+    model = origins.models.Photo
     extra = 0
     readonly_fields = ('thumbnail',)
     fieldsets = [
@@ -223,7 +223,7 @@ class PhotosInline(admin.StackedInline):
 
 
 class FossilPublicationsInline(admin.TabularInline):
-    model = Fossil.references.through
+    model = origins.models.Fossil.references.through
     extra = 1
     verbose_name = "Publication"
     verbose_name_plural = "Publications"
@@ -408,9 +408,9 @@ class FossilAdmin(admin.ModelAdmin):
         :return:
         """
         if db_field.name == "site" and self.current_obj:
-            kwargs["queryset"] = Site.objects.filter(country=self.current_obj.country).order_by('name')
+            kwargs["queryset"] = origins.models.Site.objects.filter(country=self.current_obj.country).order_by('name')
         if db_field.name == "context" and self.current_obj:
-            kwargs["queryset"] = Context.objects.filter(site=self.current_obj.site).order_by('name')
+            kwargs["queryset"] = origins.models.Context.objects.filter(site=self.current_obj.site).order_by('name')
 
         return super(FossilAdmin, self).formfield_for_foreignkey(db_field, request, **kwargs)
 
@@ -448,7 +448,7 @@ class FossilAdmin(admin.ModelAdmin):
 
 
 class TaxonPublicationsInline(admin.TabularInline):
-    model = Taxon.references.through
+    model = origins.models.Taxon.references.through
     extra = 1
     verbose_name = "Publication"
     verbose_name_plural = "Publications"
@@ -460,7 +460,7 @@ class TaxonAdmin(TaxonomyAdmin):
 
 
 class TTaxonPublicationsInline(admin.TabularInline):
-    model = TTaxon.references.through
+    model = origins.models.TTaxon.references.through
     extra = 1
     verbose_name = "Publication"
     verbose_name_plural = "Publications"
@@ -479,7 +479,7 @@ class TTaxonAdmin(MPTTModelAdmin, TaxonomyAdmin):
 
 
 class NomenPublicationsInline(admin.TabularInline):
-    model = Nomen.references.through
+    model = origins.models.Nomen.references.through
     extra = 1
     verbose_name = "Publication"
     verbose_name_plural = "Publications"
@@ -503,17 +503,17 @@ class NomenAdmin(admin.ModelAdmin):
         :return:
         """
         if db_field.name == "type_object":
-            kwargs["queryset"] = Fossil.objects.filter(is_type_specimen=True).order_by('catalog_number')
+            kwargs["queryset"] = origins.models.Fossil.objects.filter(is_type_specimen=True).order_by('catalog_number')
 
         return super(NomenAdmin, self).formfield_for_foreignkey(db_field, request, **kwargs)
 
 
 # Register your models here.
-admin.site.register(Context, ContextAdmin)
-admin.site.register(Reference, ReferenceAdmin)
-admin.site.register(Fossil, FossilAdmin)
-admin.site.register(Site, SiteAdmin)
+admin.site.register(origins.models.Context, ContextAdmin)
+admin.site.register(origins.models.Reference, ReferenceAdmin)
+admin.site.register(origins.models.Fossil, FossilAdmin)
+admin.site.register(origins.models.Site, SiteAdmin)
 #admin.site.register(Taxon, TaxonAdmin)
-admin.site.register(TTaxon, TTaxonAdmin)
-admin.site.register(TaxonRank)
-admin.site.register(Nomen, NomenAdmin)
+admin.site.register(origins.models.TTaxon, TTaxonAdmin)
+admin.site.register(origins.models.TaxonRank)
+admin.site.register(origins.models.Nomen, NomenAdmin)
