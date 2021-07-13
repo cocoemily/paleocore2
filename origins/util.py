@@ -5,6 +5,8 @@ from lxml import etree
 from django.core.exceptions import ObjectDoesNotExist
 from django.contrib.gis.geos import Point
 from django.utils.text import slugify
+import pandas
+import re
 # import shapefile
 
 # pbdb_file_path = "/Users/reedd/Documents/projects/ete/pbdb/pbdb_test_no_header.csv"
@@ -413,3 +415,33 @@ def update_ttaxon():
             t.epithet = t.name
         t.name = t.label
         t.save()
+
+def clean_catno(catno):
+    res = None
+    try:
+        cc, cn = catno.split(' ')
+        res = ' '.join([cc, cn.strip('0')])
+    except ValueError:
+        res = catno
+    return res
+
+
+def test_catalog_numbers(file='origins/data/turkana_cat2.xlsx'):
+    matched =[]
+    unmatched = []
+    pd = pandas
+    xl = pd.read_excel(file, sheet_name='East')
+    catno = xl['Catno']
+    cleaned = [clean_catno(c) for c in catno]
+
+    east_turkana_site = Site.objects.get(name='East Turkana')
+    origins_list = Fossil.objects.filter(site=east_turkana_site)
+    for c in cleaned:  # iterate through each catalog number in FMSP dataset
+        p = re.compile(c)  # compile
+        for f in origins_list:
+            m = p.match(f.catalog_number)  # attempt to match the FMSP catno to origins
+            if m:  # if there's a match append to matched list
+                matched.append(c)
+            else:
+                unmatched.append(c)
+    return matched, unmatched
