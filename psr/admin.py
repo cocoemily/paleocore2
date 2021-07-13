@@ -275,7 +275,7 @@ class OccurrenceAdmin(projects.admin.PaleoCoreOccurrenceAdmin):
 
     def get_urls(self):
         tool_item_urls = [
-            path(r'import_data/', psr.views.ImportShapefileDirectory.as_view())
+            path('import_data/', psr.views.ImportShapefileDirectory.as_view())
         ]
         return tool_item_urls + super(OccurrenceAdmin, self).get_urls()
 
@@ -374,8 +374,8 @@ class ExcavationOccurrenceAdmin(projects.admin.PaleoCoreOccurrenceAdmin):
 
     def get_urls(self):
         tool_item_urls = [
-            path(r'import_data/', psr.views.ImportAccessDatabase.as_view()),
-            # path(r'^summary/$',permission_required('mlp.change_occurrence',
+            path('import_data/', psr.views.ImportAccessDatabase.as_view()),
+            # path('^summary/$',permission_required('mlp.change_occurrence',
             #                         login_url='login/')(self.views.Summary.as_view()),
             #     name="summary"),
         ]
@@ -601,11 +601,11 @@ class GeologicalContextAdmin(projects.admin.PaleoCoreLocalityAdminGoogle):
 
     def get_urls(self):
         tool_item_urls = [
-            path(r'import_data/', psr.views.ImportShapefileDirectory.as_view()),
-            # path(r'^summary/$',permission_required('mlp.change_occurrence',
+            path('import_data/', psr.views.ImportShapefileDirectory.as_view()),
+            # path('^summary/$',permission_required('mlp.change_occurrence',
             #                         login_url='login/')(self.views.Summary.as_view()),
             #     name="summary"),
-            path(r'import_json/', psr.views.ImportJSON.as_view()),
+            path('import_json/', psr.views.ImportJSON.as_view()),
         ]
         return tool_item_urls + super(GeologicalContextAdmin, self).get_urls()
 
