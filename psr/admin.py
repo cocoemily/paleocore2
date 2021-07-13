@@ -1,34 +1,27 @@
 from django.contrib.gis import admin
-from django.contrib.admin.widgets import AdminFileWidget
+from django.shortcuts import render
 from django.urls import reverse, path
-from django.utils.html import format_html
-#from imagekit.admin import AdminThumbnail
+from django.forms import TextInput, Textarea  # import custom form widgets
+
 
 from import_export import resources
-import tempfile
-import unicodecsv
-import os
+from mapwidgets.widgets import GooglePointFieldWidget
+from zipfile import ZipFile
 
 from .models import *  # import database models from models.py
-import projects.admin
-from django.forms import TextInput, Textarea  # import custom form widgets
-from mapwidgets.widgets import GooglePointFieldWidget
-from .views import *
 from .utilities import *
+from .views import *
 
-#TODO figure out why this is not deleting all the duplicates
+
 def find_and_delete_duplicates(modeladmin, request, queryset):
     dups = find_duplicates(queryset)
     numdel = dups.__len__()
 
-    if 'apply' in request.POST:
-        for d in dups:
-            d.delete()
+    for d in dups:
+        d.delete()
 
-        modeladmin.message_user(request,"Deleted {} duplicates".format(numdel))
-        return HttpResponseRedirect(request.get_full_path())
-
-    return render(request, 'admin/psr/duplicates.html', context={'items': dups})
+    modeladmin.message_user(request,"Deleted {} duplicates".format(numdel))
+    return HttpResponseRedirect(request.get_full_path())
 
 
 psrformfield = {
@@ -275,7 +268,7 @@ class OccurrenceAdmin(projects.admin.PaleoCoreOccurrenceAdmin):
 
     def get_urls(self):
         tool_item_urls = [
-            path('import_data/', psr.views.ImportShapefileDirectory.as_view())
+            path('import_data/', ImportShapefileDirectory.as_view())
         ]
         return tool_item_urls + super(OccurrenceAdmin, self).get_urls()
 
@@ -374,10 +367,7 @@ class ExcavationOccurrenceAdmin(projects.admin.PaleoCoreOccurrenceAdmin):
 
     def get_urls(self):
         tool_item_urls = [
-            path('import_data/', psr.views.ImportAccessDatabase.as_view()),
-            # path('^summary/$',permission_required('mlp.change_occurrence',
-            #                         login_url='login/')(self.views.Summary.as_view()),
-            #     name="summary"),
+            path('import_data/', ImportAccessDatabase.as_view()),
         ]
         return tool_item_urls + super(ExcavationOccurrenceAdmin, self).get_urls()
 
@@ -466,7 +456,7 @@ class GeologicalContextAdmin(projects.admin.PaleoCoreLocalityAdminGoogle):
 
     actions = [find_and_delete_duplicates, 'export_simple_csv', 'export_shapefile', 'export_photos']
 
-    def export_simple_csv(self, request, queryset):
+    def export_simple_csv(self, request, queryset, fields_to_export):
         fields_to_export = ['id', 'name', 'context_type', 'geology_type', 'description',
                             'dip', 'strike', 'color', 'texture', 'height', 'width', 'depth',
                             'slope_character', 'sediment_presence', 'sediment_character',
@@ -601,11 +591,8 @@ class GeologicalContextAdmin(projects.admin.PaleoCoreLocalityAdminGoogle):
 
     def get_urls(self):
         tool_item_urls = [
-            path('import_data/', psr.views.ImportShapefileDirectory.as_view()),
-            # path('^summary/$',permission_required('mlp.change_occurrence',
-            #                         login_url='login/')(self.views.Summary.as_view()),
-            #     name="summary"),
-            path('import_json/', psr.views.ImportJSON.as_view()),
+            path('import_data/', ImportShapefileDirectory.as_view()),
+            path('import_json/', ImportJSON.as_view()),
         ]
         return tool_item_urls + super(GeologicalContextAdmin, self).get_urls()
 

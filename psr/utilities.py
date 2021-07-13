@@ -1,21 +1,21 @@
 from django.core.files.base import ContentFile
 from django.http import HttpResponse, HttpResponseRedirect
-
-from psr.models import *
 from django.core.exceptions import MultipleObjectsReturned, ObjectDoesNotExist
-from psr.ontologies import *
-import collections
-
-import re
-import os
 from django.contrib.gis.geos import Point, MultiPoint
 from django.contrib.gis.measure import Distance
+from django.contrib.gis.geos import GEOSGeometry
+
+from psr.models import *
+from psr.ontologies import *
+
+
+import collections
+import re
+import os
 import calendar
 from datetime import datetime
 import dateutil.parser as dp
-import psr.ontologies
 import shapefile
-from django.contrib.gis.geos import GEOSGeometry
 from decimal import Decimal
 from mdb_parser import MDBTable
 import unicodecsv
