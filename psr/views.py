@@ -1,28 +1,12 @@
-from django.shortcuts import render
-import os
-from fastkml import kml, Placemark, Folder, Document
-from lxml import etree
-from datetime import datetime
-from django.contrib.gis.geos import GEOSGeometry
-from pygeoif import geometry
-from zipfile import ZipFile
 import tempfile
 
 # Django Libraries
 from django.conf import settings
 from django.views import generic
-from django.http import HttpResponse
-from django.shortcuts import render_to_response, redirect
-from django.template import RequestContext
-from django.contrib import messages
-from dateutil.parser import parse
-from django.core.files.base import ContentFile
 
 # App Libraries
-from .models import Occurrence, Biology, Archaeology, Geology, Taxon, IdentificationQualifier
 from .forms import *
 from .utilities import *
-from .ontologies import *  # import vocabularies and choice lists
 
 
 class ImportShapefile(generic.FormView):

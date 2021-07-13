@@ -75,6 +75,21 @@ After upload is clicked, the server should display all of the data that you just
 
 After upload is clicked, the server should display all of the data that you just imported. 
 
+#### Importing Survey Data from Google Maps
+* Add all points to Starred places on Google Maps 
+* Download JSON of Starred places from Google Takeout (https://takeout.google.com/)
+  * Make sure you are logged into the same account on your phone and on your computer
+* Run server on local host
+* Open Geological Context
+* Click "Import from JSON"
+* Choose .json file downloaded from Google Takeout
+* Click "Upload"
+
+After upload is clicked, the server should display all of the data that you just imported. 
+This button will upload the coordinate data and a placeholder name that matches the name seen on Google Maps. 
+Click on each newly imported point to edit the name and attributes.
+
+
 
 Exporting Data
 --------------------
