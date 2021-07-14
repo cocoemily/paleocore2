@@ -1084,9 +1084,9 @@ def import_geo_contexts(s, d, photos):
         if psr_g.context_type in PSR_LOESS_PROF_VOCABULARY: #TODO figure out how to do this more eloquently
             psr_g.size_of_loess=r.record["Size_of_lo"]
 
-            if r.record["Loess_mean"] not in ("", None):
+            if r.record["Mean_thick"] not in ("", None):
                 psr_g.loess_mean_thickness = Decimal(r.record["Mean_thick"])
-            if r.record["Loess_max_"] not in ("", None):
+            if r.record["Max_thickn"] not in ("", None):
                 psr_g.loess_max_thickness = Decimal(r.record["Max_thickn"])
 
             psr_g.loess_landscape_position=r.record["Landscape_"]
@@ -1104,7 +1104,7 @@ def import_geo_contexts(s, d, photos):
             #psr_g.loess_number_cultural_horizons=r.record[23] #Loess_numb_2 with old FCL
             #psr_g.loess_number_coarse_layers=r.record[24] #Loess_numb_3 with old FCL
             psr_g.loess_number_soil_horizons = r.record["Number_soi"]
-            psr_g.loess_number_cultural_horizons = r.record["Number_cult"]
+            psr_g.loess_number_cultural_horizons = r.record["Number_cul"]
 
 
             if r.record["Presence_v"] in ('-None Selected-'): #Loess_pres_1
@@ -1214,8 +1214,11 @@ def import_survey_occurrences(s, d, photos):
         psr_a.date_recorded = psr_a.date_collected
         psr_a.year_collected = psr_a.date_collected.year
 
+        psr_a.last_import = True
+        psr_a.save()
+
         # set item type code
-        if psr_a.find_type in PSR_ARCHAEOLOGY_VOCABULARY:
+        if psr_a.find_type.lower() in [i.lower() for i in PSR_ARCHAEOLOGY_VOCABULARY]:
             psr_a.item_type = "Archaeological"
             new_arch = Archaeology(geom=psr_a.geom)
             for key in list(psr_a.__dict__.keys()):
@@ -1236,9 +1239,12 @@ def import_survey_occurrences(s, d, photos):
             new_arch.save()
             subtype_archaeology(survey=True)
 
-        elif psr_a.find_type in PSR_BIOLOGY_VOCABULARY:
+        elif psr_a.find_type.lower() in [i.lower() for i in PSR_BIOLOGY_VOCABULARY]:
             psr_a.item_type = "Biological"
-            new_bio = Biology(geom=psr_a.geom)
+            taxon = Taxon.objects.get_or_create(name=r.record["Taxon"])[0]
+            idq = IdentificationQualifier.objects.get_or_create(name=r.record["Taxon"])[0]
+
+            new_bio = Biology(geom=psr_a.geom, taxon=taxon, identification_qualifier=idq)
             for key in list(psr_a.__dict__.keys()):
                 new_bio.__dict__[key] = psr_a.__dict__[key]
 
@@ -1251,7 +1257,7 @@ def import_survey_occurrences(s, d, photos):
             new_bio.last_import=True
             new_bio.save()
 
-        elif psr_a.find_type in PSR_GEOLOGY_VOCABULARY:
+        elif psr_a.find_type.lower() in [i.lower() for i in PSR_GEOLOGY_VOCABULARY]:
             psr_a.item_type = "Geological"
             new_geo = Geology(geom=psr_a.geom)
             for key in list(psr_a.__dict__.keys()):
@@ -1266,17 +1272,23 @@ def import_survey_occurrences(s, d, photos):
             new_geo.last_import=True
             new_geo.save()
 
-        elif psr_a.find_type in PSR_AGGREGATE_VOCABULARY:
+        elif psr_a.find_type.lower() in [i.lower() for i in PSR_AGGREGATE_VOCABULARY]:
             psr_a.item_type = "Aggregate"
             new_aggr = Aggregate(geom=psr_a.geom)
             for key in list(psr_a.__dict__.keys()):
                 new_aggr.__dict__[key] = psr_a.__dict__[key]
 
             new_aggr.screen_size=r.record["Screen_siz"]
-            new_aggr.burning=r.record["Burning"]
-            new_aggr.bone=r.record["Bone"]
-            new_aggr.microfauna=r.record["Microfauna"]
-            new_aggr.pebbles=r.record["Pebbles"]
+            if r.record["Burning"] not in ('-None Selected-', "", None, "Null"):
+                new_aggr.burning=r.record["Burning"]
+            if r.record["Bone"] not in ('-None Selected-', "", None, "Null"):
+                new_aggr.bone=r.record["Bone"]
+            if r.record["Microfauna"] not in ('-None Selected-', "", None, "Null"):
+                new_aggr.microfauna=r.record["Microfauna"]
+            if r.record["Molluscs"] not in ('-None Selected-', "", None, "Null"):
+                new_aggr.molluscs=r.record["Molluscs"]
+            if r.record["Pebbles"] not in ('-None Selected-', "", None, "Null"):
+                new_aggr.pebbles=r.record["Pebbles"]
             new_aggr.smallplatforms=Decimal(r.record["Smallplatf"])
             new_aggr.smalldebris=Decimal(r.record["Smalldebri"])
             new_aggr.tinyplatforms=Decimal(r.record["Tinyplatfo"])
@@ -1286,13 +1298,6 @@ def import_survey_occurrences(s, d, photos):
 
             new_aggr.last_import=True
             new_aggr.save()
-
-        else:
-            pass
-
-        psr_a.last_import = True
-        #return psr_a #for testing purposes
-        #psr_a.save()  # last step to add it to the database
 
         if r.record["Image"]:
             photonames = r.record["Image"].split(",")
