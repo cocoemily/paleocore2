@@ -1,0 +1,66 @@
+<!-- simple listing -->
+<div>
+  Number Nomina Listed: {{count}}
+  <ol>
+    {% for nomen in nomina %}
+    <li><b><em><a href=" {% url 'origins:nomen_detail_view' nomen.id %}">{{ nomen.name }}</a></em></b> - {{nomen.type_specimen}} -
+    <!-- main reference -->
+    {% if nomen.name_reference %}
+        {% with nomen.name_reference as publication %}
+          {% if publication.url %}<a href="{{publication.url}}" target="_blank">{% endif %}
+          {{ publication.authors }}. {{ publication.year }}. {{ publication.title }}{% if not publication.title_ends_with_punct %}.{% endif %}
+          {% if publication.journal %}<i>{{ publication.journal }}</i>.{% endif %}
+          {% if publication.book_title %} <i>{{ publication.book_title }}</i>.{% endif %}
+          {% if publication.publisher %} {{ publication.publisher }},{% endif %}
+          {% if publication.institution %} {{ publication.institution }}.{% endif %}
+          {% if publication.volume %} <b>{{ publication.volume }}</b>{% endif %}
+          {% if publication.number %} ({{ publication.number }}){% endif %}
+          {% if publication.pages %}:{{ publication.pages }}{% endif %}
+          {% if publication.url %}</a>{% endif %}
+        {% endwith %}
+    {% endif %}
+    </li>
+    {% endfor %}
+  </ol>
+</div>
+
+<!-- accordian listing -->
+{% comment %}
+<div>
+  <ul class="accordion" data-accordion data-multi-expand="true" data-allow-all-closed="true">
+    {% for name in taxa %}
+      <li class="accordion-item" data-accordion-item>
+        <h5><a href="{% url 'origins:taxon_detail_view' name.id %}">{{ name.scientific_name }}</a></h5>
+        <div class="accordion-content" data-tab-content>
+          <!-- main reference -->
+          {% for publication in name.name_reference.all %}
+          {{ publication.authors }}. {{ publication.title }}
+          {% if not publication.title_ends_with_punct %}.{% endif %}
+          {% if publication.journal %} {{ publication.journal }},{% endif %}
+          {% if publication.book_title %} {{ publication.book_title }},{% endif %}
+          {% if publication.publisher %} {{ publication.publisher }},{% endif %}
+          {% if publication.institution %} {{ publication.institution }},{% endif %}
+          {% if publication.volume %} volume {{ publication.volume }},{% endif %}
+          {% if publication.number %} issue {{ publication.number }},{% endif %}
+          {% if publication.pages %} pages {{ publication.pages }},{% endif %}
+          {% if publication.month %} {{ publication.month_long }}{% endif %} {{ publication.year }}.<br/>
+          {% endfor %}
+          <!-- additional references -->
+          {% for publication in name.references.all %}
+          {{ publication.authors }}. {{ publication.title }}
+          {% if not publication.title_ends_with_punct %}.{% endif %}
+          {% if publication.journal %} {{ publication.journal }},{% endif %}
+          {% if publication.book_title %} {{ publication.book_title }},{% endif %}
+          {% if publication.publisher %} {{ publication.publisher }},{% endif %}
+          {% if publication.institution %} {{ publication.institution }},{% endif %}
+          {% if publication.volume %} volume {{ publication.volume }},{% endif %}
+          {% if publication.number %} issue {{ publication.number }},{% endif %}
+          {% if publication.pages %} pages {{ publication.pages }},{% endif %}
+          {% if publication.month %} {{ publication.month_long }}{% endif %} {{ publication.year }}.<br/>
+          {% endfor %}
+        </div>
+      </li>
+    {% endfor %}
+  </ul>
+</div>
+{% endcomment %}

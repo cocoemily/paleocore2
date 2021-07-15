@@ -1,0 +1,30 @@
+{% extends "base.html" %}
+{% load mptt_tags %}
+{% block content %}
+<div class="grid-container">
+  <div class="grid-x grid-margin-x">
+    <div class="medium-10 cell">
+      {% if title %}
+      <h1> {{title}} </h1>
+      {% else %}
+      <h1>Hominid Nomenclature</h1>
+      {% endif %}
+
+      {% if body %}
+      <h1> {{body}} </h1>
+      {% else %}
+      <p>The following list contains {{count}} scientific names applied to taxa of the human lineage. The listing is
+        updated from Campbell's (1965) listing of Hominid nomenclature. Each entry provides the formal scientific name
+        and full reference.  Species entries include the fossil catalog numbers for the type specimen and
+        associate paratypes as listed in the nominal publication. </p>
+      {% endif %}
+      <hr/>
+      {% include 'origins/includes/nomina_list.html' %}
+
+
+
+
+    </div>
+  </div>
+</div>
+{% endblock %}
