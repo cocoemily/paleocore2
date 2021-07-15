@@ -1,7 +1,7 @@
 from django.shortcuts import render
 from django.views import generic
 from .forms import UpdateSitesForm, UpdateSitesModelForm
-from .models import Fossil, Site, TTaxon, TaxonRank
+from .models import Fossil, TTaxon, TaxonRank, Nomen
 from django.contrib import messages
 from djgeojson.views import GeoJSONLayerView, GeoJSONResponseMixin
 from djgeojson.serializers import Serializer as GeoJSONSerializer
@@ -106,6 +106,11 @@ class NominaListView(generic.ListView):
         species = TaxonRank.objects.get(name='Species')
         taxa = TTaxon.objects.filter(rank=species).order_by('name')
         return taxa
+
+
+class NomenDetailView(generic.DetailView):
+    model = Nomen
+    #template_name = 'nomen_detail.html'
 
 
 class ZoteroListView(generic.ListView):

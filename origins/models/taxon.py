@@ -15,6 +15,9 @@ from mptt.models import MPTTModel, TreeForeignKey
 from origins.ontologies import CONTINENT_CHOICES, NOMENCLATURAL_STATUS_CHOICES, NOMENCLATURAL_CODE_CHOICES, TYPE_CHOICES, \
     CLASSIFICATION_STATUS_CHOICES
 
+from wagtail.admin.edit_handlers import FieldPanel, StreamFieldPanel, InlinePanel
+from .wagtail import NomenDetailRelatedLink
+
 
 # Taxonomy models inherited from paleo core base project
 class TaxonRank(projects.models.TaxonRank):
@@ -106,6 +109,22 @@ class Nomen(projects.models.PaleoCoreBaseClass):
                 full_name_html_string += f' {self.authorship}'
         return mark_safe(full_name_html_string)
 
+    def objective_junior_synonyms(self):
+        """
+        Get objective junior synonyms associated with this nomen
+        :return: Returns None or a queryset of Nomina
+        """
+        if self.is_objective_synonym:
+            result = None
+        else:
+            try:
+                type_obj = self.type_object  # First get the type specimen fossil object assoc. with this nomen
+                # from the type get the assoc. nomina that point to it, excluding this name.
+                result = type_obj.nomen_set.exclude(pk=self.id)
+            except AttributeError:  # if nomen has no type object, raises Attribute error.
+                result = None
+        return result
+
     def __str__(self):
         unicode_string = '['+str(self.id)+']'
         if self.name:
@@ -116,6 +135,14 @@ class Nomen(projects.models.PaleoCoreBaseClass):
         ordering = ['name']
         verbose_name = 'Nomen'
         verbose_name_plural = 'Nomina'
+
+    # Wagtail
+    panels = [FieldPanel('title', classname="full title"),
+    FieldPanel('subtitle', classname="full title"),
+    FieldPanel('intro', classname="full"),
+    StreamFieldPanel('body'),
+    FieldPanel('template_string'),
+    InlinePanel('related_links', label="Related links"),]
 
 
 class TTaxon(MPTTModel, projects.models.Taxon):

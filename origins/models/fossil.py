@@ -1,5 +1,5 @@
 from django.contrib.gis.db import models
-import origins.models
+#import origins.models
 #from origins.models import Site, Context, TTaxon, Taxon
 import uuid
 from origins.ontologies import CONTINENT_CHOICES, NOMENCLATURAL_STATUS_CHOICES, NOMENCLATURAL_CODE_CHOICES, TYPE_CHOICES, \
