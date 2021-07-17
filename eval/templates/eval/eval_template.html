@@ -1,0 +1,93 @@
+{% load static compress %}
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Graduate Student Evaluation</title>
+
+    <style>
+      table {border-collapse: collapse;}
+      .table-bordered tr td {padding: 5px; border: 1px solid black;}
+      h1,h2,h3,h4,body,p {font-family: "Times New Roman", "Times", serif}
+      h1 {font-size: 14pt}
+      body {font-size: 11pt; max-width: 6.5in}
+      {% comment %}
+        h1,h2,h3,h4,body,p {font-family: "Palatino Linotype", "Book Antiqua", Palatino, serif}
+        h1 {font-size: 14pt}
+        body {font-size: 8pt; max-width: 6.5in}
+        h1 p{margin-top: 8pt}
+        .space { margin-top: 32pt}
+        {% endcomment %}
+    </style>
+    {% comment %}
+  {% compress css %}
+    <link rel="stylesheet" href="{% static 'libs/font-awesome/css/font-awesome.min.css' %}">
+    <link rel="stylesheet" type="text/x-scss" href="{% static 'css/app.scss' %}">
+    {% endcompress %}
+    {% endcomment %}
+</head>
+<body>
+
+{% for eval in data %}
+  <img src='/Users/dreed/Documents/pycharm/paleocore110/static/eval/UT_letterhead.png'
+       height="100" width="763"
+       alt="letterhead">
+  <p>
+  TO: {{ eval.student }}<br/>
+  RE: Annual Evaluation, Year {{ eval.student.year_in_program }}</p>
+  <p>10 May 2020</p>
+  <p>Dear {{ eval.student.first_name }},</p>
+  <p>
+    The anthropology faculty met recently to evaluate graduate
+      student progress and I am pleased to report that the faculty determined you are
+      making good progress towards your degree as summarized in the evaluation below.
+  </p>
+  <table class='table-bordered'>
+  <tr>
+    <td>Academic Progress</td>
+    <td>Research</td>
+    <td>Professionalism</td>
+    <td>Teaching</td>
+  </tr>
+  <tr>
+    <td>{{ eval.academic_decision }}</td>
+    <td>{{ eval.research_decision }}</td>
+    <td>{{ eval.professional_decision }}</td>
+    <td>{{ eval.teaching_decision }}</td>
+  </tr>
+  </table>
+  * Possible rankings are: Good, Concern, Serious Concern
+  {% if eval.student.prospectus %}
+    <p>
+    Congratulations on your progress! At this phase it is most important to focus on completing your data collection,
+    analysis and writing.
+    </p>
+  {% else %}
+    <p>
+    Congratulations on your progress! At this phase it is most important to focus on completing
+      coursework while preparing for the qualifying exam and the dissertation prospectus.</p>
+    <p>
+      As you prepare for the qualifying exam be aware that students are now eligible to enroll
+      in a 3-credit conference course dedicated to exam preparation.
+      If you are interested in enrolling please contact the graduate coordinator, Thomas Fawcett, for details.</p>
+  {% endif %}
+  <p>The faculty wishes to remind you of the importance of remaining good communication with your
+    academic supervisor and further developing professional presentation and organizational skills.
+    I encourage you to keep up the good work and wish you success in the coming academic year.
+    Please do not hesitate to contact me if you have any questions or concerns about your degree program.</p>
+  <p>Sincerely,</p>
+  <img src="/Users/dreed/Documents/pycharm/paleocore110/static/eval/Signature.gif" alt="signature"
+       height="50" width="159">
+  <p>Denné Reed<br/>
+  Associate Professor, Graduate Advisor<br/>
+  Department of Anthropology<br/>
+  </p>
+  <p>
+  Cc: {{ eval.student.supervisor.first_name }} {{ eval.student.supervisor.last_name }},
+    {% if eval.student.cosupervisor %}
+      {{ eval.student.cosupervisor.first_name }} {{ eval.student.cosupervisor.last_name }},
+    {% endif %}
+    Thomas Fawcett
+  </p>
+{% endfor %}
+</body>
+</html>

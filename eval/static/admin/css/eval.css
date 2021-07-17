@@ -1,0 +1,5 @@
+/* highlights every td and th following a tr with class red */
+/* function in eval.models.StudentAdmin adds style class to problem rows */
+tr[class*=red] td, tr[class*=red] th {
+    background: #ffebeb;
+}
