@@ -17,7 +17,7 @@ django-allauth==0.45.0
 django-braces==1.14.0
 django-mptt==0.12.0
 django-leaflet==0.28.1
-django-publications==1.0.0
+-e git+https://github.com/paleocore/django-publications@b240e699b6ab6a1959951e12bfc26402fc66ea7c#egg=django_publications
 idigbio==0.8.5
 xlrd==2.0.1
 django-import-export==2.5.0
