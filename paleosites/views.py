@@ -4,7 +4,7 @@ from django.shortcuts import render
 from django.shortcuts import render
 from .models import Site, Date
 from django.contrib.gis.shortcuts import render_to_kml
-from django.shortcuts import render_to_response
+from django.shortcuts import render
 from .forms import SiteSearch
 from django.http import HttpResponse, HttpResponseRedirect
 import csv
@@ -130,4 +130,4 @@ def all_kml(request):
 def map_page(request):
     lcount = Site.objects.all().count()
     points_to_map = Site.objects.all()
-    return render_to_response('map.html', {'location_count' : lcount, 'map_points' : points_to_map})
+    return render(None, 'map.html', {'location_count' : lcount, 'map_points' : points_to_map})

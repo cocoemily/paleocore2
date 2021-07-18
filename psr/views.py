@@ -11,7 +11,7 @@ from zipfile import ZipFile
 from django.conf import settings
 from django.views import generic
 from django.http import HttpResponse
-from django.shortcuts import render_to_response, redirect
+from django.shortcuts import render, redirect
 from django.template import RequestContext
 from django.contrib import messages
 from dateutil.parser import parse

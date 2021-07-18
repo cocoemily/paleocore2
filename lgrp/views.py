@@ -5,7 +5,7 @@ import os
 from django.conf import settings
 from django.views import generic
 from django.http import HttpResponse
-from django.shortcuts import render_to_response, redirect
+from django.shortcuts import render, redirect
 from django.template import RequestContext, loader, response
 from django.contrib import messages
 from django.contrib.gis.geos import GEOSGeometry, Point
@@ -396,7 +396,8 @@ def change_coordinates_view(request):
                         "item_description": selected_object.item_description
                         }
         the_form = ChangeXYForm(initial=initial_data)
-        return render_to_response('admin/lgrp/occurrence/changeXY.html', {"theForm": the_form}, RequestContext(request))
+        context = {"theForm": the_form}
+        return render(request, 'admin/lgrp/occurrence/changeXY.html', context)
 
 
 def occurrence2biology_view(request):
