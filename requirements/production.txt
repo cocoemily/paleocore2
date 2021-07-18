@@ -1,5 +1,5 @@
 -r base.txt
-django-redis-cache==1.8.1
+django-redis-cache==3.0.0
 gunicorn==19.9.0
 redis==3.1.0
 
