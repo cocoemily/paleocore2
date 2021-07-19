@@ -120,7 +120,6 @@ INSTALLED_APPS = (
     'wagtail.search',
     'wagtail.admin',
     'wagtail.core',
-    'wagalytics',
     'wagtailgeowidget',  # geom editing widget - used by projects app
     'allauth',  # universal user authentication app
     'allauth.account',
