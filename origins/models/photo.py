@@ -1,6 +1,6 @@
 from django.contrib.gis.db import models
 from django.utils.html import mark_safe
-
+import os
 
 class Photo(models.Model):
     image = models.ImageField('Image', upload_to='uploads/images/origins', null=True, blank=True)
