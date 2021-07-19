@@ -492,6 +492,18 @@ footer {
   .menu li a:hover {color: $white;}
   .accordion-menu .is-accordion-submenu-parent:not(.has-submenu-toggle) > a::after {border-color: $white transparent transparent;}
 
+  #cookiebanner
+  {
+    background-color:$emperor;
+    h6 {
+      color: $white;
+      font-size: 20px;
+      padding: 8px;
+    }
+    a {
+      margin-top: 20px;
+    }
+  }
   #copyright
   {
     background-color:$dark-metal;
