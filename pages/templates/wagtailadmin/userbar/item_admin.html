@@ -1,6 +1,7 @@
 {% extends "wagtailadmin/userbar/item_base.html" %}
-{% load i18n  %}
+{% load i18n wagtailadmin_tags %}
 
+{% comment 'old version' %}
 {% block item_content %}
     <div class="wagtail-action wagtail-icon wagtail-icon-wagtail">
         <a href="{% url 'wagtailadmin_home' %}" target="_parent" class="">{% trans 'Go to Wagtail admin' %}</a>
@@ -8,5 +9,21 @@
 
     <div class="wagtail-action wagtail-icon wagtail-icon-cogs">
         <a href="{% url 'admin:index' %}" target="_parent" class="">{% trans 'Go to Django admin' %}</a>
+    </div>
+{% endblock %}
+{% endcomment %}
+
+{% block item_content %}
+    <div class="wagtail-action">
+        <a href="{% url 'wagtailadmin_home' %}" target="_parent">
+          {% icon name="wagtail-icon" class_name="wagtail-action-icon" %}
+          {% trans 'Go to Wagtail admin' %}
+        </a>
+    </div>
+    <div class="wagtail-action">
+        <a href="{% url 'admin:index' %}" target="_parent">
+          {% icon name="cogs" class_name="wagtail-action-icon" %}
+          {% trans 'Go to Django admin' %}
+        </a>
     </div>
 {% endblock %}
