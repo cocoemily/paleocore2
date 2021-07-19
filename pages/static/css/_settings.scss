@@ -60,6 +60,15 @@
 //  55. Top Bar
 //  56. Xy Grid
 
+// Declare variables before assignment.
+$primary-color: null;
+$secondary-color: null;
+$tertiary-color: null;
+$quaternary-color: null;
+$success-color: null;
+$warning-color: null;
+$alert-color: null;
+
 @import 'node_modules/foundation-sites/scss/util/util';
 
 // 1. Global
