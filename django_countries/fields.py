@@ -17,6 +17,7 @@ from django_countries.conf import settings
 #     (ep.name, ep.load())
 #     for ep in pkg_resources.iter_entry_points("django_countries.Country")
 # )
+EXTENSIONS = dict()
 
 
 def country_to_text(value):
