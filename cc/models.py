@@ -70,7 +70,7 @@ class Lithic(Context):
     weight = models.DecimalField(decimal_places=2,max_digits=10, blank=True, null=True)
     platform_technique = models.CharField(max_length=20, blank=True, null=True)
     platform_angle = models.DecimalField(decimal_places=0,max_digits=3, null=True, blank=True)
-    multiple = models.NullBooleanField(default=False, blank=True, null=True)
+    multiple = models.BooleanField(default=False, blank=True, null=True)
     epa = models.IntegerField(blank=True, null=True)
     core_shape = models.CharField(max_length=20, blank=True, null=True)
     core_blank = models.CharField(max_length=20, blank=True, null=True)

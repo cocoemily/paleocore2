@@ -16,7 +16,7 @@ class Site(models.Model):
     altitude = models.FloatField('Altitude', blank=True, null=True)
     site_types = (('Shelter', 'Shelter'), ('Cave', 'Cave'), ('Open-air', 'Open-air'), ('Unknown', 'Unknown'))
     site_type = models.CharField('Site type', max_length=20, blank=True, null=True, choices=site_types)
-    display = models.NullBooleanField('Flagged', blank=True, null=True)
+    display = models.BooleanField('Flagged', blank=True, null=True)
     map_location = models.PointField(dim=2, blank=True, null=True)
     objects = GeoManager()
     notes = models.TextField(blank=True, null=True)
