@@ -69,6 +69,7 @@ INSTALLED_APPS = (
     'djgeojson',  # Django geojson
     'leaflet',  # leaflet mapping
     'mptt',  # modified pre-ordered tree traversal - used to manage hierarchies and trees
+    'cookielaw',  # cookie permission banner
 
 
     'blog',  # generic blog app
