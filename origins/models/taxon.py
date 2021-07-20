@@ -70,6 +70,7 @@ class Nomen(projects.models.PaleoCoreBaseClass):
     nomenclatural_status = models.CharField('Nom. Status', max_length=255, null=True, blank=True,
                                             choices=NOMENCLATURAL_STATUS_CHOICES)
     is_objective_synonym = models.BooleanField('Objective Synonym', default=False)
+    is_subjective_synonym = models.BooleanField('Subjective Synonym', default=False)
     name_reference = models.ForeignKey(publications.models.Publication, null=True, blank=True,
                                        on_delete=models.SET_NULL, related_name='name_reference')
     references = models.ManyToManyField(publications.models.Publication, blank=True)

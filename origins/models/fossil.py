@@ -90,7 +90,7 @@ class Fossil(models.Model):
     references = models.ManyToManyField(publications.models.Publication, blank=True)
 
     def __str__(self):
-        return str(self.id)+' '+str(self.catalog_number)
+        return str(self.catalog_number)
 
     def element_count(self):
         return FossilElement.objects.filter(fossil=self.id).count()

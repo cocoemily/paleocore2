@@ -487,12 +487,13 @@ class NomenPublicationsInline(admin.TabularInline):
 
 class NomenAdmin(admin.ModelAdmin):
     readonly_fields = ['full_name_html']
-    list_display = ['name', 'authorship', 'full_name_html', 'rank', 'is_objective_synonym', 'nomenclatural_status']
-    list_filter = ['rank', 'is_objective_synonym', 'nomenclatural_status']
+    list_display = ['name', 'authorship', 'year', 'type_object',
+                    'rank', 'is_objective_synonym', 'is_subjective_synonym',
+                    'nomenclatural_status']
+    list_filter = ['rank', 'is_objective_synonym', 'is_subjective_synonym', 'nomenclatural_status']
     inlines = [NomenPublicationsInline]
     exclude = ['last_import', 'references']
     search_fields = ['name', 'authorship', 'year']
-    list_editable = ['is_objective_synonym']
 
     def formfield_for_foreignkey(self, db_field, request=None, **kwargs):
         """
