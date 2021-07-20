@@ -7,6 +7,7 @@ from django.contrib.gis.geos import Point
 from django.utils.text import slugify
 import pandas
 import re
+from wagtail.core.models import Page
 # import shapefile
 
 # pbdb_file_path = "/Users/reedd/Documents/projects/ete/pbdb/pbdb_test_no_header.csv"
@@ -314,11 +315,11 @@ def import_gwhod(path=gs_path):
     for line in lines[410:]:  # skip header
         data = line.split('\t')
         catalog_number = data[0].strip()  # remove extra whitespace
-        taxon = data[1].strip()
+        taxon_name = data[1].strip()
         try:
             Fossil.objects.get(catalog_number=catalog_number)
         except Fossil.DoesNotExist:
-            if taxon not in ['Homo erectus']:
+            if taxon_name not in ['Homo erectus']:
                 print(line)
 
 # def export_sites2shape(filepath='/Users/reedd/Desktop/sites'):
@@ -342,7 +343,7 @@ def import_gwhod(path=gs_path):
 #     w.save(filepath)
 
 
-def create_site_page(site):
+def create_site_page(site_obj):
     """
     Procedure to create a new Origins.SitePage related to a Site object using a template. The template is used
     to provide default entries and to set the position in the page hierarchy.
@@ -350,44 +351,44 @@ def create_site_page(site):
     """
     # This is clunky and assumes a page titled "Template" exists.
     template_page = Page.objects.get(title='Template')
-    site_slug = slugify(site.name)
+    site_slug = slugify(site_obj.name)
     update_dict = dict(
-        site=site,
+        site=site_obj,
         slug=slugify(site_slug),
-        title=site.name,
+        title=site_obj.name,
         body=None,
-        location=site.geom,
-        date=site.date_created,
+        location=site_obj.geom,
+        date=site_obj.date_created,
         feed_image=None,
-        intro=site.name
+        intro=site_obj.name
     )
     template_page.copy(update_attrs=update_dict)
 
 
-def create_fossil_page(fossil):
+def create_fossil_page(fossil_obj):
     template_page = Page.objects.get(title='FossilTemplate')
-    fossil_slug = slugify(fossil.catalog_number)
+    fossil_slug = slugify(fossil_obj.catalog_number)
     update_dict = dict(
-        fossil=fossil,
+        fossil=fossil_obj,
         slug=fossil_slug,
-        title=fossil.catalog_number,
+        title=fossil_obj.catalog_number,
         body=None,
-        location=fossil.geom,
-        date=fossil.created,
+        location=fossil_obj.geom,
+        date=fossil_obj.created,
         feed_image=None,
-        intro=fossil.catalog_number
+        intro=fossil_obj.catalog_number
     )
     template_page.copy(update_attrs=update_dict)
 
 
-def taxon2mptt(taxon):
+def taxon2mptt(taxon_obj):
     """
     Match a Taxon instance to a corresponding MPTTTaxon instance.
-    :param taxon:
+    :param taxon_obj:
     :return: MPTTTaxon or None
     """
     try:
-        match = TTaxon.objects.get(name=taxon.name)
+        match = TTaxon.objects.get(name=taxon_obj.name)
     except ObjectDoesNotExist:
         match = None
     return match
@@ -402,11 +403,11 @@ def ttaxa2nomina():
 
 def fossil_taxa():
     fossils = Fossil.objects.all()
-    fossil_taxa = []
+    fossil_taxa_list = []
     for f in fossils:
         if f.taxon:
-            fossil_taxa.append(f.taxon)
-    return list(set(fossil_taxa))
+            fossil_taxa_list.append(f.taxon)
+    return list(set(fossil_taxa_list))
 
 
 def update_ttaxon():
@@ -415,6 +416,7 @@ def update_ttaxon():
             t.epithet = t.name
         t.name = t.label
         t.save()
+
 
 def clean_catno(catno):
     res = None
@@ -427,7 +429,7 @@ def clean_catno(catno):
 
 
 def test_catalog_numbers(file='origins/data/turkana_cat2.xlsx'):
-    matched =[]
+    matched = []
     unmatched = []
     pd = pandas
     xl = pd.read_excel(file, sheet_name='East')
