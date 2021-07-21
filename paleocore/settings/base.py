@@ -102,6 +102,7 @@ INSTALLED_APPS = (
     'arvrc',  # African Rift Valley Research Consortium
     'eval',  # Evaluation
     'paleosites',  # paleosites
+    'turkana',
 
     'wagtail.contrib.routable_page',
     'wagtail.contrib.sitemaps',
