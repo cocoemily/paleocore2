@@ -2,12 +2,14 @@ import unicodecsv
 from origins.models import *
 from difflib import SequenceMatcher
 from lxml import etree
+from django.db.models import Q
 from django.core.exceptions import ObjectDoesNotExist
 from django.contrib.gis.geos import Point
 from django.utils.text import slugify
 import pandas
 import re
 from wagtail.core.models import Page
+from origins.models.fossil import TurkanaFossil
 # import shapefile
 
 # pbdb_file_path = "/Users/reedd/Documents/projects/ete/pbdb/pbdb_test_no_header.csv"
@@ -418,17 +420,37 @@ def update_ttaxon():
         t.save()
 
 
+# Utility functions for processing Marchal Turkana Data
 def clean_catno(catno):
+    """
+    Remove leading zeros from catalog numbers
+    :param catno:
+    :return:
+    """
     res = None
     try:
         cc, cn = catno.split(' ')
-        res = ' '.join([cc, cn.strip('0')])
+        res = ' '.join([cc, cn.lstrip('0')])
     except ValueError:
         res = catno
     return res
 
 
-def test_catalog_numbers(file='origins/data/turkana_cat2.xlsx'):
+def import_turkana_fossils(file = 'origins/data/turkana_inventory.xlsx'):
+    pd = pandas
+    xleast = pd.read_excel(file, sheet_name='East')
+    xleast.name='east'
+    xlwest = pd.read_excel(file, sheet_name='West')
+    xlwest.name='west'
+    xlnorth = pd.read_excel(file, sheet_name='North')
+    xlnorth.name='north'
+    sheets = [xleast, xlwest, xlnorth]
+    for sheet in sheets:
+        for row in sheet.itertuples(index=False):
+            TurkanaFossil.objects.create(verbatim_catalog_number=row[0], verbatim_suffix=row[1], region=sheet.name)
+
+
+def match_catalog_numbers(file='origins/data/turkana_cat2.xlsx'):
     matched = []
     unmatched = []
     pd = pandas
@@ -446,4 +468,98 @@ def test_catalog_numbers(file='origins/data/turkana_cat2.xlsx'):
                 matched.append(c)
             else:
                 unmatched.append(c)
+    return matched, unmatched
+
+
+def get_marchal(origins_fossil_obj):
+    """
+    Get a qs of Marchal fossil objects matching an origins object
+    :param origins_fossil_obj:
+    :return: queryset of Marchal fossils matching origins fossil
+    """
+    f = origins_fossil_obj
+    catno = f.catalog_number.upper()
+    matched = TurkanaFossil.objects.filter(catalog_number__startswith=catno)
+    return matched
+
+
+def get_origins(marchal_fossil_obj):
+    """
+    Get a qs of Origins fossil objects matching a Marchal TurkanaFossil object
+    :param marchal_fossil_obj:
+    :return:
+    """
+    f = marchal_fossil_obj
+    catno = f.catalog_number.upper()
+    matched = Fossil.objects.filter(catalog_number__startswith=catno)
+    return matched
+
+
+def catalog_number_from_verbatim(fossil_obj):
+    """
+    Format a full catalog number from verbatim catalog number and suffix and write to catalog_number field
+    :param fossil_obj:
+    """
+    if fossil_obj.region == 'east':
+        catno = clean_catno(fossil_obj.verbatim_catalog_number)
+        if fossil_obj.verbatim_suffix != '##':
+            full_catno = catno + '-' + fossil_obj.verbatim_suffix.upper()
+        else:
+            full_catno = catno
+        fossil_obj.catalog_number = full_catno
+        fossil_obj.save()
+
+
+def update_catalog_nubmers():
+    """
+    Update all catalog_number entries for East Turkna
+    :return:
+    """
+    etfs = TurkanaFossil.objects.filter(region='east')
+    for f in etfs:
+        catalog_number_from_verbatim(f)
+
+
+def origins_in_marchal(sites=['east']):
+    """
+    For all fossils in origins find matches in Marchal
+    :return:
+    """
+    matched = []
+    unmatched = []
+    et = Site.objects.get(name='East Turkana')
+    wt = Site.objects.get(name='West Turkana')
+    om = Site.objects.get(name='Omo Shungura')
+    site_object_list = []
+    origins_fossils = []
+
+    if 'east' in sites:
+        site_object_list.append(et)
+    if 'west' in sites:
+        site_object_list.append(wt)
+    if 'north' in sites:
+        site_object_list.append(om)
+
+    for site_obj in site_object_list:
+        origins_fossils = origins_fossils + list(Fossil.objects.filter(site=site_obj).order_by('catalog_number'))
+    for fossil_obj in origins_fossils:
+        m = get_marchal(fossil_obj)
+        if m:
+            matched.append(fossil_obj)
+        else:
+            unmatched.append(fossil_obj)
+    return matched, unmatched
+
+
+def marchal_in_origins(regions=['east']):
+    matched = []
+    unmatched = []
+    for region in regions:
+        marchal_fossils = TurkanaFossil.objects.filter(region=region).order_by('catalog_number')
+    for fossil_obj in marchal_fossils:
+        m = get_origins(fossil_obj)
+        if m:
+            matched.append(fossil_obj)
+        else:
+            unmatched.append(fossil_obj)
     return matched, unmatched

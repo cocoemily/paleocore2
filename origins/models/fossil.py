@@ -178,3 +178,16 @@ class FossilElement(models.Model):
         if self.skeletal_element:
             unicode_string = unicode_string + ' ' + self.skeletal_element
         return unicode_string
+
+
+class TurkanaFossil(models.Model):
+    verbatim_catalog_number = models.CharField(max_length=256, null=True, blank=True)
+    verbatim_suffix = models.CharField(max_length=256, null=True, blank=True)
+    catalog_number = models.CharField(max_length=256, null=True, blank=True)
+    collection_code = models.CharField(max_length=256, null=True, blank=True)
+    specimen_number = models.IntegerField(null=True, blank=True)
+    specimen_suffix = models.CharField(max_length=256, null=True, blank=True)
+    region = models.CharField(max_length=256, null=True, blank=True)
+    suffix_assigned = models.BooleanField(null=True)
+    in_origins = models.BooleanField(null=True)
+    in_turkana = models.BooleanField(null=True)

@@ -509,6 +509,12 @@ class NomenAdmin(admin.ModelAdmin):
         return super(NomenAdmin, self).formfield_for_foreignkey(db_field, request, **kwargs)
 
 
+class TurkanaFossilAdmin(admin.ModelAdmin):
+    list_display = ['verbatim_catalog_number', 'verbatim_suffix', 'catalog_number', 'region', 'suffix_assigned']
+    list_filter = ['region', 'suffix_assigned', 'in_turkana']
+    search_fields = ['verbatim_catalog_number', 'verbatim_suffix', 'catalog_number']
+
+
 # Register your models here.
 admin.site.register(origins.models.Context, ContextAdmin)
 admin.site.register(origins.models.Reference, ReferenceAdmin)
@@ -518,3 +524,4 @@ admin.site.register(origins.models.Site, SiteAdmin)
 admin.site.register(origins.models.TTaxon, TTaxonAdmin)
 admin.site.register(origins.models.TaxonRank)
 admin.site.register(origins.models.Nomen, NomenAdmin)
+admin.site.register(origins.models.TurkanaFossil, TurkanaFossilAdmin)
