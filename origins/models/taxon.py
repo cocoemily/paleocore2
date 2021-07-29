@@ -150,7 +150,7 @@ class ActiveNomen(Nomen):
     class Meta:
         proxy = True
         ordering = ['name']
-        verbose_name = 'Actice Nomen'
+        verbose_name = 'Active Nomen'
         verbose_name_plural = 'Active Nomina'
 
 
