@@ -528,15 +528,19 @@ def origins_in_marchal(sites=['east']):
     matched = []
     unmatched = []
     et = Site.objects.get(name='East Turkana')
+    fj = Site.objects.get(name='Fejej')
+    kp = Site.objects.get(name='Kanapoi')
     wt = Site.objects.get(name='West Turkana')
     om = Site.objects.get(name='Omo Shungura')
     site_object_list = []
     origins_fossils = []
 
     if 'east' in sites:
+        site_object_list.append(fj)
         site_object_list.append(et)
     if 'west' in sites:
         site_object_list.append(wt)
+        site_object_list.append(kp)
     if 'north' in sites:
         site_object_list.append(om)
 

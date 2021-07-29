@@ -1,6 +1,7 @@
 from django.contrib import admin
 import origins.models
 import origins.util
+import origins.ontologies
 from projects.admin import PaleoCoreLocalityAdminGoogle, TaxonomyAdmin
 from django.utils.html import format_html
 from django.contrib.gis.measure import Distance
@@ -509,11 +510,23 @@ class NomenAdmin(admin.ModelAdmin):
         return super(NomenAdmin, self).formfield_for_foreignkey(db_field, request, **kwargs)
 
 
+class ActiveNomenAdmin(NomenAdmin):
+    list_display = ['name', 'authorship', 'name_reference', 'year', 'type_object', 'paratypes',
+                    'rank', 'is_objective_synonym', 'is_subjective_synonym',
+                    'nomenclatural_status', 'problem']
+    list_filter = ['rank', 'is_objective_synonym', 'is_subjective_synonym', 'nomenclatural_status', 'problem']
+
+    def get_queryset(self, request):
+        species_rank = origins.models.TaxonRank.objects.get(ordinal=70)
+        qs = origins.models.Nomen.objects.filter(is_objective_synonym=False).filter(is_subjective_synonym=False)
+        qs = qs.filter(nomenclatural_status=origins.ontologies.valid).filter(rank=species_rank)
+        return qs
+
+
 class TurkanaFossilAdmin(admin.ModelAdmin):
     list_display = ['verbatim_catalog_number', 'verbatim_suffix', 'catalog_number', 'region', 'suffix_assigned']
     list_filter = ['region', 'suffix_assigned', 'in_turkana']
     search_fields = ['verbatim_catalog_number', 'verbatim_suffix', 'catalog_number']
-
 
 # Register your models here.
 admin.site.register(origins.models.Context, ContextAdmin)
@@ -524,4 +537,5 @@ admin.site.register(origins.models.Site, SiteAdmin)
 admin.site.register(origins.models.TTaxon, TTaxonAdmin)
 admin.site.register(origins.models.TaxonRank)
 admin.site.register(origins.models.Nomen, NomenAdmin)
+admin.site.register(origins.models.ActiveNomen, ActiveNomenAdmin)
 admin.site.register(origins.models.TurkanaFossil, TurkanaFossilAdmin)

@@ -146,6 +146,14 @@ class Nomen(projects.models.PaleoCoreBaseClass):
     InlinePanel('related_links', label="Related links"),]
 
 
+class ActiveNomen(Nomen):
+    class Meta:
+        proxy = True
+        ordering = ['name']
+        verbose_name = 'Nomen'
+        verbose_name_plural = 'Nomina'
+
+
 class TTaxon(MPTTModel, projects.models.Taxon):
     """
     Modified Preordered Tree Traversal Taxon class
