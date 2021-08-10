@@ -244,7 +244,7 @@ class BiologyAdmin(OccurrenceAdmin):
     list_select_related = lgrp_default_list_select_related
     fieldsets = biology_fieldsets
     search_fields = lgrp_search_fields + ('taxon__name',)
-    # actions = ['create_data_csv']
+    actions = ['create_data_csv']
 
     def create_data_csv(self, request, queryset):
         """
