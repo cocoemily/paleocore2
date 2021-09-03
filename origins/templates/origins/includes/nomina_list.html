@@ -3,7 +3,7 @@
   Number Nomina Listed: {{count}}
   <ol>
     {% for nomen in nomina %}
-    <li><b><em><a href=" {% url 'origins:nomen_detail_view' nomen.id %}">{{ nomen.name }}</a></em></b> - {{nomen.type_specimen}} -
+    <li><b><em>{{ nomen.name }}</em></b>{% if nomen.type_specimen %} - {{nomen.type_specimen}} - {% endif %}
     <!-- main reference -->
     {% if nomen.name_reference %}
         {% with nomen.name_reference as publication %}
