@@ -1,10 +1,11 @@
 {% extends "base.html" %}
-{% load mptt_tags %}
+{% load wagtailcore_tags navigation_tags wagtailimages_tags %}
+{% load paleocore_utils %}
 {% block content %}
 <div class="grid-container">
   <div class="grid-x grid-margin-x">
     <div class="medium-10 cell">
-
+      {% breadcrumbs %}
       {% include 'origins/includes/nomen.html' %}
       <div><a href=" ../../.. ">< Back</a></div>
     </div>

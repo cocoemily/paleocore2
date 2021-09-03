@@ -26,7 +26,7 @@ urlpatterns = [
     #path('', views.index, name='index'),
     path('taxon/', views.TaxonListView.as_view(), name='taxon_list_view'),
     path('taxon/<int:pk>/', views.TaxonDetailView.as_view(), name='taxon_detail_view'),
-    path('origins/nomina/nomen/<int:pk>/', views.NomenDetailView.as_view(), name='nomen_detail_view'),
+    # path('/nomina/<int:pk>/', views.NomenDetailView.as_view(), name='nomen_detail_view'),
     # path('nomina/', views.NominaListView.as_view(), name='nomina_list_view'),
     # path('zotero/', views.ZoteroListView.as_view(), name='zotero_list_view')
 ]
