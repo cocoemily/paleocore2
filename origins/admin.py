@@ -240,7 +240,7 @@ class FossilAdmin(admin.ModelAdmin):
     list_filter = ['origins', 'is_type_specimen', 'type_status', 'source', 'site__name', 'country', ]
     list_display_links = ['id', 'catalog_number']
     list_select_related = ['site', 'context', 'taxon']
-    search_fields = ['catalog_number', 'place_name', 'country', 'locality',
+    search_fields = ['catalog_number', 'other_catalog_numbers', 'place_name', 'country', 'locality',
                      'fossil_element__skeletal_element']
     readonly_fields = ['element_count', 'aapa', 'id', 'default_image', 'element_description', 'taxon_link']
 
