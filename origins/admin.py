@@ -490,7 +490,7 @@ class NomenAdmin(admin.ModelAdmin):
     readonly_fields = ['full_name_html']
     list_display = ['name', 'authorship', 'year', 'type_object',
                     'rank', 'is_objective_synonym', 'is_subjective_synonym',
-                    'nomenclatural_status']
+                    'nomenclatural_status', 'verified_by']
     list_filter = ['rank', 'is_objective_synonym', 'is_subjective_synonym', 'nomenclatural_status']
     inlines = [NomenPublicationsInline]
     exclude = ['last_import', 'references']
@@ -513,7 +513,7 @@ class NomenAdmin(admin.ModelAdmin):
 class ActiveNomenAdmin(NomenAdmin):
     list_display = ['name', 'authorship', 'name_reference', 'year', 'type_object', 'paratypes',
                     'rank', 'is_objective_synonym', 'is_subjective_synonym',
-                    'nomenclatural_status', 'problem']
+                    'nomenclatural_status', 'verified_by', 'problem']
     list_filter = ['rank', 'is_objective_synonym', 'is_subjective_synonym', 'nomenclatural_status', 'problem']
 
     def get_queryset(self, request):

@@ -109,6 +109,20 @@ CLASSIFICATION_STATUS_CHOICES = (
     (deprecated, 'Deprecated')
 )
 
+# Verifiers
+denne = 'Denne Reed'
+emily = 'Emily Raney'
+jyhreh = 'Jyhreh Johnson'
+harper = 'Harper Jackson'
+nida = 'Nida Virabalin'
+
+VERIFIER_CHOICES = (
+    (denne, 'DR'),
+    (emily, 'ER'),
+    (jyhreh, 'JJ'),
+    (harper, 'HJ'),
+    (nida, 'NV')
+)
 
 # helper functions
 def choices2list(choices_tuple):

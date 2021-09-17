@@ -12,8 +12,8 @@ import projects.models
 import publications.models
 from mptt.models import MPTTModel, TreeForeignKey
 
-from origins.ontologies import CONTINENT_CHOICES, NOMENCLATURAL_STATUS_CHOICES, NOMENCLATURAL_CODE_CHOICES, TYPE_CHOICES, \
-    CLASSIFICATION_STATUS_CHOICES
+from origins.ontologies import CONTINENT_CHOICES, NOMENCLATURAL_STATUS_CHOICES, NOMENCLATURAL_CODE_CHOICES, \
+    TYPE_CHOICES, CLASSIFICATION_STATUS_CHOICES, VERIFIER_CHOICES
 
 from wagtail.admin.edit_handlers import FieldPanel, StreamFieldPanel, InlinePanel
 from .wagtail import NomenDetailRelatedLink
@@ -74,6 +74,8 @@ class Nomen(projects.models.PaleoCoreBaseClass):
     name_reference = models.ForeignKey(publications.models.Publication, null=True, blank=True,
                                        on_delete=models.SET_NULL, related_name='name_reference')
     references = models.ManyToManyField(publications.models.Publication, blank=True)
+    verified_by = models.CharField(max_length=255, null=True, blank=True, choices=VERIFIER_CHOICES)
+    verified_date = models.DateField(null=True, blank=True)
 
     def from_ttaxon(self, ttaxon):
         """
