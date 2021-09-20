@@ -391,6 +391,18 @@ hr {border-color: $light-gray;}
     .block-faq_question:first-of-type {border: 0;}
 }
 
+#nomen{
+  padding-bottom: 20px;
+  h4, h5 {
+    color: $primary;
+    font-weight: bolder;
+    margin: 0;}
+  i {font-size: 0.73em;}
+  .nomen-type{
+  font-weight: bold; color:$dark-gray;
+  }
+}
+
 
 #search {
   input[type="text"]{border-top-left-radius: 5px; border-bottom-left-radius: 5px; font-size: 1.2rem;padding-left: 15px;}
