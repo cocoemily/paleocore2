@@ -1,36 +1,33 @@
 <!-- simple listing -->
 <div>
-  Number Nomina Listed: {{count}}
-  <ol>
-    {% for nomen in nomina %}
-    <li><b><em>{{ nomen.name }}</em></b>{% if nomen.type_specimen %} - {{nomen.type_specimen}} - {% endif %}
-    <!-- main reference -->
+  {% for nomen in nomina %}
+    <div id="nomen">
+      <h5><em>{{ nomen.name}}</em> {{nomen.authorship}}</h5>
+    {% if nomen.type_specimen %}<div class="nomen-type">Type Specimen: {{nomen.type_specimen}}</div>{% endif %}
     {% if nomen.name_reference %}
-        {% with nomen.name_reference as publication %}
-          {% if publication.url %}<a href="{{publication.url}}" target="_blank">{% endif %}
-          {{ publication.authors }}. {{ publication.year }}. {{ publication.title }}{% if not publication.title_ends_with_punct %}.{% endif %}
-          {% if publication.journal %}<i>{{ publication.journal }}</i>.{% endif %}
-          {% if publication.book_title %} <i>{{ publication.book_title }}</i>.{% endif %}
-          {% if publication.publisher %} {{ publication.publisher }},{% endif %}
-          {% if publication.institution %} {{ publication.institution }}.{% endif %}
-          {% if publication.volume %} <b>{{ publication.volume }}</b>{% endif %}
-          {% if publication.number %} ({{ publication.number }}){% endif %}
-          {% if publication.pages %}:{{ publication.pages }}{% endif %}
-          {% if publication.url %}</a>{% endif %}
-        {% endwith %}
-    {% endif %}
-    </li>
-    {% endfor %}
-  </ol>
+          {% with nomen.name_reference as publication %}
+            {{ publication.authors }}. {{ publication.year }}. {{ publication.title }}{% if not publication.title_ends_with_punct %}.{% endif %}
+            {% if publication.journal %}<em>{{ publication.journal }}</em>.{% endif %}
+            {% if publication.book_title %} <em>{{ publication.book_title }}</em>.{% endif %}
+            {% if publication.publisher %} {{ publication.publisher }},{% endif %}
+            {% if publication.institution %} {{ publication.institution }}.{% endif %}
+            {% if publication.volume %} <b>{{ publication.volume }}</b>{% endif %}
+            {% if publication.number %} ({{ publication.number }}){% endif %}
+            {% if publication.pages %}:{{ publication.pages }}{% endif %}
+            {% if publication.url %}<br/><a href="{{publication.url}}" target="_blank"><i class="fa fa-external-link-alt"></i> {% endif %}{{publication.url}}{% if publication.url %}</a>{% endif %}
+          {% endwith %}
+      {% endif %}
+    </div>
+  {% endfor %}
 </div>
 
 <!-- accordian listing -->
 {% comment %}
 <div>
   <ul class="accordion" data-accordion data-multi-expand="true" data-allow-all-closed="true">
-    {% for name in taxa %}
+    {% for name in nomina %}
       <li class="accordion-item" data-accordion-item>
-        <h5><a href="{% url 'origins:taxon_detail_view' name.id %}">{{ name.scientific_name }}</a></h5>
+        <h5><a href="{% url 'origins:taxon_detail_view' name.id %}">{{ name.name }}</a></h5>
         <div class="accordion-content" data-tab-content>
           <!-- main reference -->
           {% for publication in name.name_reference.all %}
@@ -64,3 +61,4 @@
   </ul>
 </div>
 {% endcomment %}
+
