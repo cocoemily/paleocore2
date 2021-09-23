@@ -50,9 +50,10 @@ class NominaListView(Page):
         # Update template context
         species_rank = origins_models.TaxonRank.objects.get(name='Species')  # species rank
         qs = origins_models.Nomen.objects.all()
-        qs = qs.filter(is_objective_synonym=False)
-        qs = qs.filter(nomenclatural_status='valid')
-        qs = qs.filter(rank=species_rank)
+        qs = qs.filter(is_objective_synonym=False)  # exclude objective synonyms for now
+        qs = qs.filter(nomenclatural_status='valid')  # include only available names
+        qs = qs.filter(rank=species_rank) # restrict to species rank
+        qs = qs.filter(verified_by__isnull=False)  # select only verified nomina
         #qs = origins_models.Nomen.objects.all()
         count = qs.count()
         context = super(NominaListView, self).get_context(request)

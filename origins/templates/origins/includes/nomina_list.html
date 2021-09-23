@@ -3,8 +3,16 @@
   {% for nomen in nomina %}
     <div id="nomen">
       <h5><em>{{ nomen.name}}</em> {{nomen.authorship}}</h5>
-    {% if nomen.type_specimen %}<div class="nomen-type">Type Specimen: {{nomen.type_specimen}}</div>{% endif %}
-    {% if nomen.name_reference %}
+    {% if nomen.type_specimen %}
+        <div class="nomen-type">
+        {% with nomen.type_object as type_specimen %}
+          {{type_specimen.type_status | title}}: {{type_specimen.catalog_number}} <br/>
+        {% endwith %}
+        Nomenclatural Status: {{ nomen.nomenclatural_status | title}}
+        </div>
+    {% endif %}
+
+      {% if nomen.name_reference %}
           {% with nomen.name_reference as publication %}
             {{ publication.authors }}. {{ publication.year }}. {{ publication.title }}{% if not publication.title_ends_with_punct %}.{% endif %}
             {% if publication.journal %}<em>{{ publication.journal }}</em>.{% endif %}
