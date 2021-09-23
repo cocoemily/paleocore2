@@ -12,7 +12,16 @@
             Type Specimen: {{ nomen.type_object.catalog_number }}<br/>
             {% endif %}
           {% endif %}
-          Nomenclatural Status: {{ nomen.nomenclatural_status | title}}
+          {% if nomen.nomenclatural_status %}
+            Nomenclatural Status:
+            {% if nomen.nomenclatural_status in valid %}
+            Available - Valid<br/>
+            {% elif nomen.nomenclatural_status in invalid %}
+            Available - Invalid<br/>
+            {% elif nomen.nomenclatural_status in unavailable %}
+            Unavailable<br/>
+            {% endif %}
+          {% endif %}
         </div>
 
 

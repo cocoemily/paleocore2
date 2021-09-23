@@ -17,7 +17,16 @@ from taggit.models import TaggedItemBase
 from modelcluster.contrib.taggit import ClusterTaggableManager
 from wagtailgeowidget.edit_handlers import GeoPanel
 import origins.models as origins_models
-
+import origins.ontologies
+valid = [origins.ontologies.valid]
+unavailable = [origins.ontologies.invalid_sm,  # Specific nomen nudum before 1931
+               origins.ontologies.invalid_sn,  # Specific nomen nudum after 1930
+               origins.ontologies.invalid_so,  # Specific nomen nudum - proposed conditionally
+               origins.ontologies.invalid_ga,  # Genus nomen nudum before 1931
+               origins.ontologies.invalid_gb,  # Genus nomen nudum after 1930
+               ]
+invalid = [origins.ontologies.invalid_sh,  # specific junior homonym
+           origins.ontologies.invalid_gh]  # generic junior homonym
 
 # Origins Page Models
 class NominaListViewRelatedLink(Orderable, RelatedLink):
@@ -59,6 +68,10 @@ class NominaListView(Page):
         context = super(NominaListView, self).get_context(request)
         context['nomina'] = qs
         context['count'] = count
+        context['valid'] = valid
+        context['invalid'] = invalid
+        context['unavailable'] = [origins.ontologies.invalid_sn, origins.ontologies.invalid_sm, origins.ontologies]
+
         return context
 
 
