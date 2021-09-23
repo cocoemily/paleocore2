@@ -9,7 +9,7 @@
             {% if nomen.type_object.type_status %}
             {{nomen.type_object.type_status | title}}: {{nomen.type_object.catalog_number}} <br/>
             {% else %}
-            Type Specimen: {{ nomen.type_object.catalog_number }}
+            Type Specimen: {{ nomen.type_object.catalog_number }}<br/>
             {% endif %}
           {% endif %}
           Nomenclatural Status: {{ nomen.nomenclatural_status | title}}
