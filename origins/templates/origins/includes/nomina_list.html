@@ -3,14 +3,18 @@
   {% for nomen in nomina %}
     <div id="nomen">
       <h5><em>{{ nomen.name}}</em> {{nomen.authorship}}</h5>
-    {% if nomen.type_specimen %}
+
         <div class="nomen-type">
-        {% with nomen.type_object as type_specimen %}
-          {{type_specimen.type_status | title}}: {{type_specimen.catalog_number}} <br/>
-        {% endwith %}
-        Nomenclatural Status: {{ nomen.nomenclatural_status | title}}
+          {% if nomen.type_object %}
+            {% if nomen.type_object.type_status %}
+            {{nomen.type_object.type_status | title}}: {{nomen.type_object.catalog_number}} <br/>
+            {% else %}
+            Type Specimen: {{ nomen.type_object.catalog_number }}
+            {% endif %}
+          {% endif %}
+          Nomenclatural Status: {{ nomen.nomenclatural_status | title}}
         </div>
-    {% endif %}
+
 
       {% if nomen.name_reference %}
           {% with nomen.name_reference as publication %}
