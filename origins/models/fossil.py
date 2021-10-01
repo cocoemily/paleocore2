@@ -4,9 +4,11 @@ from origins.ontologies import CONTINENT_CHOICES, NOMENCLATURAL_STATUS_CHOICES, 
     CLASSIFICATION_STATUS_CHOICES
 from django_countries.fields import CountryField
 import publications
+import projects.models
+from ckeditor.fields import RichTextField as CKRichTextField
 
 
-class Fossil(models.Model):
+class Fossil(projects.models.PaleoCoreGeomBaseClass):
     # Foreign keys
     context = models.ForeignKey(to='Context', on_delete=models.CASCADE, null=True, blank=True)
 
@@ -28,9 +30,8 @@ class Fossil(models.Model):
     type_status = models.CharField(max_length=255, null=True, blank=True, choices=TYPE_CHOICES)
     lifestage = models.CharField(max_length=20, null=True, blank=True)
     sex = models.CharField(max_length=10, null=True, blank=True)
-    short_description = models.TextField(null=True, blank=True)
-    description = models.TextField(null=True, blank=True)
-    remarks = models.TextField(null=True, blank=True)
+    short_description = CKRichTextField(null=True, blank=True)
+    description = CKRichTextField(null=True, blank=True)
 
     # Taxon
     taxon = models.ForeignKey('Taxon', null=True, blank=True, on_delete=models.SET_NULL)
