@@ -7,7 +7,12 @@
         <div class="nomen-type">
           {% if nomen.type_object %}
             {% if nomen.type_object.type_status %}
-            {{nomen.type_object.type_status | title}}: {{nomen.type_object.catalog_number}} <br/>
+            {{nomen.type_object.type_status | title}}:
+              {% if nomen.type_object.organism_id %}
+                {{ nomen.type_object.organism_id }}<br/>
+              {% else %}
+                {{nomen.type_object.catalog_number}}<br/>
+              {% endif %}
             {% else %}
             Type Specimen: {{ nomen.type_object.catalog_number }}<br/>
             {% endif %}
