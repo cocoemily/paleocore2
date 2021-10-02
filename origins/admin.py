@@ -490,7 +490,7 @@ class NomenAdmin(admin.ModelAdmin):
     readonly_fields = ['full_name_html']
     list_display = ['name', 'authorship', 'year', 'name_reference', 'type_specimen',
                     'rank', 'is_objective_synonym', 'is_subjective_synonym', 'is_available',
-                    'nomenclatural_status', 'verified_by']
+                    'nomenclatural_status', 'assigned_to', 'verified_by']
     list_filter = ['rank', 'assigned_to', 'verified_by',
                    'is_objective_synonym', 'is_subjective_synonym', 'nomenclatural_status']
     inlines = [NomenPublicationsInline]
@@ -508,17 +508,13 @@ class NomenAdmin(admin.ModelAdmin):
         :param kwargs:
         :return:
         """
-        if db_field.name == "type_object":
+        if db_field.name == "type_specimen":
             kwargs["queryset"] = origins.models.Fossil.objects.filter(is_type_specimen=True).order_by('catalog_number')
 
         return super(NomenAdmin, self).formfield_for_foreignkey(db_field, request, **kwargs)
 
 
 class ActiveNomenAdmin(NomenAdmin):
-    list_display = ['name', 'authorship', 'name_reference', 'year', 'type_specimen', 'paratypes',
-                    'rank', 'is_objective_synonym', 'is_subjective_synonym',
-                    'nomenclatural_status', 'verified_by', 'problem']
-    list_filter = ['rank', 'is_objective_synonym', 'is_subjective_synonym', 'nomenclatural_status', 'problem']
 
     def get_queryset(self, request):
         species_rank = origins.models.TaxonRank.objects.get(ordinal=70)
