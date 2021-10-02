@@ -69,6 +69,7 @@ class Nomen(projects.models.PaleoCoreBaseClass):
     paratypes = models.CharField(max_length=255, null=True, blank=True)
     nomenclatural_status = models.CharField('Nom. Status', max_length=255, null=True, blank=True,
                                             choices=NOMENCLATURAL_STATUS_CHOICES)
+    is_available = models.BooleanField('Available', default=False)
     is_objective_synonym = models.BooleanField('Objective Synonym', default=False)
     is_subjective_synonym = models.BooleanField('Subjective Synonym', default=False)
     name_reference = models.ForeignKey(publications.models.Publication, null=True, blank=True,

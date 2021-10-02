@@ -488,10 +488,11 @@ class NomenPublicationsInline(admin.TabularInline):
 
 class NomenAdmin(admin.ModelAdmin):
     readonly_fields = ['full_name_html']
-    list_display = ['name', 'authorship', 'year', 'type_specimen',
-                    'rank', 'is_objective_synonym', 'is_subjective_synonym',
+    list_display = ['name', 'authorship', 'year', 'name_reference', 'type_specimen',
+                    'rank', 'is_objective_synonym', 'is_subjective_synonym', 'is_available',
                     'nomenclatural_status', 'verified_by']
-    list_filter = ['rank', 'is_objective_synonym', 'is_subjective_synonym', 'nomenclatural_status']
+    list_filter = ['rank', 'assigned_to', 'verified_by',
+                   'is_objective_synonym', 'is_subjective_synonym', 'nomenclatural_status']
     inlines = [NomenPublicationsInline]
     search_fields = ['name', 'authorship', 'year']
     fields = ['name', 'authorship', 'year', 'rank', 'type_specimen_label', 'type_specimen', 'paratypes',
