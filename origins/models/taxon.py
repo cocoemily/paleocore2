@@ -74,6 +74,7 @@ class Nomen(projects.models.PaleoCoreBaseClass):
     name_reference = models.ForeignKey(publications.models.Publication, null=True, blank=True,
                                        on_delete=models.SET_NULL, related_name='name_reference')
     references = models.ManyToManyField(publications.models.Publication, blank=True)
+    assigned_to = models.CharField(max_length=255, null=True, blank=True, choices=VERIFIER_CHOICES)
     verified_by = models.CharField(max_length=255, null=True, blank=True, choices=VERIFIER_CHOICES)
     verified_date = models.DateField(null=True, blank=True)
 

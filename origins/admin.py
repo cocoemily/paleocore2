@@ -493,9 +493,11 @@ class NomenAdmin(admin.ModelAdmin):
                     'nomenclatural_status', 'verified_by']
     list_filter = ['rank', 'is_objective_synonym', 'is_subjective_synonym', 'nomenclatural_status']
     inlines = [NomenPublicationsInline]
-    exclude = ['last_import', 'references']
     search_fields = ['name', 'authorship', 'year']
-    fields = ['name', 'authorship', 'year']
+    fields = ['name', 'authorship', 'year', 'rank', 'type_specimen_label', 'type_specimen', 'paratypes',
+              'nomenclatural_status', 'remarks', 'is_objective_synonym', 'is_subjective_synonym', 'name_reference'
+              'assigned_to', 'verified_by', 'verified_date',
+              'date_created', 'date_modified', 'problem', 'problem_comment']
 
     def formfield_for_foreignkey(self, db_field, request=None, **kwargs):
         """
