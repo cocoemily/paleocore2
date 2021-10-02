@@ -497,7 +497,7 @@ class NomenAdmin(admin.ModelAdmin):
     fields = ['name', 'authorship', 'year', 'rank', 'type_specimen_label', 'type_specimen', 'paratypes',
               'nomenclatural_status', 'remarks', 'is_objective_synonym', 'is_subjective_synonym', 'name_reference',
               'assigned_to', 'verified_by', 'verified_date',
-              'date_created', 'date_modified', 'problem', 'problem_comment']
+              'date_created', 'date_last_modified', 'problem', 'problem_comment']
 
     def formfield_for_foreignkey(self, db_field, request=None, **kwargs):
         """
