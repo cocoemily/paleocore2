@@ -62,10 +62,10 @@ class Nomen(projects.models.PaleoCoreBaseClass):
     year = models.IntegerField(null=True, blank=True, help_text=year_help)
     rank = models.ForeignKey('TaxonRank', null=True, blank=True, on_delete=models.SET_NULL)
     # TODO move type spcimen data to type object
-    type_specimen = models.CharField(max_length=255, null=True, blank=True, help_text=type_help)
+    type_specimen_label = models.CharField(max_length=255, null=True, blank=True, help_text=type_help)
     # TODO delete type_specimen and rename type_object to type specimen
-    type_object = models.ForeignKey('Fossil', null=True, blank=True, on_delete=models.SET_NULL,
-                                    help_text=type_object_help)
+    type_specimen = models.ForeignKey('Fossil', null=True, blank=True, on_delete=models.SET_NULL,
+                                      help_text=type_object_help)
     paratypes = models.CharField(max_length=255, null=True, blank=True)
     nomenclatural_status = models.CharField('Nom. Status', max_length=255, null=True, blank=True,
                                             choices=NOMENCLATURAL_STATUS_CHOICES)
