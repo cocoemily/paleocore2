@@ -58,6 +58,7 @@ class Nomen(projects.models.PaleoCoreBaseClass):
     type_object_help = 'The type specimen fossil, select from choice list'
     paratypes_help = 'A comma delimited list of catalog number for paratype specimens as given in the source text'
 
+    zoobank_id = models.CharField(max_length=255, null=True, blank=True)
     authorship = models.CharField(max_length=255, null=True, blank=True, help_text=authorship_help)
     year = models.IntegerField(null=True, blank=True, help_text=year_help)
     rank = models.ForeignKey('TaxonRank', null=True, blank=True, on_delete=models.SET_NULL)
