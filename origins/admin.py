@@ -495,7 +495,7 @@ class NomenAdmin(admin.ModelAdmin):
                    'is_objective_synonym', 'is_subjective_synonym', 'nomenclatural_status']
     inlines = [NomenPublicationsInline]
     search_fields = ['name', 'authorship', 'year']
-    fields = ['name', 'authorship', 'year', 'rank', 'type_specimen_label', 'type_specimen', 'paratypes',
+    fields = ['name', 'authorship', 'year', 'rank', 'zoobank_id', 'type_specimen_label', 'type_specimen', 'paratypes',
               'nomenclatural_status', 'remarks', 'is_objective_synonym', 'is_subjective_synonym', 'name_reference',
               'assigned_to', 'verified_by', 'verified_date',
               'date_created', 'date_last_modified', 'problem', 'problem_comment']
