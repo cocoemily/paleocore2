@@ -1,8 +1,9 @@
 <!-- simple listing -->
+{% load wagtailcore_tags %}
 <div>
   {% for nomen in nomina %}
     <div id="nomen">
-      <h5><em>{{ nomen.name}}</em> {{nomen.authorship}}</h5>
+      <h5><a href=" {% pageurl page  %}detail/{{nomen.id}}"><em>{{ nomen.name}}</em> {{nomen.authorship}}</a></h5>
 
         <div class="nomen-type">
           {% if nomen.type_specimen %}

@@ -1,64 +1,51 @@
 <!-- simple listing -->
-<div>
-  <h1>{{nomen.full_name_html | safe}} </h1>
-  <ul>
-    <li><a href="#">Type specimen: {{ nomen.type_object.catalog_number}}</a></li>
-    <li><a href=""">Type site: {{nomen.type_object.site.name}}</a></li>
-    <li>Name publication:
-    <!-- main reference -->
-    {% if nomen.name_reference %}
-        {% with nomen.name_reference as publication %}
-          {% if publication.url %}<a href="{{publication.url}}" target="_blank">{% endif %}
-          {{ publication.authors }}. {{ publication.year }}. {{ publication.title }}{% if not publication.title_ends_with_punct %}.{% endif %}
-          {% if publication.journal %}<i>{{ publication.journal }}</i>.{% endif %}
-          {% if publication.book_title %} <i>{{ publication.book_title }}</i>.{% endif %}
-          {% if publication.publisher %} {{ publication.publisher }},{% endif %}
-          {% if publication.institution %} {{ publication.institution }}.{% endif %}
-          {% if publication.volume %} <b>{{ publication.volume }}</b>{% endif %}
-          {% if publication.number %} ({{ publication.number }}){% endif %}
-          {% if publication.pages %}:{{ publication.pages }}{% endif %}
-          {% if publication.url %}</a>{% endif %}
-        {% endwith %}
-    {% endif %}
-    </li>
+<div id="nomen">
+  <h5><em>{{ nomen.name}}</em> {{nomen.authorship}}</h5>
 
-    <li>ICZN Nomenclatural status: {{ nomen.nomenclatural_status}}</li>
-
-    {% if nomen.objective_junior_synonyms %}
-    <li>Objective Junior Synonyms:
-      <ol>
-        {% for synonym in nomen.objective_junior_synonyms %}
-        <li>{{ synonym.name }}</li>
-        {% endfor %}
-      </ol>
-    {% endif %}
-
-    {% if nomen.remarks %}
-    <li>Remarks: {{nomen.remarks | safe}}</li>
-    {% endif %}
-
-    {% if nomen.reference_set %}
-    <li>Additional References:
-      <ol>
-        {% for publication in nomen.reference_set %}
-        {% if publication.url %}<a href="{{publication.url}}" target="_blank">{% endif %}
-          {{ publication.authors }}. {{ publication.year }}. {{ publication.title }}{% if not publication.title_ends_with_punct %}.{% endif %}
-          {% if publication.journal %}<i>{{ publication.journal }}</i>.{% endif %}
-          {% if publication.book_title %} <i>{{ publication.book_title }}</i>.{% endif %}
-          {% if publication.publisher %} {{ publication.publisher }},{% endif %}
-          {% if publication.institution %} {{ publication.institution }}.{% endif %}
-          {% if publication.volume %} <b>{{ publication.volume }}</b>{% endif %}
-          {% if publication.number %} ({{ publication.number }}){% endif %}
-          {% if publication.pages %}:{{ publication.pages }}{% endif %}
-          {% if publication.url %}</a>
+    <div class="nomen-type">
+      {% if nomen.type_specimen %}
+        {% if nomen.type_specimen.type_status %}
+        {{nomen.type_specimen.type_status | title}}:
+          {% if nomen.type_specimen.organism_id %}
+            {{ nomen.type_specimen.organism_id }}<br/>
+          {% else %}
+            {{nomen.type_specimen.catalog_number}}<br/>
+          {% endif %}
+        {% else %}
+        Type Specimen: {{ nomen.type_specimen.catalog_number }}<br/>
         {% endif %}
-
-        {% endfor %}
-      </ol>
-    </li>
-    {% endif %}
-  </ul>
+      {% endif %}
+      {% if nomen.nomenclatural_status %}
+        Nomenclatural Status:
+        {% if nomen.nomenclatural_status in valid %}
+        Available - Valid<br/>
+        {% elif nomen.nomenclatural_status in invalid %}
+        Available - Invalid<br/>
+        {% elif nomen.nomenclatural_status in unavailable %}
+        Unavailable<br/>
+        {% endif %}
+      {% endif %}
+    </div>
+  {% if nomen.name_reference %}
+      {% with nomen.name_reference as publication %}
+        {% include 'origins/includes/publication.html' %}<br/>
+      {% endwith %}
+  {% endif %}
+  <hr/>
+  <div>
+    <h6>Remarks</h6>
+    {{ nomen.remarks | safe}}
+    <h6>References</h6>
+    <ol>
+    {% for publication in nomen.references.all %}
+      <li>{% include 'origins/includes/publication.html' %}</li>
+    {% endfor %}
+    </ol>
+  </div>
 </div>
+
+
+
 
 <!-- accordian listing -->
 {% comment %}

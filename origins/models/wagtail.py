@@ -4,6 +4,7 @@ from django.core.paginator import Paginator, EmptyPage, PageNotAnInteger
 from wagtail.core import blocks
 from wagtail.core.models import Page, Orderable
 from wagtail.core.fields import RichTextField, StreamField
+from wagtail.contrib.routable_page.models import RoutablePageMixin, route
 from wagtail.images.edit_handlers import ImageChooserPanel
 from wagtail.images.blocks import ImageChooserBlock
 from modelcluster.fields import ParentalKey
@@ -27,6 +28,7 @@ unavailable = [origins.ontologies.invalid_sm,  # Specific nomen nudum before 193
                ]
 invalid = [origins.ontologies.invalid_sh,  # specific junior homonym
            origins.ontologies.invalid_gh]  # generic junior homonym
+
 
 # Origins Page Models
 class NominaListViewRelatedLink(Orderable, RelatedLink):
@@ -90,9 +92,10 @@ class NomenDetailRelatedLink(Orderable, RelatedLink):
     page = ParentalKey('NomenDetail', related_name='related_links')
 
 
-class NomenDetail(Page):
+class NomenDetail(RoutablePageMixin, Page):
     """
-    Nomen Detail View Page
+    Nomen Detail View Page using the Routable Page Mixin to return different
+    views depending on Nomen id.
     """
     TEMPLATE_CHOICES = [
         ('origins/nomen_detail.html', 'Default Template'),
@@ -112,6 +115,28 @@ class NomenDetail(Page):
         index.SearchField('intro'),
         index.SearchField('body'),
     ]
+
+    # def get_context(self, request):
+    #     nomen = origins_models.Nomen.objects.get(pk=19)
+    #
+    #     context = super(NomenDetail, self).get_context(request)
+    #     context['nomen'] = nomen
+    #     return context
+
+    @route(r'^(\d+)/$')
+    def nomen_detail(self, request, id):
+        """
+        View function for nomen_detail
+        :param request:
+        :return:
+        """
+
+        nomen = origins_models.Nomen.objects.get(pk=id)
+        references = nomen.references
+        return self.render(request, context_overrides={
+            'nomen': nomen,
+            'title': "Details for PK 19 Au. anamensis",
+        })
 
 
 NomenDetail.content_panels = [

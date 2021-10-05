@@ -69,6 +69,7 @@ class Fossil(projects.models.PaleoCoreGeomBaseClass):
 
     # Search and Filter Fields
     origins = models.BooleanField(default=False)  # in scope for origins project
+    vif = models.BooleanField(default=False)  # in scope for origins project
 
     # Original Fields from Human Origins Program DB
     verbatim_PlaceName = models.CharField(max_length=100, null=True, blank=True)

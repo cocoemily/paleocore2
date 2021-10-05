@@ -108,8 +108,8 @@ class TaxonDetailView(generic.DetailView):
 #         return taxa
 
 
-class NomenDetailView(generic.DetailView):
-    model = Nomen
+# class NomenDetailView(generic.DetailView):
+#     model = Nomen
     #template_name = 'nomen_detail.html'
 
 

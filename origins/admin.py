@@ -237,7 +237,7 @@ class FossilAdmin(admin.ModelAdmin):
                     'default_image',
                     # 'element_description',
                     ]
-    list_filter = ['origins', 'is_type_specimen', 'type_status', 'source', 'site__name', 'country', ]
+    list_filter = ['origins', 'vif', 'is_type_specimen', 'type_status', 'source', 'site__name', 'country']
     list_display_links = ['id', 'catalog_number']
     list_select_related = ['site', 'context', 'taxon']
     search_fields = ['catalog_number', 'other_catalog_numbers', 'place_name', 'country', 'locality',
@@ -263,7 +263,7 @@ class FossilAdmin(admin.ModelAdmin):
                        ('nickname', 'other_catalog_numbers'),
                        ('lifestage', 'sex'),
                        ('is_type_specimen', 'type_status'),
-                       ('origins',)],
+                       ('origins', 'vif')],
         }),
         ('Remarks', {
             'fields': [('remarks',)]

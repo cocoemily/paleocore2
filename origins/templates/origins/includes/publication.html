@@ -1,0 +1,10 @@
+{{ publication.authors }}. {{ publication.year }}. {{ publication.title }}{% if not publication.title_ends_with_punct %}.{% endif %}
+{% if publication.journal %}<em>{{ publication.journal }}</em>.{% endif %}
+{% if publication.book_title %} <em>{{ publication.book_title }}</em>.{% endif %}
+{% if publication.publisher %} {{ publication.publisher }},{% endif %}
+{% if publication.institution %} {{ publication.institution }}.{% endif %}
+{% if publication.volume %} <b>{{ publication.volume }}</b>{% endif %}
+{% if publication.number %} ({{ publication.number }}){% endif %}
+{% if publication.pages %}:{{ publication.pages }}{% endif %}
+{% if publication.url %}<br/><a href="{{publication.url}}" target="_blank"><i class="fa fa-external-link-alt"></i>
+  {% endif %}{{publication.url}}{% if publication.url %}</a>{% endif %}
