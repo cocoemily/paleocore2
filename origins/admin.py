@@ -411,9 +411,11 @@ class FossilAdmin(admin.ModelAdmin):
         """
         # LBYL - Check if current form has an object selected. This prevents errors raised when using list editables.
         if hasattr(self, 'current_obj'):
-            if db_field.name == "site":
+            #  Line below checks if current object is not None. We need this check so that we can open blank forms for
+            #  new entries.
+            if db_field.name == "site" and self.current_obj:
                 kwargs["queryset"] = origins.models.Site.objects.filter(country=self.current_obj.country).order_by('name')
-            if db_field.name == "context":
+            if db_field.name == "context" and self.current_obj:
                 kwargs["queryset"] = origins.models.Context.objects.filter(site=self.current_obj.site).order_by('name')
 
         return super(FossilAdmin, self).formfield_for_foreignkey(db_field, request, **kwargs)
