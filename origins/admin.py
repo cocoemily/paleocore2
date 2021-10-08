@@ -233,10 +233,11 @@ class FossilPublicationsInline(admin.TabularInline):
 class FossilAdmin(admin.ModelAdmin):
     list_display = ['id', 'catalog_number', 'is_type_specimen', 'site_link', 'context_link', 'taxon_link',
                     'country', 'context__best_age',
-                    'short_description',
+                    'short_description', 'vif',
                     'default_image',
                     # 'element_description',
                     ]
+    list_editable = ['vif']
     list_filter = ['origins', 'vif', 'is_type_specimen', 'type_status', 'source', 'site__name', 'country']
     list_display_links = ['id', 'catalog_number']
     list_select_related = ['site', 'context', 'taxon']
