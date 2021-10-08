@@ -115,12 +115,14 @@ emily = 'Emily Raney'
 jyhreh = 'Jyhreh Johnson'
 harper = 'Harper Jackson'
 nida = 'Nida Virabalin'
+kennedy = 'Kennedy Knowlton'
 
 VERIFIER_CHOICES = (
     (denne, 'DR'),
     (emily, 'ER'),
     (jyhreh, 'JJ'),
     (harper, 'HJ'),
+    (kennedy, 'KK'),
     (nida, 'NV')
 )
 
