@@ -70,6 +70,7 @@ INSTALLED_APPS = (
     'leaflet',  # leaflet mapping
     'mptt',  # modified pre-ordered tree traversal - used to manage hierarchies and trees
     'cookielaw',  # cookie permission banner
+    'rest_framework',  # REST framework
 
 
     'blog',  # generic blog app
