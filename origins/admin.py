@@ -244,6 +244,7 @@ class FossilAdmin(admin.ModelAdmin):
     search_fields = ['catalog_number', 'other_catalog_numbers', 'place_name', 'country', 'locality',
                      'fossil_element__skeletal_element']
     readonly_fields = ['element_count', 'aapa', 'id', 'default_image', 'element_description', 'taxon_link']
+    save_as = True
 
     list_per_page = 200
     inlines = [
