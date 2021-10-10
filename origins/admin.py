@@ -546,7 +546,7 @@ class TurkanaFossilAdmin(admin.ModelAdmin):
             if obj.collection_code and obj.specimen_number:
                 query_string = f"{obj.collection_code}+{obj.specimen_number}"
             else:
-                if obj.catalog_number[:-1].isalpha:
+                if obj.catalog_number[-1].isalpha():
                     query_string = f"{obj.catalog_number[:-2].replace(' ','+')}"
                 else:
                     query_string = f"{obj.catalog_number.replace(' ','+')}"
