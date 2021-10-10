@@ -556,10 +556,15 @@ def origins_in_marchal(sites=['east']):
 
 
 def marchal_in_origins(regions=['east']):
+    """
+    Get lists of matched and unmatched fossil objects from origins.fossils
+    :param regions:
+    :return:
+    """
     matched = []
     unmatched = []
     for region in regions:
-        marchal_fossils = TurkanaFossil.objects.filter(region=region).order_by('catalog_number')
+        marchal_fossils = TurkanaFossil.objects.filter(region__in=regions).order_by('catalog_number')
     for fossil_obj in marchal_fossils:
         m = get_origins(fossil_obj)
         if m:
@@ -567,3 +572,13 @@ def marchal_in_origins(regions=['east']):
         else:
             unmatched.append(fossil_obj)
     return matched, unmatched
+
+
+def update_turkana_fossils_in_origins(regions=['east']):
+    matched_fossils, unmatched_fossils = marchal_in_origins(regions)
+    for fossil in unmatched_fossils:
+        fossil.in_origins=False
+        fossil.save()
+    for fossil in matched_fossils:
+        fossil.in_origins=True
+        fossil.save()
