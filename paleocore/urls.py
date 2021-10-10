@@ -70,7 +70,6 @@ urlpatterns += [
 ]
 
 
-
 if settings.DEBUG:
     from django.contrib.staticfiles.urls import staticfiles_urlpatterns
     from django.views.generic.base import RedirectView
