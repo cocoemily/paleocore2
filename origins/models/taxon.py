@@ -19,8 +19,24 @@ from wagtail.admin.edit_handlers import FieldPanel, StreamFieldPanel, InlinePane
 from .wagtail import NomenDetailRelatedLink
 
 
-# Taxonomy models inherited from paleo core base project
+# Taxonomy models inherited from projects.TaxonRank base project
 class TaxonRank(projects.models.TaxonRank):
+    """
+    A class for Taxonomic Ranks
+    Inherits from Paleo Core Base Class
+    name
+    date_created
+    date_last_modified
+    problem
+    problem_comment
+    remarks
+    last_import
+
+    Inherits from projects.TaxonRank
+    name
+    plural
+    ordinal
+    """
     class Meta:
         verbose_name = "Taxon Rank"
         ordering = ['ordinal']

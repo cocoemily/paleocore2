@@ -10,6 +10,10 @@ from django.http import HttpResponse
 
 from pyzotero import zotero
 
+from rest_framework import viewsets
+from rest_framework import permissions
+from origins.serialziers import TaxonRankSerializer, NomenSerializer
+
 
 class UpdateSites(generic.FormView):
     template_name = 'admin/origins/site/update_sites.html'
@@ -122,4 +126,23 @@ class ZoteroListView(generic.ListView):
         zot = zotero.Zotero(2207794, 'user', 'ZRvebf2xkInRdYxVGtALHvzZ')
         items = zot.top(limit=20)
         return items
+
+
+# API Views
+class NomenViewSet(viewsets.ReadOnlyModelViewSet):
+    """
+    API endpoint that allows Nomina to be viewed
+    """
+    queryset = Nomen.objects.all()
+    serializer_class = NomenSerializer
+    #permission_classes = [permissions.IsAuthenticated]
+
+
+class TaxonRankViewSet(viewsets.ReadOnlyModelViewSet):
+    """
+    API endpoint that allows Taxon Ranks to be viewed
+    """
+    queryset = TaxonRank.objects.all()
+    serializer_class = TaxonRankSerializer
+    #permission_classes = [permissions.IsAuthenticated]
 
