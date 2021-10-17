@@ -135,7 +135,7 @@ class NomenViewSet(viewsets.ReadOnlyModelViewSet):
     """
     queryset = Nomen.objects.all()
     serializer_class = NomenSerializer
-    #permission_classes = [permissions.IsAuthenticated]
+    permission_classes = [permissions.IsAuthenticated]
 
 
 class TaxonRankViewSet(viewsets.ReadOnlyModelViewSet):
@@ -144,5 +144,5 @@ class TaxonRankViewSet(viewsets.ReadOnlyModelViewSet):
     """
     queryset = TaxonRank.objects.all()
     serializer_class = TaxonRankSerializer
-    #permission_classes = [permissions.IsAuthenticated]
+    permission_classes = [permissions.IsAuthenticated]
 
