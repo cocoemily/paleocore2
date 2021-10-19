@@ -26,7 +26,7 @@ class NomenSerializer(serializers.ModelSerializer):
                   'is_available', 'nomenclatural_status',
                   'is_objective_synonym', 'is_subjective_synonym',
                   'name_reference',
-                  'verified_date', 'date_last_modified',
+                  'verified_date', 'date_last_modified', 'full_name_html'
                   ]
 
 
