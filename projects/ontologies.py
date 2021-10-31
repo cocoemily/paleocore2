@@ -5,8 +5,11 @@
 
 # Basis of Record Vocabulary
 fossil_specimen = 'FossilSpecimen'  # corresponding to Darwin Core classes
+preserved_specimen = 'PreservedSpecimen'
 human_observation = 'HumanObservation'
-BASIS_OF_RECORD_VOCABULARY = ((fossil_specimen, "Fossil"), (human_observation, "Observation"))
+BASIS_OF_RECORD_VOCABULARY = ((fossil_specimen, "Fossil"),
+                              (preserved_specimen, "Preserved Specimen"),
+                              (human_observation, "Observation"))
 
 # HRP modified Basis of Record Vocabulary
 collection = "Collection"
