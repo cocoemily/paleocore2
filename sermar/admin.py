@@ -18,6 +18,7 @@ class LocalityAdmin(admin.ModelAdmin):
                     'owl_species', 'pellet_species', 'verbatim_roost_type', 'accumulating_agent', 'protected_area']
     list_filter = ['pellets', 'bones', 'analysis', 'accumulating_agent', 'protected_area']
     readonly_fields = ['easting', 'northing', 'longitude', 'latitude']
+    search_fields = ['landmark', 'accumulating_agent', 'roost_id', 'roost_type']
 
     formfield_overrides = {
         models.CharField: {'widget': TextInput(attrs={'size': '25'})},
