@@ -99,23 +99,6 @@ class TaxonListView(generic.ListView):
 class TaxonDetailView(generic.DetailView):
     model = TTaxon
 
-# This view is replaced by NominaListView in models.wagtail
-# class NominaListView(generic.ListView):
-#     template_name = 'origins/nomina.html'
-#     context_object_name = 'taxa'
-#     model = TTaxon
-#
-#     def get_queryset(self):
-#         """Return a list of all species names"""
-#         species = TaxonRank.objects.get(name='Species')
-#         taxa = TTaxon.objects.filter(rank=species).order_by('name')
-#         return taxa
-
-
-# class NomenDetailView(generic.DetailView):
-#     model = Nomen
-    #template_name = 'nomen_detail.html'
-
 
 class ZoteroListView(generic.ListView):
     template_name = 'origins/zotero_list.html'
