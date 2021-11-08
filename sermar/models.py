@@ -73,6 +73,7 @@ class Locality(PaleoCoreGeomBaseClass):
     adequate_sample = models.BooleanField(null=True)
     verbatim_analysis = models.IntegerField(null=True, blank=True)
     analysis = models.BooleanField(null=True)
+    accumulating_agent = models.CharField(max_length=255, null=True, blank=True, choices=ACCUMULATOR_CHOICES)
 
     def __str__(self):
         return f'{self.name}'

@@ -7,7 +7,9 @@ from import_export.admin import ImportExportModelAdmin
 
 class LocalityAdmin(admin.ModelAdmin):
     list_display = ['roost_id', 'landmark', 'priority', 'in_park', 'pellets', 'bones', 'analysis',
-                    'owl_species', 'pellet_species', 'verbatim_roost_type']
+                    'owl_species', 'pellet_species', 'verbatim_roost_type', 'accumulating_agent']
+    list_filter = ['pellets', 'bones', 'analysis']
+    list_editable = ['accumulating_agent']
 
 
 class CollectionResource(resources.ModelResource):
