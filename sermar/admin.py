@@ -17,7 +17,6 @@ class LocalityAdmin(admin.ModelAdmin):
     list_display = ['roost_id', 'landmark', 'priority', 'in_park', 'pellets', 'bones', 'analysis',
                     'owl_species', 'pellet_species', 'verbatim_roost_type', 'accumulating_agent', 'protected_area']
     list_filter = ['pellets', 'bones', 'analysis', 'accumulating_agent', 'protected_area']
-    list_editable = ['protected_area']
     readonly_fields = ['easting', 'northing', 'longitude', 'latitude']
 
     formfield_overrides = {
