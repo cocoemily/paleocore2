@@ -42,7 +42,7 @@ class Locality(PaleoCoreGeomBaseClass):
     Class for roost/nest localities
     inherits from PaleoCoreGeomBaseClass
     name
-    date_create, date_last_modified
+    date_created, date_last_modified
     problem, problem_comment
     remarks, last_import
 
