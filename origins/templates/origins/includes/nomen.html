@@ -1,11 +1,17 @@
 <!-- simple listing -->
 <div id="nomen">
   <h5><em>{{ nomen.name}}</em> {{nomen.authorship}}</h5>
-
-    <div class="nomen-type">
-      {% if nomen.type_specimen %}
+  {% if nomen.name_reference %}
+      {% with nomen.name_reference as publication %}
+        {% include 'origins/includes/publication.html' %}<br/>
+      {% endwith %}
+  {% endif %}
+  <hr/>
+  <div>
+    {% if nomen.type_specimen %}
+      <h6>Type Specimen</h6>
         {% if nomen.type_specimen.type_status %}
-        {{nomen.type_specimen.type_status | title}}:
+          {{nomen.type_specimen.type_status | title}}:
           {% if nomen.type_specimen.organism_id %}
             {{ nomen.type_specimen.organism_id }}<br/>
           {% else %}
@@ -14,28 +20,23 @@
         {% else %}
         Type Specimen: {{ nomen.type_specimen.catalog_number }}<br/>
         {% endif %}
+    {% endif %}
+
+    {% if nomen.nomenclatural_status %}
+    <h6>Status</h6>
+      {% if nomen.nomenclatural_status in valid %}
+      Available - Valid<br/>
+      {% elif nomen.nomenclatural_status in invalid %}
+      Available - Invalid<br/>
+      {% elif nomen.nomenclatural_status in unavailable %}
+      Unavailable<br/>
       {% endif %}
-      {% if nomen.nomenclatural_status %}
-        Nomenclatural Status:
-        {% if nomen.nomenclatural_status in valid %}
-        Available - Valid<br/>
-        {% elif nomen.nomenclatural_status in invalid %}
-        Available - Invalid<br/>
-        {% elif nomen.nomenclatural_status in unavailable %}
-        Unavailable<br/>
-        {% endif %}
-      {% endif %}
-    </div>
-  {% if nomen.name_reference %}
-      {% with nomen.name_reference as publication %}
-        {% include 'origins/includes/publication.html' %}<br/>
-      {% endwith %}
-  {% endif %}
-  <hr/>
-  <div>
+    {% endif %}
+
     <h6>Remarks</h6>
     {{ nomen.remarks | safe}}
-    <h6>References</h6>
+
+    <h6>Additional References</h6>
     <ol>
     {% for publication in nomen.references.all %}
       <li>{% include 'origins/includes/publication.html' %}</li>
