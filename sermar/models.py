@@ -3,7 +3,7 @@ from projects.models import PaleoCoreBaseClass, PaleoCoreGeomBaseClass
 from projects.models import PaleoCoreLocalityBaseClass, PaleoCoreOccurrenceBaseClass
 from ckeditor.fields import RichTextField
 from projects import ontologies as projects_ontologies
-from .otnologies import ACCUMULATOR_CHOICES
+from .otnologies import ACCUMULATOR_CHOICES, PARK_CHOICES
 
 # Choices
 tyto_alba = 'Tyto alba'
@@ -74,6 +74,7 @@ class Locality(PaleoCoreGeomBaseClass):
     verbatim_analysis = models.IntegerField(null=True, blank=True)
     analysis = models.BooleanField(null=True)
     accumulating_agent = models.CharField(max_length=255, null=True, blank=True, choices=ACCUMULATOR_CHOICES)
+    protected_area = models.CharField(max_length=255, null=True, blank=True, choices=PARK_CHOICES)
 
     def __str__(self):
         return f'{self.name}'
