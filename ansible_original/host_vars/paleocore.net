@@ -1,0 +1,16 @@
+use_ssl: false
+
+django_env:
+    DJANGO_SETTINGS_MODULE: paleocore.settings.production
+    HOST_NAME: paleocore.net
+    DB_USER: dreed
+    DB_PASSWD: '2D4QWz@Qpxmn'
+    DB_HOST: localhost
+    DB_NAME: paleocore
+    EMAIL_HOST: 'email_host'
+    EMAIL_FROM: 'denne.reed@gmail.com'
+    EMAIL_USER: 'email_user'
+    EMAIL_PASSWD: 'email_passwd'
+    DJANGO_ADMIN_USER: 'reedd'
+    DJANGO_ADMIN_EMAIL: 'admin@host.com'
+    DJANGO_ADMIN_PASSWD: 'prwhd2fb262t'

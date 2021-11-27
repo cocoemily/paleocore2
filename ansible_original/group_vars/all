@@ -1,0 +1,11 @@
+project_repo: git@github.com:paleocore/paleocore2.git
+project_title: paleocore
+project_name: paleocore
+sites_dir:  /usr/local/sites
+virtualenvs_dir: /home/django/virtualenvs/
+nginx_root_dir:  /etc/nginx/sites-available
+gunicorn:  127.0.0.1:2015
+deploy_user: dreed
+keystore_path: paleocore_keystore
+vcs: git
+vcs_host: github.com
