@@ -496,7 +496,7 @@ class NomenAdmin(admin.ModelAdmin):
     readonly_fields = ['full_name_html']
     list_display = ['name', 'authorship', 'year', 'name_reference', 'type_specimen',
                     'rank', 'is_objective_synonym', 'is_subjective_synonym', 'is_available', 'is_potentially_valid',
-                    #'nomenclatural_status',
+                    'nomenclatural_status',
                     'bc_status',
                     'assigned_to', 'verified_by']
     list_filter = ['rank', 'assigned_to', 'verified_by', 'is_available', 'is_potentially_valid',
@@ -505,7 +505,7 @@ class NomenAdmin(admin.ModelAdmin):
     search_fields = ['name', 'authorship', 'year']
     fields = ['name', 'authorship', 'year', 'rank', 'zoobank_id', 'type_specimen_label', 'type_specimen', 'paratypes',
               'is_available', 'is_potentially_valid',
-              # 'nomenclatural_status',
+              'nomenclatural_status',
               'bc_status',
               'remarks', 'is_objective_synonym', 'is_subjective_synonym', 'name_reference',
               'assigned_to', 'verified_by', 'verified_date',
@@ -530,7 +530,7 @@ class ActiveNomenAdmin(NomenAdmin):
     def get_queryset(self, request):
         species_rank = origins.models.TaxonRank.objects.get(ordinal=70)
         qs = origins.models.Nomen.objects.filter(is_objective_synonym=False).filter(is_subjective_synonym=False)
-        qs = qs.filter(nomenclatural_status=origins.ontologies.valid).filter(rank=species_rank)
+        qs = qs.filter(nomenclatural_status=origins.ontologies.potentially_valid).filter(rank=species_rank)
         return qs
 
 

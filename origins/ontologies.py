@@ -98,6 +98,16 @@ BC_STATUS_CHOICES = (
     (suppressed, 'Supressed')
 )
 
+# Origins Nomenclatural Status Choices
+unavailable = 'unavailable'
+invalid = 'invalid'
+potentially_valid = 'potentially_valid'
+NOMENCLATURAL_STATUS_CHOICES = (
+    (unavailable, 'unavailable'),
+    (invalid, 'invalid'),
+    (potentially_valid, 'potentially valid'),
+)
+
 # Classification Status Choices
 accepted = 'accepted'
 junior_synonym = 'junior_synonym'
