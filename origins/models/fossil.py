@@ -1,7 +1,6 @@
 from django.contrib.gis.db import models
 import uuid
-from origins.ontologies import CONTINENT_CHOICES, NOMENCLATURAL_STATUS_CHOICES, NOMENCLATURAL_CODE_CHOICES, TYPE_CHOICES, \
-    CLASSIFICATION_STATUS_CHOICES
+from origins.ontologies import CONTINENT_CHOICES, TYPE_CHOICES
 from django_countries.fields import CountryField
 import publications
 import projects.models

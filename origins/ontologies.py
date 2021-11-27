@@ -76,7 +76,7 @@ NOMENCLATURAL_CODE_CHOICES = (
     (icbn, 'ICBN')
 )
 
-# Nomenclatural Status Choices
+# Bernard Campbell Nomenclatural Status Choices
 valid = 'valid'
 invalid_gh = 'invalid_gh'  # Generic homonym
 invalid_ga = 'invalid_ga'  # Genus nomen nudum before 1931
@@ -86,7 +86,7 @@ invalid_sm = 'invalid_sm'  # Specific nomen nudum before 1931
 invalid_sn = 'invalid_sn'  # Specific nomen nudum after 1930
 invalid_so = 'invalid_so'  # Specific nomen nudum - proposed conditionally
 suppressed = 'suppressed'  # Name suppressed by ICZN decision.
-NOMENCLATURAL_STATUS_CHOICES = (
+BC_STATUS_CHOICES = (
     (valid, 'Valid'),
     (invalid_gh, 'Invalid GH'),
     (invalid_ga, 'Invalid GA'),

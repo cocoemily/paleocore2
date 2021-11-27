@@ -72,7 +72,7 @@ class NominaListView(Page):
         context['count'] = count
         context['valid'] = valid
         context['invalid'] = invalid
-        context['unavailable'] = [origins.ontologies.invalid_sn, origins.ontologies.invalid_sm, origins.ontologies]
+        context['unavailable'] = unavailable
 
         return context
 

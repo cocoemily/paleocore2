@@ -475,13 +475,13 @@ class TTaxonPublicationsInline(admin.TabularInline):
 
 class TTaxonAdmin(MPTTModelAdmin, TaxonomyAdmin):
     readonly_fields = ['id', 'biology_usages', 'fossil_usages', 'scientific_name', '_synonyms']
-    list_display = ['name', 'scientific_name', 'rank', 'classification_status', 'nomenclatural_status',
+    list_display = ['name', 'scientific_name', 'rank', 'classification_status', 'bc_status',
                     'fossil_usages', '_synonyms']
     fields = ['id', 'zoobank_id', 'epithet', 'name', 'verbatim_name', 'abbreviation', 'authorship', 'year', 'name_reference',
               'type_specimen', 'type_status', 'parent', 'classification_status', 'junior_to', 'rank',
-              'nomenclatural_code', 'nomenclatural_status', 'remarks']
+              'nomenclatural_code', 'bc_status', 'remarks']
     inlines = [TTaxonPublicationsInline]
-    list_filter = ['nomenclatural_status', 'classification_status', 'rank']
+    list_filter = ['bc_status', 'classification_status', 'rank']
     save_as = True
 
 
@@ -495,14 +495,19 @@ class NomenPublicationsInline(admin.TabularInline):
 class NomenAdmin(admin.ModelAdmin):
     readonly_fields = ['full_name_html']
     list_display = ['name', 'authorship', 'year', 'name_reference', 'type_specimen',
-                    'rank', 'is_objective_synonym', 'is_subjective_synonym', 'is_available',
-                    'nomenclatural_status', 'assigned_to', 'verified_by']
-    list_filter = ['rank', 'assigned_to', 'verified_by',
-                   'is_objective_synonym', 'is_subjective_synonym', 'nomenclatural_status']
+                    'rank', 'is_objective_synonym', 'is_subjective_synonym', 'is_available', 'is_potentially_valid',
+                    #'nomenclatural_status',
+                    'bc_status',
+                    'assigned_to', 'verified_by']
+    list_filter = ['rank', 'assigned_to', 'verified_by', 'is_available', 'is_potentially_valid',
+                   'is_objective_synonym', 'is_subjective_synonym', 'bc_status']
     inlines = [NomenPublicationsInline]
     search_fields = ['name', 'authorship', 'year']
     fields = ['name', 'authorship', 'year', 'rank', 'zoobank_id', 'type_specimen_label', 'type_specimen', 'paratypes',
-              'nomenclatural_status', 'remarks', 'is_objective_synonym', 'is_subjective_synonym', 'name_reference',
+              'is_available', 'is_potentially_valid',
+              # 'nomenclatural_status',
+              'bc_status',
+              'remarks', 'is_objective_synonym', 'is_subjective_synonym', 'name_reference',
               'assigned_to', 'verified_by', 'verified_date',
               'date_created', 'date_last_modified', 'problem', 'problem_comment']
 

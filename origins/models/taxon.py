@@ -12,7 +12,7 @@ import projects.models
 import publications.models
 from mptt.models import MPTTModel, TreeForeignKey
 
-from origins.ontologies import CONTINENT_CHOICES, NOMENCLATURAL_STATUS_CHOICES, NOMENCLATURAL_CODE_CHOICES, \
+from origins.ontologies import CONTINENT_CHOICES, BC_STATUS_CHOICES, NOMENCLATURAL_CODE_CHOICES, \
     TYPE_CHOICES, CLASSIFICATION_STATUS_CHOICES, VERIFIER_CHOICES
 
 from wagtail.admin.edit_handlers import FieldPanel, StreamFieldPanel, InlinePanel
@@ -84,9 +84,10 @@ class Nomen(projects.models.PaleoCoreBaseClass):
     type_specimen = models.ForeignKey('Fossil', null=True, blank=True, on_delete=models.SET_NULL,
                                       help_text=type_object_help)
     paratypes = models.CharField(max_length=255, null=True, blank=True)
-    nomenclatural_status = models.CharField('Nom. Status', max_length=255, null=True, blank=True,
-                                            choices=NOMENCLATURAL_STATUS_CHOICES)
+    bc_status = models.CharField('Nom. Status', max_length=255, null=True, blank=True,
+                                 choices=BC_STATUS_CHOICES)
     is_available = models.BooleanField('Available', default=False)
+    is_potentially_valid = models.BooleanField('Pot. Valid', default=False)
     is_objective_synonym = models.BooleanField('Objective Synonym', default=False)
     is_subjective_synonym = models.BooleanField('Subjective Synonym', default=False)
     name_reference = models.ForeignKey(publications.models.Publication, null=True, blank=True,
@@ -191,8 +192,8 @@ class TTaxon(MPTTModel, projects.models.Taxon):
     paratypes = models.CharField(max_length=255, null=True, blank=True)
     nomenclatural_code = models.CharField(max_length=255, null=True, blank=True, default='ICZN',
                                           choices=NOMENCLATURAL_CODE_CHOICES)
-    nomenclatural_status = models.CharField('Nom. Status', max_length=255, null=True, blank=True,
-                                            choices=NOMENCLATURAL_STATUS_CHOICES)
+    bc_status = models.CharField('Nom. Status', max_length=255, null=True, blank=True,
+                                            choices=BC_STATUS_CHOICES)
     parent = TreeForeignKey('self', null=True, blank=True, on_delete=models.CASCADE, related_name='children')
     classification_status = models.CharField('Classif. Status', max_length=255, null=True, blank=True, default='ICZN',
                                           choices=CLASSIFICATION_STATUS_CHOICES)
