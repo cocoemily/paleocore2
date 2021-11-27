@@ -526,7 +526,7 @@ class NomenAdmin(admin.ModelAdmin):
 
 
 class ActiveNomenAdmin(NomenAdmin):
-
+    # Get the queryset of active nomen
     def get_queryset(self, request):
         species_rank = origins.models.TaxonRank.objects.get(ordinal=70)
         qs = origins.models.Nomen.objects.filter(is_objective_synonym=False).filter(is_subjective_synonym=False)
