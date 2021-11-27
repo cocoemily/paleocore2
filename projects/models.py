@@ -45,7 +45,7 @@ class PaleoCoreBaseClass(models.Model):
                                               help_text='The date and time this resource was last altered.')
     problem = models.BooleanField(default=False,
                                   help_text='Is there a problem with this record that needs attention?')
-    problem_comment = models.TextField(max_length=255, blank=True, null=True,
+    problem_comment = models.TextField(blank=True, null=True,
                                        help_text='Description of the problem.')
     remarks = CKRichTextField("Record Remarks", null=True, blank=True,
                               help_text='General remarks about this database record.')
