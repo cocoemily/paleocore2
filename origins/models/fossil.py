@@ -123,17 +123,6 @@ class Fossil(projects.models.PaleoCoreGeomBaseClass):
     default_image.allow_tags = True
     default_image.mark_safe = True
 
-    def aapa(self):
-        """
-        Method to indicate if fossil belowns in analysis set for AAPA 2017.
-        Returns true if the fossil comes from a mio-pliocene locality in Africa
-        :return: True or False
-        """
-        young_sites = [None, 'Olduvai', 'Border Cave', 'Lincoln Cave', 'Olorgesailie', 'Klasies River',
-                       'Thomas Quarries', u'Sal\xe9', u'Haua Fteah', u'Melka-Kuntur\xe9 (cf. Locality)',
-                       u'Olduvai Gorge', u'Cave of Hearths', u'Kanjera (Locality)']
-        return self.continent == 'Africa' and self.locality not in young_sites
-
 
 class FossilElement(models.Model):
     # Records
@@ -190,3 +179,34 @@ class TurkanaFossil(models.Model):
     suffix_assigned = models.BooleanField(null=True)
     in_origins = models.BooleanField(null=True)
     in_turkana = models.BooleanField(null=True)
+
+
+class TurkFossil(Fossil):
+    """Fossil occurrences imported from the Turkana Catalog compiled by F. Marchal and S. Prat"""
+    verbatim_inventory_number = models.CharField(max_length=256, null=True, blank=True)
+    verbatim_suffix = models.CharField(max_length=256, null=True, blank=True)
+    verbatim_year_discovered = models.CharField(max_length=256, null=True, blank=True)
+    verbatim_year_mentioned = models.CharField(max_length=256, null=True, blank=True)
+    verbatim_year_published = models.CharField(max_length=256, null=True, blank=True)
+    verbatim_country = models.CharField(max_length=256, null=True, blank=True)
+    verbatim_zone = models.CharField(max_length=256, null=True, blank=True)
+    verbatim_area = models.CharField(max_length=256, null=True, blank=True)
+    verbatim_locality = models.CharField(max_length=256, null=True, blank=True)
+    verbatim_formation = models.CharField(max_length=256, null=True, blank=True)
+    verbatim_member = models.CharField(max_length=256, null=True, blank=True)
+    verbatim_level = models.CharField(max_length=256, null=True, blank=True)
+    verbatim_age_g1 = models.CharField(max_length=256, null=True, blank=True)
+    verbatim_age_g2 = models.CharField(max_length=256, null=True, blank=True)
+    verbatim_anatomical_part = models.CharField(max_length=256, null=True, blank=True)
+    verbatim_anatomical_description = models.CharField(max_length=256, null=True, blank=True)
+    verbatim_taxonomy1 = models.CharField(max_length=256, null=True, blank=True)
+    verbatim_taxonomy2 = models.CharField(max_length=256, null=True, blank=True)
+    verbatim_robusticity = models.CharField(max_length=256, null=True, blank=True)
+    verbatim_finder = models.CharField(max_length=256, null=True, blank=True)
+    verbatim_reference_first_mention = models.CharField(max_length=256, null=True, blank=True)
+    verbatim_reference_description = models.CharField(max_length=256, null=True, blank=True)
+    verbatim_reference_identification = models.CharField(max_length=256, null=True, blank=True)
+    verbatim_reference_dating = models.CharField(max_length=256, null=True, blank=True)
+    region = models.CharField(max_length=256, null=True, blank=True)
+    suffix_assigned = models.BooleanField(null=True)
+    in_origins = models.BooleanField(null=True)

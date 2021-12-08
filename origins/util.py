@@ -9,7 +9,7 @@ from django.utils.text import slugify
 import pandas
 import re
 from wagtail.core.models import Page
-from origins.models.fossil import TurkanaFossil
+from origins.models.fossil import TurkanaFossil, TurkFossil
 # import shapefile
 
 # pbdb_file_path = "/Users/reedd/Documents/projects/ete/pbdb/pbdb_test_no_header.csv"
@@ -450,6 +450,43 @@ def import_turkana_fossils(file = 'origins/data/turkana_inventory.xlsx'):
             TurkanaFossil.objects.create(verbatim_catalog_number=row[0], verbatim_suffix=row[1], region=sheet.name)
 
 
+def import_turk_fossils(file='origins/data/turkana_inventory_211207.xlsx'):
+    pd = pandas
+    data = pd.read_excel(file)
+    for index, row in data.iterrows():
+        data_dictionary = {
+            'verbatim_inventory_number': row['inventory'],
+            'verbatim_suffix': row['suffix'],
+            'verbatim_year_discovered': row['discovered'],
+            'verbatim_year_mentioned': row['mentioned'],
+            'verbatim_year_published': row['published'],
+            'verbatim_country': row['country'],
+            'verbatim_zone': row['zone'],
+            'verbatim_area': row['area'],
+            'verbatim_locality': row['locality'],
+            'verbatim_formation': row['formation'],
+            'verbatim_member': row['member'],
+            'verbatim_level': row['level'],
+            'verbatim_age_g1': row['age_g1'],
+            'verbatim_age_g2': row['age_g2'],
+            'verbatim_anatomical_part': row['part'],
+            'verbatim_anatomical_description': row['description'],
+            'verbatim_taxonomy1': row['taxonomy1'],
+            'verbatim_taxonomy2': row['taxonomy2'],
+            'verbatim_robusticity': row['rubusticity'],
+            'verbatim_finder': row['finder'],
+            'verbatim_reference_first_mention': row['ref_first_mention'],
+            'verbatim_reference_description': row['ref_description'],
+            'verbatim_reference_identification': row['ref_identification'],
+            'verbatim_reference_dating': row['ref_dating'],
+            'region': row['region'],
+            'catalog_number': row['catalog_number'],
+            'suffix_assigned': row['suffix_assigned'],
+        }
+        tf = TurkFossil.objects.create(**data_dictionary)
+        tf.save()
+
+
 def match_catalog_numbers(file='origins/data/turkana_cat2.xlsx'):
     matched = []
     unmatched = []
@@ -487,7 +524,7 @@ def get_origins(marchal_fossil_obj):
     """
     Get a qs of Origins fossil objects matching a Marchal TurkanaFossil object
     :param marchal_fossil_obj:
-    :return:
+    :return: Return a qs of matching Origins Fossil objects
     """
     f = marchal_fossil_obj
     catno = f.catalog_number.upper()
