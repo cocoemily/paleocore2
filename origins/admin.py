@@ -234,7 +234,7 @@ class FossilAdmin(admin.ModelAdmin):
     list_display = ['id', 'catalog_number', 'is_type_specimen', 'site_link', 'context_link', 'taxon_link',
                     'country', 'context__best_age',
                     'short_description', 'vif',
-                    'default_image',
+                    'default_image', 'problem', 'to_split'
                     # 'element_description',
                     ]
     list_editable = ['vif']
@@ -268,7 +268,9 @@ class FossilAdmin(admin.ModelAdmin):
                        ('origins', 'vif')],
         }),
         ('Remarks', {
-            'fields': [('remarks',)]
+            'fields': [('remarks',),
+                       ('problem',),
+                       ('problem_comment'),]
         }),
         ('Events', {
             'fields': [('date_discovered', 'discovered_by'),

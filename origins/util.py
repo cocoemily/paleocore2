@@ -527,8 +527,8 @@ def get_origins(marchal_fossil_obj):
     :return: Return a qs of matching Origins Fossil objects
     """
     f = marchal_fossil_obj
-    catno = f.catalog_number.upper()
-    matched = Fossil.objects.filter(catalog_number__startswith=catno)
+    #catno = f.catalog_number.upper()
+    matched = Fossil.objects.filter(catalog_number__startswith=f.catalog_number)
     return matched
 
 
@@ -619,3 +619,11 @@ def update_turkana_fossils_in_origins(regions=['east']):
     for fossil in matched_fossils:
         fossil.in_origins=True
         fossil.save()
+
+
+def update_in_origins():
+    for f in TurkFossil.objects.all():
+        m = get_origins(f)
+        if len(m) == 2:
+            f.in_origins = True
+            f.save()

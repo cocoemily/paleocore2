@@ -88,6 +88,9 @@ class Fossil(projects.models.PaleoCoreGeomBaseClass):
     # References
     references = models.ManyToManyField(publications.models.Publication, blank=True)
 
+    # Helper field for managing Turkana imports
+    to_split = models.BooleanField(null=True)
+
     def __str__(self):
         return str(self.catalog_number)
 
@@ -210,3 +213,4 @@ class TurkFossil(Fossil):
     region = models.CharField(max_length=256, null=True, blank=True)
     suffix_assigned = models.BooleanField(null=True)
     in_origins = models.BooleanField(null=True)
+
