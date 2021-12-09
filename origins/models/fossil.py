@@ -213,4 +213,6 @@ class TurkFossil(Fossil):
     region = models.CharField(max_length=256, null=True, blank=True)
     suffix_assigned = models.BooleanField(null=True)
     in_origins = models.BooleanField(null=True)
+    to_add = models.BooleanField(null=True)
+    to_divide = models.BooleanField(null=True)
 

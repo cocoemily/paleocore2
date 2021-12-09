@@ -565,7 +565,7 @@ class TurkanaFossilAdmin(admin.ModelAdmin):
 
 class TurkFossilAdmin(admin.ModelAdmin):
     list_display = ['catalog_number', 'verbatim_suffix', 'region',
-                    'suffix_assigned', 'in_origins', 'origins_fossil']
+                    'suffix_assigned', 'in_origins', 'to_add', 'to_divide', 'origins_fossil']
     list_filter = ['region', 'suffix_assigned', 'in_origins']
     search_fields = ['verbatim_inventory_number', 'verbatim_suffix', 'catalog_number']
     readonly_fields = ['origins_fossil']
