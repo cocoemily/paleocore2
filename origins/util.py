@@ -436,14 +436,14 @@ def clean_catno(catno):
     return res
 
 
-def import_turkana_fossils(file = 'origins/data/turkana_inventory.xlsx'):
+def import_turkana_fossils(file='origins/data/turkana_inventory.xlsx'):
     pd = pandas
     xleast = pd.read_excel(file, sheet_name='East')
-    xleast.name='east'
+    xleast.name = 'east'
     xlwest = pd.read_excel(file, sheet_name='West')
-    xlwest.name='west'
+    xlwest.name = 'west'
     xlnorth = pd.read_excel(file, sheet_name='North')
-    xlnorth.name='north'
+    xlnorth.name = 'north'
     sheets = [xleast, xlwest, xlnorth]
     for sheet in sheets:
         for row in sheet.itertuples(index=False):
@@ -527,7 +527,7 @@ def get_origins(marchal_fossil_obj):
     :return: Return a qs of matching Origins Fossil objects
     """
     f = marchal_fossil_obj
-    #catno = f.catalog_number.upper()
+    # catno = f.catalog_number.upper()
     matched = Fossil.objects.filter(catalog_number__startswith=f.catalog_number)
     return matched
 
