@@ -9,7 +9,7 @@ from django.utils.text import slugify
 import pandas
 import re
 from wagtail.core.models import Page
-from origins.models.fossil import TurkanaFossil
+from origins.models.fossil import TurkanaFossil, TurkFossil
 # import shapefile
 
 # pbdb_file_path = "/Users/reedd/Documents/projects/ete/pbdb/pbdb_test_no_header.csv"
@@ -436,18 +436,55 @@ def clean_catno(catno):
     return res
 
 
-def import_turkana_fossils(file = 'origins/data/turkana_inventory.xlsx'):
+def import_turkana_fossils(file='origins/data/turkana_inventory.xlsx'):
     pd = pandas
     xleast = pd.read_excel(file, sheet_name='East')
-    xleast.name='east'
+    xleast.name = 'east'
     xlwest = pd.read_excel(file, sheet_name='West')
-    xlwest.name='west'
+    xlwest.name = 'west'
     xlnorth = pd.read_excel(file, sheet_name='North')
-    xlnorth.name='north'
+    xlnorth.name = 'north'
     sheets = [xleast, xlwest, xlnorth]
     for sheet in sheets:
         for row in sheet.itertuples(index=False):
             TurkanaFossil.objects.create(verbatim_catalog_number=row[0], verbatim_suffix=row[1], region=sheet.name)
+
+
+def import_turk_fossils(file='origins/data/turkana_inventory_211207.xlsx'):
+    pd = pandas
+    data = pd.read_excel(file)
+    for index, row in data.iterrows():
+        data_dictionary = {
+            'verbatim_inventory_number': row['inventory'],
+            'verbatim_suffix': row['suffix'],
+            'verbatim_year_discovered': row['discovered'],
+            'verbatim_year_mentioned': row['mentioned'],
+            'verbatim_year_published': row['published'],
+            'verbatim_country': row['country'],
+            'verbatim_zone': row['zone'],
+            'verbatim_area': row['area'],
+            'verbatim_locality': row['locality'],
+            'verbatim_formation': row['formation'],
+            'verbatim_member': row['member'],
+            'verbatim_level': row['level'],
+            'verbatim_age_g1': row['age_g1'],
+            'verbatim_age_g2': row['age_g2'],
+            'verbatim_anatomical_part': row['part'],
+            'verbatim_anatomical_description': row['description'],
+            'verbatim_taxonomy1': row['taxonomy1'],
+            'verbatim_taxonomy2': row['taxonomy2'],
+            'verbatim_robusticity': row['rubusticity'],
+            'verbatim_finder': row['finder'],
+            'verbatim_reference_first_mention': row['ref_first_mention'],
+            'verbatim_reference_description': row['ref_description'],
+            'verbatim_reference_identification': row['ref_identification'],
+            'verbatim_reference_dating': row['ref_dating'],
+            'region': row['region'],
+            'catalog_number': row['catalog_number'],
+            'suffix_assigned': row['suffix_assigned'],
+        }
+        tf = TurkFossil.objects.create(**data_dictionary)
+        tf.save()
 
 
 def match_catalog_numbers(file='origins/data/turkana_cat2.xlsx'):
@@ -487,11 +524,11 @@ def get_origins(marchal_fossil_obj):
     """
     Get a qs of Origins fossil objects matching a Marchal TurkanaFossil object
     :param marchal_fossil_obj:
-    :return:
+    :return: Return a qs of matching Origins Fossil objects
     """
     f = marchal_fossil_obj
-    catno = f.catalog_number.upper()
-    matched = Fossil.objects.filter(catalog_number__startswith=catno)
+    # catno = f.catalog_number.upper()
+    matched = Fossil.objects.filter(catalog_number__startswith=f.catalog_number)
     return matched
 
 
@@ -582,3 +619,11 @@ def update_turkana_fossils_in_origins(regions=['east']):
     for fossil in matched_fossils:
         fossil.in_origins=True
         fossil.save()
+
+
+def update_in_origins():
+    for f in TurkFossil.objects.all():
+        m = get_origins(f)
+        if len(m) == 2:
+            f.in_origins = True
+            f.save()
