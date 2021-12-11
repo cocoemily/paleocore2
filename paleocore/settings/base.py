@@ -15,11 +15,11 @@ import environ
 env = environ.Env()
 
 # Absolute filesystem path to the top-level project folder:
-
-root = environ.Path(__file__) - 3
+root = environ.Path(__file__) - 3  # The full path to the paleocore project directory locally
 PROJECT_ROOT = root()
-APPS_DIR = root.path('pages')
+APPS_DIR = root.path('pages')  # set paleocore/pages/ as the main directory for template loader
 
+# Using 12 factor .env file to store sensitive data.
 environ.Env.read_env(root('.env'))
 
 # Absolute filesystem path to the Django project directory:
@@ -40,9 +40,7 @@ DEBUG = env.bool('DJANGO_DEBUG', True)
 
 ALLOWED_HOSTS = []
 
-
 # Application definition
-
 INSTALLED_APPS = (
     'django.contrib.admin',
     'django.contrib.auth',
@@ -96,7 +94,7 @@ INSTALLED_APPS = (
     'gdb',  # Greate Divide Basin
     'omo_mursi',  # Omo Mursi
     'origins',  # Origins
-    'psr', # Paleo Silk Road
+    'psr',  # Paleo Silk Road
     'cc',  # Combe Capelle
     'fc',  # Fontechevadpc
     'wtap',  # West Turkana Archaeology Project
@@ -156,7 +154,7 @@ MANAGERS = ADMINS
 TEMPLATES = [
     {
         'BACKEND': 'django.template.backends.django.DjangoTemplates',
-        'DIRS': [str(APPS_DIR.path('templates')), ],
+        'DIRS': [str(APPS_DIR.path('templates')), ],  # e.g. .../paleocore/pages/templates
         'APP_DIRS': True,
         'OPTIONS': {
             'debug': DEBUG,
