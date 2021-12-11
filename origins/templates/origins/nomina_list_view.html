@@ -5,7 +5,8 @@
 {% block content %}
 <div class="grid-container">
   <div class="grid-x grid-margin-x">
-    <div class="medium-10 cell">
+    <!-- medium-12 to use the full width and align with breadcrumbs -->
+    <div class="medium-12 cell">
       {% if page.title %}
       <h1> {{page.title}} </h1>
       {% else %}
@@ -21,37 +22,7 @@
         associate paratypes as listed in the nominal publication. </p>
       {% endif %}
       <hr/>
-      {% comment %}
-      <p>Fontawesome test<br/>
-        docsfa fa-external-link: <i class="fa fa-external-link"></i><br/>
-        docsfa fa-external-link-alt: <i class="fa fa-external-link-alt"></i><br/>
-        docsfa fa-gears<i class="fa fa-gears"></i><br/>
-        <i class="fa fa-gear-alt"></i><br/>
-        <i class="fa icon-fa-gear-alt"></i><br/>
-        wagtailfa icon-fa-external-link-alt: <i class="fa fa-external-link-alt"></i><br/>
-        wagtailfa icon-fa-external-link-square-alt:<i class="fa fa-external-link-square-alt"></i><br/>
-        wagtailfa icon-fa-gears-alt:<i class="fa fa-gears-alt"></i><br/>
-        wagtailfa icon-fa-address-book:<i class="fa icon-fa-address-book"></i><br/>
-        fa fa-cart-arrow-down: <i class="fa fa-cart-arrow-down"></i><br/>
-        docsfa fa-exclamation-triangle: <i class="fa fa-exclamation-triangle"></i>
-
-
-
-        <i class="fa fa-caret-down"></i>
-        <i class="fa fa-book"></i>
-        <i class="fa fa-car"></i>
-        <i class="fa fa-external-link" aria-hidden="true"></i>
-        <i class="fa fa-android"></i>
-        <i class="fa fa-angle-double-down"></i>
-        <i class="fa fa-address-book">fontawesome</i>
-      </p>
-      {% endcomment %}
-
       {% include 'origins/includes/nomina_list.html' %}
-
-
-
-
     </div>
   </div>
 </div>

@@ -29,18 +29,37 @@
         {% endif %}
   <div class="special_links">
     <a href="?plain" class="button">Plain text</a>
-    <a href="?ris" class="button">RIS</a>
     <a href="?bibtex" class="button">BibTex</a>
+    <a href="?ris" class="button">RIS</a>
   </div>
 	{% for publication in publications %}
-		<h1>Publication</h1>
 		<hr/>
-		<div style="margin-bottom: 30px;">
-		{% include "publications/publication.html" %}<br/>
+		<div class="card">
+      <div class="card-section">
+		  {% include "publications/publication.html" %}
+      </div>
 		</div>
-		<h2>Reference</h2>
-		<hr/>
-		<pre lang="bibtex">{% include "publications/publication.bib" %}</pre>
+
+		<div>
+      <h6>Plain Text</h6>
+      <div class="card">
+      <div class="card-section">
+        <pre lang="">{% include "publications/publications.txt" %}</pre>
+      </div>
+    </div>
+      <h6>Bibtex</h6>
+      <div class="card">
+        <div class="card-section">
+          <pre lang="bibtex">{% include "publications/publications.bib" %}</pre>
+        </div>
+      </div>
+      <h6>RIS</h6>
+      <div class="card">
+        <div class="card-section">
+          <pre lang="ris">{% include "publications/publications.ris" %}</pre>
+        </div>
+      </div>
+    </div>
 	{% endfor %}
       </div>
     </div>

@@ -212,8 +212,8 @@ hr {border-color: $light-gray;}
 #content {padding-top: 25px; padding-bottom: 25px; min-height: 100vh;}
 
 .card {
-  box-shadow: 1px 1px 10px 1px rgba(0,0,0,.21);
-  border: 0;
+  //box-shadow: 1px 1px 10px 1px rgba(0,0,0,.21);
+  border-width: 1px;
   transform: translate3d(0px, 0px, 0px);
   transition: box-shadow 0.2s cubic-bezier(0, 0.2, 0.4, 1) 0s;
 }
