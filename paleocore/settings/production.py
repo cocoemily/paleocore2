@@ -2,7 +2,6 @@
 from .base import *
 
 
-
 DEBUG = env.bool('DJANGO_DEBUG', default=False)
 
 TEMPLATES[0]['OPTIONS']['debug'] = DEBUG
@@ -20,8 +19,10 @@ COMPRESS_CSS_FILTERS = [
 ]
 
 ALLOWED_HOSTS = [
-    env("DJANGO_ALLOWED_HOST_NAME"), env("DJANGO_ALLOWED_HOST_NAME2"),
-    'www.' + env("DJANGO_ALLOWED_HOST_NAME"), 'www.' + env("DJANGO_ALLOWED_HOST_NAME2"),
+    env("DJANGO_ALLOWED_HOST_NAME"),
+    env("DJANGO_ALLOWED_HOST_NAME2"),
+    'www.' + env("DJANGO_ALLOWED_HOST_NAME"),
+    'www.' + env("DJANGO_ALLOWED_HOST_NAME2"),
     env("DJANGO_PRODUCTION_IP")
 ]
 
@@ -30,7 +31,7 @@ DATABASES['default']['ENGINE'] = 'django.contrib.gis.db.backends.postgis'
 
 INSTALLED_APPS += (
     'wagtail.contrib.frontend_cache',
-    'gunicorn',
+    'gunicorn',  # python lightweight web server. Gunicorn -> Nginx -> Client
 )
 
 MIDDLEWARE_CLASSES = (
