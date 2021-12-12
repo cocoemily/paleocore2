@@ -97,7 +97,7 @@ class Nomen(projects.models.PaleoCoreBaseClass):
     references = models.ManyToManyField(publications.models.Publication, blank=True)
     assigned_to = models.CharField('Assigned', max_length=255, null=True, blank=True, choices=VERIFIER_CHOICES)
     verified_by = models.CharField('Verified', max_length=255, null=True, blank=True, choices=VERIFIER_CHOICES)
-    verified_date = models.DateField(null=True, blank=True)
+    verified_date = models.DateField(null=True, blank=True)  # used to control visibility on nomen detail page
 
     def from_ttaxon(self, ttaxon):
         """

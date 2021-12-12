@@ -17,7 +17,7 @@
 <!-- publication title -->
 <b><a href="{% url 'publications:id' publication.pk %}" class="title">{{ publication.title|tex_parse }}</a></b>
 {% if user.is_staff %}
-<a href="{% url 'admin:publications_publication_change' publication.id %}"><span class="badge"> EDIT </span></a>
+<a href="{% url 'admin:publications_publication_change' publication.id %}"> [EDIT] </a>
 <!-- pdf link -->
 
   {% if publication.pdf %}

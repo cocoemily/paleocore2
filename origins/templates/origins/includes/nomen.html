@@ -3,7 +3,14 @@
 <div id="nomen">
   <!-- Title: Nomen and Authorship -->
   <div>
-    <h5><em>{{ nomen.name}}</em> {{nomen.authorship}}</h5>
+    <h5><em>
+      {{ nomen.name}}</em> {{nomen.authorship}}
+      {% if user.is_staff %}
+        <a href="{% url 'admin:origins_nomen_change' nomen.id %}"> [EDIT] </a>
+      {% endif %}
+    </h5>
+
+<!-- pdf link -->
   </div>
   <hr/>
   <!-- Name reference -->
@@ -24,45 +31,45 @@
   <div>
     <!-- Nomen Details -->
     <h6>Details</h6>
-    {% if nomen.type_specimen or nomen.nomenclatural_status %}
+    {% if nomen.type_specimen or nomen.nomenclatural_status or nomen.verified_date %}
       <div class="card">
 
-        <!-- Status Details -->
-        {% if nomen.nomenclatural_status %}
-          <div class="card-section">
+        <!-- Details -->
+        <div class="card-divider">
+
+            <!-- Nomenclatural Status -->
             Status:
             {% if nomen.nomenclatural_status %}
-              {{ nomen.nomenclatural_status|unslugify|capfirst }}
+              {{ nomen.nomenclatural_status|unslugify|capfirst }}<br/>
+            {% else %} undetermined<br/>
             {% endif %}
-          </div>
-        {% endif %}
 
-        <!-- Type Specimen -->
-        {% if nomen.type_specimen.type_status %}
-          <div class="card-section">
-          {{nomen.type_specimen.type_status | title}}:
-            {% if nomen.type_specimen.organism_id %}
-              {{ nomen.type_specimen.organism_id }}<br/>
+            <!-- Type Specimen -->
+            {% if nomen.type_specimen %}
+              {% if nomen.type_specimen.type_status %}
+                {{nomen.type_specimen.type_status | title}}:
+                {% if nomen.type_specimen.organism_id %}
+                  {{ nomen.type_specimen.organism_id }}<br/>
+                {% else %}
+                  {{nomen.type_specimen.catalog_number}}<br/>
+                {% endif %}
+              {% else %}
+                {{ nomen.type_specimen.catalog_number }}<br/>
+              {% endif %}
             {% else %}
-              {{nomen.type_specimen.catalog_number}}<br/>
+              No details available.
             {% endif %}
-          </div>
-          {% else %}
-          <div class="card-section">
-          Type Specimen: {{ nomen.type_specimen.catalog_number }}<br/>
-          </div>
+
+        </div>
+
+        <!-- Remarks -->
+        {% if nomen.remarks and nomen.verified_date %}
+        <div class="card-section">
+          {{ nomen.remarks | safe}}
+
+        </div>
         {% endif %}
 
-        {% comment %} Move the functionality of this code to wagtail
-        <!-- Nomen Remarks -->
-        <!-- Move remarks into the Wagtail system
-        {% if nomen.remarks %}
-        <div class="card-section">
-          Remarks: {{ nomen.remarks | safe}}
-        {% endif %}
-        </div>
-        -->
-        {% endcomment %}
       </div>
     {% else %}
       <div class="card">
@@ -70,7 +77,6 @@
         No details available.
         </div>
       </div>
-
     {% endif %}
   </div>
 
