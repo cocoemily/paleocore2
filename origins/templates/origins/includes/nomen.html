@@ -84,7 +84,7 @@
     <!-- Additional References -->
     {% if nomen.references.all %}
       <h6>Additional References</h6>
-      {% for publication in nomen.references.all %}
+      {% for publication in nomen.references.all|dictsort:"year" %}
         <div class="card">
           <div class="card-section">
           {% include 'publications/publication.html' %}
