@@ -136,3 +136,9 @@ def adverts(context):
         'adverts': all_adverts,
         'request': context['request'],
     }
+
+
+# Custom filter to convert slugs to plain text, e.g. potentially_valid -> potentially valid
+@register.filter(name='unslugify')
+def unslugify(string):
+    return string.replace('_', ' ')

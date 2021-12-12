@@ -1,90 +1,90 @@
+{% load paleocore_utils %}
 <!-- simple listing -->
 <div id="nomen">
-  <h5><em>{{ nomen.name}}</em> {{nomen.authorship}}</h5>
-  {% if nomen.name_reference %}
-      {% with nomen.name_reference as publication %}
-        {% include 'origins/includes/publication.html' %}<br/>
-      {% endwith %}
-  {% endif %}
-  <hr/>
+  <!-- Title: Nomen and Authorship -->
   <div>
-    {% if nomen.type_specimen %}
-      <h6>Type Specimen</h6>
-        {% if nomen.type_specimen.type_status %}
-          {{nomen.type_specimen.type_status | title}}:
-          {% if nomen.type_specimen.organism_id %}
-            {{ nomen.type_specimen.organism_id }}<br/>
-          {% else %}
-            {{nomen.type_specimen.catalog_number}}<br/>
-          {% endif %}
-        {% else %}
-        Type Specimen: {{ nomen.type_specimen.catalog_number }}<br/>
+    <h5><em>{{ nomen.name}}</em> {{nomen.authorship}}</h5>
+  </div>
+  <hr/>
+  <!-- Name reference -->
+  <div>
+    {% if nomen.name_reference %}
+    <h6>Authorship Reference</h6>
+      <div class="card">
+          <div class="card-section">
+          {% with nomen.name_reference as publication %}
+            {% include 'publications/publication.html' %}<br/>
+          {% endwith %}
+          </div>
+      </div>
+    {% endif %}
+  </div>
+
+  <!-- Details -->
+  <div>
+    <!-- Nomen Details -->
+    <h6>Details</h6>
+    {% if nomen.type_specimen or nomen.nomenclatural_status %}
+      <div class="card">
+
+        <!-- Status Details -->
+        {% if nomen.nomenclatural_status %}
+          <div class="card-section">
+            Status:
+            {% if nomen.nomenclatural_status %}
+              {{ nomen.nomenclatural_status|unslugify|capfirst }}
+            {% endif %}
+          </div>
         {% endif %}
+
+        <!-- Type Specimen -->
+        {% if nomen.type_specimen.type_status %}
+          <div class="card-section">
+          {{nomen.type_specimen.type_status | title}}:
+            {% if nomen.type_specimen.organism_id %}
+              {{ nomen.type_specimen.organism_id }}<br/>
+            {% else %}
+              {{nomen.type_specimen.catalog_number}}<br/>
+            {% endif %}
+          </div>
+          {% else %}
+          <div class="card-section">
+          Type Specimen: {{ nomen.type_specimen.catalog_number }}<br/>
+          </div>
+        {% endif %}
+
+        {% comment %} Move the functionality of this code to wagtail
+        <!-- Nomen Remarks -->
+        <!-- Move remarks into the Wagtail system
+        {% if nomen.remarks %}
+        <div class="card-section">
+          Remarks: {{ nomen.remarks | safe}}
+        {% endif %}
+        </div>
+        -->
+        {% endcomment %}
+      </div>
+    {% else %}
+      <div class="card">
+        <div class="card-section">
+        No details available.
+        </div>
+      </div>
+
     {% endif %}
+  </div>
 
-    {% if nomen.nomenclatural_status %}
-    <h6>Status</h6>
-      {% if nomen.nomenclatural_status in valid %}
-      Available - Valid<br/>
-      {% elif nomen.nomenclatural_status in invalid %}
-      Available - Invalid<br/>
-      {% elif nomen.nomenclatural_status in unavailable %}
-      Unavailable<br/>
-      {% endif %}
+  <div>
+    <!-- Additional References -->
+    {% if nomen.references.all %}
+      <h6>Additional References</h6>
+      {% for publication in nomen.references.all %}
+        <div class="card">
+          <div class="card-section">
+          {% include 'publications/publication.html' %}
+          </div>
+        </div>
+      {% endfor %}
     {% endif %}
-
-    <h6>Remarks</h6>
-    {{ nomen.remarks | safe}}
-
-    <h6>Additional References</h6>
-    <ol>
-    {% for publication in nomen.references.all %}
-      <li>{% include 'origins/includes/publication.html' %}</li>
-    {% endfor %}
-    </ol>
   </div>
 </div>
-
-
-
-
-<!-- accordian listing -->
-{% comment %}
-<div>
-  <ul class="accordion" data-accordion data-multi-expand="true" data-allow-all-closed="true">
-    {% for name in taxa %}
-      <li class="accordion-item" data-accordion-item>
-        <h5><a href="{% url 'origins:taxon_detail_view' name.id %}">{{ name.scientific_name }}</a></h5>
-        <div class="accordion-content" data-tab-content>
-          <!-- main reference -->
-          {% for publication in name.name_reference.all %}
-          {{ publication.authors }}. {{ publication.title }}
-          {% if not publication.title_ends_with_punct %}.{% endif %}
-          {% if publication.journal %} {{ publication.journal }},{% endif %}
-          {% if publication.book_title %} {{ publication.book_title }},{% endif %}
-          {% if publication.publisher %} {{ publication.publisher }},{% endif %}
-          {% if publication.institution %} {{ publication.institution }},{% endif %}
-          {% if publication.volume %} volume {{ publication.volume }},{% endif %}
-          {% if publication.number %} issue {{ publication.number }},{% endif %}
-          {% if publication.pages %} pages {{ publication.pages }},{% endif %}
-          {% if publication.month %} {{ publication.month_long }}{% endif %} {{ publication.year }}.<br/>
-          {% endfor %}
-          <!-- additional references -->
-          {% for publication in name.references.all %}
-          {{ publication.authors }}. {{ publication.title }}
-          {% if not publication.title_ends_with_punct %}.{% endif %}
-          {% if publication.journal %} {{ publication.journal }},{% endif %}
-          {% if publication.book_title %} {{ publication.book_title }},{% endif %}
-          {% if publication.publisher %} {{ publication.publisher }},{% endif %}
-          {% if publication.institution %} {{ publication.institution }},{% endif %}
-          {% if publication.volume %} volume {{ publication.volume }},{% endif %}
-          {% if publication.number %} issue {{ publication.number }},{% endif %}
-          {% if publication.pages %} pages {{ publication.pages }},{% endif %}
-          {% if publication.month %} {{ publication.month_long }}{% endif %} {{ publication.year }}.<br/>
-          {% endfor %}
-        </div>
-      </li>
-    {% endfor %}
-  </ul>
-</div>
-{% endcomment %}

@@ -1,0 +1,39 @@
+body {
+  padding: 30px;
+}
+
+.sections div.target {
+    background: #ccc;
+    min-height: 100vh;
+    margin: 5px;
+}
+
+.active {
+  background-color: blue;
+  color: white;
+}
+
+.demo {
+  background: #1779ba;
+}
+
+.cell {
+  margin: 10px;
+}
+
+.cell-blue {
+  /*background: dodgerblue;*/
+  background: #1779ba;
+  line-height: 50px;
+  /*height: 50px;*/
+  color: white;
+  text-align: left;
+  margin: 10px;
+}
+.cell-blue:nth-child(odd) {
+  background: #37a0e6;
+}
+
+.sticky {
+  width: 100%;
+}

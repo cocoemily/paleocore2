@@ -1,0 +1,86 @@
+{% extends "base.html" %}
+{% load wagtailcore_tags %}
+{% load navigation_tags %}
+{% load humanize %}
+{% load static %}
+
+{% block content %}
+<div id="content" class="grid-container">
+  <div class="grid-x grid-padding-x align-center">
+    <div id="standard_page" class="medium-12 cell">
+      {% if self.title %} <h1>{{ self.title }}</h1>
+      {% else %}<h1>References</h1>
+      {% endif %}
+      <div class="special_links">
+          <a href="?plain" class="button">Plain text</a>
+          <a href="?bibtex" class="button">BibTex</a>
+          <a href="?ris" class="button">RIS</a>
+
+      </div>
+      {% if self.intro %}
+      {{ self.intro | safe}}
+      {% endif %}
+      <hr/>
+
+      <div>
+        {% for citekey, publications in citekeys %}
+        <div>
+          {% for publication in publications %}
+          <div class="card">
+            <div class="card-section">
+              <p>{% include "publications/publication.html" %}</p>
+            </div>
+          </div>
+            {% endfor %}
+        </div>
+
+          {% endfor %}
+      </div>
+
+      {% comment %}}
+      <!-- Start References
+      <ol>
+        {% for citekey, publications in citekeys %}
+        <li>
+          <div{% if not forloop.last %} style="margin-bottom: 30px;"{% endif %}>
+          {% for publication in publications %}
+            <div{% if not forloop.last %} style="margin-bottom: 20px;"{% endif %}>
+            {% include "publications/publication.html" %}
+            </div>
+          {% endfor %}
+          </div>
+        </li>
+        {% endfor %}
+      </ol>
+      -->
+      {% endcomment %}
+
+
+      </div>
+      {% comment %} Prototype alphabetical side navigation...
+      <!-- sidebar navigation -->
+      <div class="medium-2 cells" data-sticky-container>
+        <div class="stick" data-sticky data-margin-top="15">
+          <div id="nav" class="vertical menu" data-magellan data-offset="80">
+            <h6>Navigation</h6>
+            <nav>
+            {% for group in classes %}
+            {% if forloop.first %}
+            <li class="is-active"><a href="#{{ group.label}}" class="active">{{ group.mapping }}</a></li>
+            {% else %}
+            <li><a href="#{{ group.label}}">{{ group.mapping }}</a></li>
+            {% endif %}
+            {% endfor %}
+            <hr/>
+            {% for group in subclasses %}
+            <li><a href="#{{ group.label}}">{{ group.mapping }}</a></li>
+            {% endfor %}
+            </nav>
+          </div>
+        </div>
+      </div>
+      <!-- end side bar navigation -->
+      {% endcomment %}
+  </div>
+</div>
+{% endblock %}

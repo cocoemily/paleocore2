@@ -50,7 +50,7 @@ urlpatterns = [
 # Add urls for the following apps if they are installed
 if 'publications' in settings.INSTALLED_APPS:
     urlpatterns += [
-        path('publications/', include(('publications.urls', 'publications'), namespace='publications')),
+        path('references/', include(('publications.urls', 'publications'), namespace='publications')),
     ]
 
 if 'origins' in settings.INSTALLED_APPS:

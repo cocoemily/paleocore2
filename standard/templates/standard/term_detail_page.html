@@ -1,0 +1,48 @@
+{% extends "base.html" %}
+{% load wagtailcore_tags %}
+{% load navigation_tags %}
+{% load humanize %}
+{% load static %}
+
+{% block content %}
+
+{% include "pages/includes/feed_image_title.html" %}
+
+<div id="content" class="grid-container">
+  <div class="grid-x grid-padding-x align-center">
+    <div class="small-9 cell">
+    </div>
+  </div>
+
+  <div class="grid-x grid-padding-x align-center">
+    <div id="standard_page" class="medium-9 cell">
+      <h1>{{page.title}}</h1>
+      {{page.body}}
+    </div>
+  </div>
+</div>
+
+{% endblock %}
+
+<!-- js to highlight side nav menu items on click and scroll -->
+{% block extra_js %}
+<script>
+  $("#nav nav a").on("click", function (event) {
+  $(this).parent().find("li").removeClass("is-active");
+  $(this).addClass("is-active");
+});
+
+$(window).on("scroll", function () {
+  $(".target").each(function () {
+    if ($(window).scrollTop() >= $(this).offset().top -140) {
+      var id = $(this).attr("id");
+      $("#nav nav li").removeClass("is-active");
+      $('#nav nav a[href="#' + id + '"]').parent().addClass("is-active");
+    }
+  });
+});
+$(document).foundation();
+</script>
+{% endblock %}
+
+
