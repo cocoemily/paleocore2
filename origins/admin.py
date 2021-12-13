@@ -270,7 +270,7 @@ class FossilAdmin(admin.ModelAdmin):
         ('Remarks', {
             'fields': [('remarks',),
                        ('problem',),
-                       ('problem_comment'),]
+                       ('problem_comment',)]
         }),
         ('Events', {
             'fields': [('date_discovered', 'discovered_by'),
@@ -444,15 +444,11 @@ class FossilAdmin(admin.ModelAdmin):
     # Add to the admin urls
     def get_urls(self):
         return [
-                   #url(r'^update_sites/(?P<ids>)/$',
-                    url(r'^update_sites/$',
-                    permission_required('origins.update_sites', login_url='login/')(
-                        origins.views.UpdateSites.as_view()),
-                    name="update_sites"),
-                # url(r'^change_xy/$',
-                #     permission_required('lgrp.change_occurrence',
-                   # login_url='login/')(lgrp.views.change_coordinates_view),
-                #     name="change_xy"),
+                   # url(r'^update_sites/(?P<ids>)/$',
+                   url(r'^update_sites/$',
+                       permission_required('origins.update_sites', login_url='login/')(
+                           origins.views.UpdateSites.as_view()),
+                       name="update_sites"),
                ] + super(FossilAdmin, self).get_urls()
 
 
@@ -500,8 +496,8 @@ class NomenAdmin(admin.ModelAdmin):
                     'rank', 'is_objective_synonym', 'is_subjective_synonym', 'is_available', 'is_potentially_valid',
                     'nomenclatural_status',
                     'bc_status',
-                    'assigned_to', 'verified_by']
-    list_filter = ['rank', 'assigned_to', 'verified_by', 'is_available', 'is_potentially_valid',
+                    'assigned_to', 'verified_by', 'verified_date']
+    list_filter = ['rank', 'assigned_to', 'verified_by', 'verified_date', 'is_available', 'is_potentially_valid',
                    'is_objective_synonym', 'is_subjective_synonym', 'bc_status']
     inlines = [NomenPublicationsInline]
     search_fields = ['name', 'authorship', 'year']
