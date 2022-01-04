@@ -7,8 +7,8 @@ from rest_framework import routers
 
 # REST framework routers
 router = routers.DefaultRouter()
-router.register(r'nomen-api', views.NomenViewSet)
-router.register(r'taxonrank-api', views.TaxonRankViewSet)
+router.register(r'nomina', views.NomenViewSet)  # /paleocore.org/origins/api/nomina/
+router.register(r'taxonranks', views.TaxonRankViewSet)
 
 urlpatterns = [
     # url to get a geojson representation of all Origins sites
@@ -31,7 +31,7 @@ urlpatterns = [
             name='countries_geojson'),
 
     #path('', views.index, name='index'),
-    path('api/', include(router.urls)), # wire in api paths
+    path('api/', include(router.urls)),  # wire in api paths
     path('api-auth/', include('rest_framework.urls', namespace='rest_framework')),
     path('taxon/', views.TaxonListView.as_view(), name='taxon_list_view'),
     path('taxon/<int:pk>/', views.TaxonDetailView.as_view(), name='taxon_detail_view'),
