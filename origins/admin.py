@@ -493,8 +493,8 @@ class NomenPublicationsInline(admin.TabularInline):
 class NomenAdmin(admin.ModelAdmin):
     readonly_fields = ['full_name_html']
     list_display = ['name', 'authorship', 'year', 'name_reference', 'type_specimen',
-                    'rank', 'is_objective_synonym', 'is_subjective_synonym', 'is_available', 'is_potentially_valid',
-                    'nomenclatural_status',
+                    'rank', 'is_objective_synonym', 'is_subjective_synonym', 'is_available',
+                    'is_potentially_valid', 'nomenclatural_status',
                     'bc_status',
                     'assigned_to', 'verified_by', 'verified_date']
     list_filter = ['rank', 'assigned_to', 'verified_by', 'verified_date', 'is_available', 'is_potentially_valid',

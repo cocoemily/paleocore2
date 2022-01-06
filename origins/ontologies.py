@@ -76,6 +76,16 @@ NOMENCLATURAL_CODE_CHOICES = (
     (icbn, 'ICBN')
 )
 
+# Nomenclatural CODE taxon rank group choices
+species_group = 'species-group'
+genus_group = 'genus-group'
+family_group = 'family-group'
+TAXON_RANK_GROUP_CHOICES = (
+    (species_group, 'species-group'),
+    (genus_group, 'genus-group'),
+    (family_group, 'family-group')
+)
+
 # Bernard Campbell Nomenclatural Status Choices
 valid = 'valid'
 invalid_gh = 'invalid_gh'  # Generic homonym

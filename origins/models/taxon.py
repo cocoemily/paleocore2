@@ -13,7 +13,7 @@ import publications.models
 from mptt.models import MPTTModel, TreeForeignKey
 
 from origins.ontologies import NOMENCLATURAL_STATUS_CHOICES, BC_STATUS_CHOICES, NOMENCLATURAL_CODE_CHOICES, \
-    TYPE_CHOICES, CLASSIFICATION_STATUS_CHOICES, VERIFIER_CHOICES
+    TAXON_RANK_GROUP_CHOICES, TYPE_CHOICES, CLASSIFICATION_STATUS_CHOICES, VERIFIER_CHOICES
 
 from wagtail.admin.edit_handlers import FieldPanel, StreamFieldPanel, InlinePanel
 from .wagtail import NomenDetailRelatedLink
@@ -68,36 +68,85 @@ class Nomen(projects.models.PaleoCoreBaseClass):
     remarks,
     last_import
     """
-    authorship_help = 'The authors of the naming publication, date included, e.g. King, 1864'
+    generic_name_help = 'The genus portion of the scientific name, e.g. Homo.'
+    specific_epithet_help = 'The trivial (species) portion of the scientific name, e.g. sapiens.'
+    authorship_help = 'The authorship of the naming publication, date included, e.g. King, 1864'
     year_help = 'The year the name was published in yyyy format.'
     type_help = 'The catalog number of the type specimen entered as a string, e.g. OH 7'
     type_object_help = 'The type specimen fossil, select from choice list'
     paratypes_help = 'A comma delimited list of catalog number for paratype specimens as given in the source text'
 
-    zoobank_id = models.CharField(max_length=255, null=True, blank=True)
+    # name = models.Charfield ... inherited from parent class. The scientific name without authorship, e.g. Homo sapiens
+    generic_name = models.CharField(max_length=255, null=True, blank=True, help_text=generic_name_help)
+    specific_epithet = models.CharField(max_length=255, null=True, blank=True, help_text=specific_epithet_help)
     authorship = models.CharField(max_length=255, null=True, blank=True, help_text=authorship_help)
+    # TODO rename year to authorship_year
     year = models.IntegerField(null=True, blank=True, help_text=year_help)
+    # TODO rename to authorship_reference_obj
+    name_reference = models.ForeignKey(publications.models.Publication, null=True, blank=True,
+                                       on_delete=models.SET_NULL, related_name='name_reference')
     rank = models.ForeignKey('TaxonRank', null=True, blank=True, on_delete=models.SET_NULL)
-    # TODO move type spcimen data to type object
+    taxon_rank_group = models.CharField(max_length=255, null=True, blank=True, choices=TAXON_RANK_GROUP_CHOICES)
     type_specimen_label = models.CharField(max_length=255, null=True, blank=True, help_text=type_help)
-    # TODO delete type_specimen and rename type_object to type specimen
     type_specimen = models.ForeignKey('Fossil', null=True, blank=True, on_delete=models.SET_NULL,
                                       help_text=type_object_help)
     paratypes = models.CharField(max_length=255, null=True, blank=True)
-    bc_status = models.CharField('BC Status', max_length=255, null=True, blank=True,
-                                 choices=BC_STATUS_CHOICES)
+    type_species = models.CharField(max_length=255, null=True, blank=True)
+    type_genus = models.CharField(max_length=255, null=True, blank=True)
+
     nomenclatural_status = models.CharField('Nom. Status', max_length=255, null=True, blank=True,
                                             choices=NOMENCLATURAL_STATUS_CHOICES)
+    bc_status = models.CharField('BC Status', max_length=255, null=True, blank=True,
+                                 choices=BC_STATUS_CHOICES)
     is_available = models.BooleanField('Available', default=False)
     is_potentially_valid = models.BooleanField('Pot. Valid', default=False)
     is_objective_synonym = models.BooleanField('Objective Synonym', default=False)
     is_subjective_synonym = models.BooleanField('Subjective Synonym', default=False)
-    name_reference = models.ForeignKey(publications.models.Publication, null=True, blank=True,
-                                       on_delete=models.SET_NULL, related_name='name_reference')
+
     references = models.ManyToManyField(publications.models.Publication, blank=True)
     assigned_to = models.CharField('Assigned', max_length=255, null=True, blank=True, choices=VERIFIER_CHOICES)
     verified_by = models.CharField('Verified', max_length=255, null=True, blank=True, choices=VERIFIER_CHOICES)
     verified_date = models.DateField(null=True, blank=True)  # used to control visibility on nomen detail page
+    # TODO rename zoobank_id to scientific_name_id
+    zoobank_id = models.CharField(max_length=255, null=True, blank=True)
+
+    # TODO define authorship_reference, authorship_reference_id
+    def authorship_reference(self, publication):
+        """
+        Get a basic reference as plain text. Handles articles, books and book chapters.
+        :param publication:
+        :return:
+        """
+        citation_text = ""
+        author_list = publication._author_list()
+        if len(author_list) == 1:
+            authors = author_list[0]
+        elif len(author_list) == 2:
+            authors = f"{author_list[0]} and {author_list[1]}"
+        elif len(author_list) > 2:
+            authors = f"{author_list[0]} et al."
+        year = publication.year
+        article_title = publication.title
+        journal_title = publication.journal
+        volume = publication.volume
+        pages = publication.pages
+        book_title = publication.book_title
+        publisher = publication.publisher
+
+        if publication.type in ['article']:
+            citation_text = f'{authors}. {year}. {article_title}. {journal_title}. {volume}: {pages}.'
+        elif publication.type in ['book']:
+            citation_text = f'{authors}. {year}. {book_title}. {publisher}.'
+        elif publication.type in ['incollection', 'inproceedings', 'inbook']:
+            citation_text = f'{authors}. {year}. {article_title} In: {book_title}. {publisher}. pp. {pages}.'
+        return citation_text
+
+    def authorship_reference_id(self):
+        """
+        Get the unique doi identifier for the reference publication
+        :return:
+        """
+        return self.name_reference.doi
 
     def from_ttaxon(self, ttaxon):
         """
@@ -125,14 +174,37 @@ class Nomen(projects.models.PaleoCoreBaseClass):
 
     # Note that full scientific names have authorship separated from the genus and species with no punctuation
     # Date is separated from author by a comma. If three or more authors then names can be truncated with et al.
-    # See ICZN Article 51.2, Also note that Campbell (1994) does not follow ICZN.
+    # See ICZN Article 51.2, Also note that Campbell (1965) does not follow ICZN 4e.
+    def scientific_name(self):
+        """
+        Get the full scientific name with authorship as plain text
+        :return:
+        """
+        scientific_name_string = ''
+        if self.name:
+            scientific_name_string = self.name
+            if self.authorship:
+                scientific_name_string += f' {self.authorship}'
+        return scientific_name_string
+
     def full_name_html(self):
+        """
+        Get the full scientific name formatted as html
+        :return:
+        """
         full_name_html_string = ''
         if self.name:
             full_name_html_string = f'<i>{self.name}</i>'
             if self.authorship:
                 full_name_html_string += f' {self.authorship}'
         return mark_safe(full_name_html_string)
+
+    def scientific_name_html(self):
+        """
+        alternate named method for full_name_html  to be consistent with scientific name
+        :return:
+        """
+        return self.full_name_html()
 
     def objective_junior_synonyms(self):
         """
