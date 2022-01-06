@@ -87,7 +87,8 @@ class Nomen(projects.models.PaleoCoreBaseClass):
     name_reference = models.ForeignKey(publications.models.Publication, null=True, blank=True,
                                        on_delete=models.SET_NULL, related_name='name_reference')
     rank = models.ForeignKey('TaxonRank', null=True, blank=True, on_delete=models.SET_NULL)
-    taxon_rank_group = models.CharField(max_length=255, null=True, blank=True, choices=TAXON_RANK_GROUP_CHOICES)
+    taxon_rank_group = models.CharField(max_length=255, null=True, blank=True,
+                                        choices=TAXON_RANK_GROUP_CHOICES, default='species-group')
     type_specimen_label = models.CharField(max_length=255, null=True, blank=True, help_text=type_help)
     type_specimen = models.ForeignKey('Fossil', null=True, blank=True, on_delete=models.SET_NULL,
                                       help_text=type_object_help)
