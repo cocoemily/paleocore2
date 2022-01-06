@@ -76,6 +76,7 @@ class Nomen(projects.models.PaleoCoreBaseClass):
     type_object_help = 'The type specimen fossil, select from choice list'
     paratypes_help = 'A comma delimited list of catalog number for paratype specimens as given in the source text'
 
+    # scientific_name = self.scientific_name()  self.scientific_name_html()
     # name = models.Charfield ... inherited from parent class. The scientific name without authorship, e.g. Homo sapiens
     generic_name = models.CharField(max_length=255, null=True, blank=True, help_text=generic_name_help)
     specific_epithet = models.CharField(max_length=255, null=True, blank=True, help_text=specific_epithet_help)
@@ -93,7 +94,8 @@ class Nomen(projects.models.PaleoCoreBaseClass):
     paratypes = models.CharField(max_length=255, null=True, blank=True)
     type_species = models.CharField(max_length=255, null=True, blank=True)
     type_genus = models.CharField(max_length=255, null=True, blank=True)
-
+    nomenclatural_code = models.CharField('Nom. Code', max_length=255, null=True, blank=True,
+                                          choices=NOMENCLATURAL_CODE_CHOICES, default='ICZN')
     nomenclatural_status = models.CharField('Nom. Status', max_length=255, null=True, blank=True,
                                             choices=NOMENCLATURAL_STATUS_CHOICES)
     bc_status = models.CharField('BC Status', max_length=255, null=True, blank=True,
@@ -205,6 +207,9 @@ class Nomen(projects.models.PaleoCoreBaseClass):
         :return:
         """
         return self.full_name_html()
+
+    def authorship_year(self):
+        return self.year
 
     def objective_junior_synonyms(self):
         """
