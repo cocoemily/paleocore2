@@ -93,8 +93,7 @@ class Nomen(projects.models.PaleoCoreBaseClass):
     type_specimen = models.ForeignKey('Fossil', null=True, blank=True, on_delete=models.SET_NULL,
                                       help_text=type_object_help)
     paratypes = models.CharField(max_length=255, null=True, blank=True)
-    type_species = models.CharField(max_length=255, null=True, blank=True)
-    type_genus = models.CharField(max_length=255, null=True, blank=True)
+    type_taxon = models.CharField(max_length=255, null=True, blank=True)
     nomenclatural_code = models.CharField('Nom. Code', max_length=255, null=True, blank=True,
                                           choices=NOMENCLATURAL_CODE_CHOICES, default='ICZN')
     nomenclatural_status = models.CharField('Nom. Status', max_length=255, null=True, blank=True,
