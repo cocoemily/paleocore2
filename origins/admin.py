@@ -491,19 +491,20 @@ class NomenPublicationsInline(admin.TabularInline):
 
 
 class NomenAdmin(admin.ModelAdmin):
-    readonly_fields = ['scientific_name', 'scientific_name_html', 'full_name_html', 'authorship_reference']
+    readonly_fields = ['scientific_name', 'scientific_name_html', 'full_name_html', 'authorship_reference',
+                       'authorship_year']
     list_display = ['name', 'authorship', 'year', 'authorship_reference_obj', 'type_specimen',
-                    'rank', 'is_objective_synonym', 'is_subjective_synonym', 'is_available',
+                    'taxon_rank_obj', 'is_objective_synonym', 'is_subjective_synonym', 'is_available',
                     'is_potentially_valid', 'nomenclatural_status',
                     'bc_status',
                     'assigned_to', 'verified_by', 'verified_date']
-    list_filter = ['rank', 'assigned_to', 'verified_by', 'verified_date', 'is_available', 'is_potentially_valid',
+    list_filter = ['taxon_rank_obj', 'assigned_to', 'verified_by', 'verified_date', 'is_available', 'is_potentially_valid',
                    'is_objective_synonym', 'is_subjective_synonym', 'bc_status']
     inlines = [NomenPublicationsInline]
-    search_fields = ['name', 'authorship', 'year']
+    search_fields = ['name', 'authorship', 'authorship_year']
     fields = ['name', 'generic_name', 'specific_epithet', 'authorship', 'year', 'authorship_reference_obj',
               'authorship_reference',
-              'rank', 'zoobank_id',
+              'taxon_rank_obj', 'taxon_rank_group', 'zoobank_id',
               'type_specimen_label', 'type_specimen', 'paratypes',
               'is_available', 'is_potentially_valid',
               'nomenclatural_status',

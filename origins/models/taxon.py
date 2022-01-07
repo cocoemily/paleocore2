@@ -81,11 +81,10 @@ class Nomen(projects.models.PaleoCoreBaseClass):
     generic_name = models.CharField(max_length=255, null=True, blank=True, help_text=generic_name_help)
     specific_epithet = models.CharField(max_length=255, null=True, blank=True, help_text=specific_epithet_help)
     authorship = models.CharField(max_length=255, null=True, blank=True, help_text=authorship_help)
-    # TODO rename year to authorship_year
-    year = models.IntegerField(null=True, blank=True, help_text=year_help)
+    year = models.IntegerField('Authorship Year', null=True, blank=True, help_text=year_help)
     authorship_reference_obj = models.ForeignKey(publications.models.Publication, null=True, blank=True,
                                        on_delete=models.SET_NULL, related_name='name_reference')
-    rank = models.ForeignKey('TaxonRank', null=True, blank=True, on_delete=models.SET_NULL)
+    taxon_rank_obj = models.ForeignKey('TaxonRank', null=True, blank=True, on_delete=models.SET_NULL)
     taxon_rank_group = models.CharField(max_length=255, null=True, blank=True,
                                         choices=TAXON_RANK_GROUP_CHOICES, default='species-group')
     nomenclatural_code = models.CharField('Nom. Code', max_length=255, null=True, blank=True,
@@ -210,6 +209,9 @@ class Nomen(projects.models.PaleoCoreBaseClass):
 
     def authorship_year(self):
         return self.year
+
+    def taxon_rank_label(self):
+        return self.taxon_rank_obj.name
 
     def objective_junior_synonyms(self):
         """
