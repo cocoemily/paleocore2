@@ -147,7 +147,7 @@ class Nomen(projects.models.PaleoCoreBaseClass):
         Get the unique doi identifier for the reference publication
         :return:
         """
-        return self.name_reference.doi
+        return self.authorship_reference_obj.doi
 
     def from_ttaxon(self, ttaxon):
         """
