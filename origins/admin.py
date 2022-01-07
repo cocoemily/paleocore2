@@ -506,9 +506,9 @@ class NomenAdmin(admin.ModelAdmin):
               'authorship_reference_obj', 'authorship_reference', 'authorship_reference_id',
               'taxon_rank_obj', 'taxon_rank_label', 'taxon_rank_group',
               'type_specimen_label', 'type_specimen', 'paratypes',
-              'is_available', 'is_potentially_valid',
-              'nomenclatural_status',
+              'nomenclatural_code', 'nomenclatural_status',
               'bc_status',
+              'is_available', 'is_potentially_valid',
               'remarks', 'is_objective_synonym', 'is_subjective_synonym',
               'assigned_to', 'verified_by', 'verified_date',
               'date_created', 'date_last_modified', 'problem', 'problem_comment']

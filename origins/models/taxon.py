@@ -78,12 +78,13 @@ class Nomen(projects.models.PaleoCoreBaseClass):
 
     # scientific_name = self.scientific_name()  self.scientific_name_html()
     # name = models.Charfield ... inherited from parent class. The scientific name without authorship, e.g. Homo sapiens
+    scientific_name_id = models.CharField(max_length=255, null=True, blank=True)
     generic_name = models.CharField(max_length=255, null=True, blank=True, help_text=generic_name_help)
     specific_epithet = models.CharField(max_length=255, null=True, blank=True, help_text=specific_epithet_help)
     authorship = models.CharField(max_length=255, null=True, blank=True, help_text=authorship_help)
     year = models.IntegerField('Authorship Year', null=True, blank=True, help_text=year_help)
     authorship_reference_obj = models.ForeignKey(publications.models.Publication, null=True, blank=True,
-                                       on_delete=models.SET_NULL, related_name='name_reference')
+                                                 on_delete=models.SET_NULL, related_name='name_reference')
     taxon_rank_obj = models.ForeignKey('TaxonRank', null=True, blank=True, on_delete=models.SET_NULL)
     taxon_rank_group = models.CharField(max_length=255, null=True, blank=True,
                                         choices=TAXON_RANK_GROUP_CHOICES, default='species-group')
@@ -108,14 +109,10 @@ class Nomen(projects.models.PaleoCoreBaseClass):
     assigned_to = models.CharField('Assigned', max_length=255, null=True, blank=True, choices=VERIFIER_CHOICES)
     verified_by = models.CharField('Verified', max_length=255, null=True, blank=True, choices=VERIFIER_CHOICES)
     verified_date = models.DateField(null=True, blank=True)  # used to control visibility on nomen detail page
-    # TODO rename zoobank_id to scientific_name_id
-    scientific_name_id = models.CharField(max_length=255, null=True, blank=True)
 
-    # TODO define authorship_reference, authorship_reference_id
     def authorship_reference(self):
         """
         Get a basic reference as plain text. Handles articles, books and book chapters.
-        :param self.authorship_reference_obj:
         :return:
         """
         citation_text = ""
