@@ -109,7 +109,7 @@ class Nomen(projects.models.PaleoCoreBaseClass):
     verified_by = models.CharField('Verified', max_length=255, null=True, blank=True, choices=VERIFIER_CHOICES)
     verified_date = models.DateField(null=True, blank=True)  # used to control visibility on nomen detail page
     # TODO rename zoobank_id to scientific_name_id
-    zoobank_id = models.CharField(max_length=255, null=True, blank=True)
+    scientific_name_id = models.CharField(max_length=255, null=True, blank=True)
 
     # TODO define authorship_reference, authorship_reference_id
     def authorship_reference(self):
