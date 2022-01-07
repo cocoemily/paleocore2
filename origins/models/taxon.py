@@ -95,7 +95,7 @@ class Nomen(projects.models.PaleoCoreBaseClass):
     type_specimen_label = models.CharField(max_length=255, null=True, blank=True, help_text=type_help)
     type_specimen = models.ForeignKey('Fossil', null=True, blank=True, on_delete=models.SET_NULL,
                                       help_text=type_object_help)
-    paratypes = models.CharField(max_length=255, null=True, blank=True)
+    paratypes = models.TextField(null=True, blank=True)
     type_taxon = models.CharField(max_length=255, null=True, blank=True)
 
     bc_status = models.CharField('BC Status', max_length=255, null=True, blank=True,
