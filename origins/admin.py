@@ -505,7 +505,7 @@ class NomenAdmin(admin.ModelAdmin):
     fields = ['name', 'scientific_name_id', 'generic_name', 'specific_epithet', 'authorship', 'year',
               'authorship_reference_obj', 'authorship_reference', 'authorship_reference_id',
               'taxon_rank_obj', 'taxon_rank_label', 'taxon_rank_group',
-              'type_specimen_label', 'type_specimen', 'paratypes',
+              'type_specimen_label', 'type_specimen', 'paratypes', 'type_taxon',
               'nomenclatural_code', 'nomenclatural_status',
               'bc_status',
               'is_available', 'is_potentially_valid',
