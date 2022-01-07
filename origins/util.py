@@ -636,10 +636,13 @@ def update_nomen_genus_species():
     family_rank = TaxonRank.objects.get(name="Family")
     for n in nomina:
         if n.taxon_rank_obj == species_rank:
-            name_list = n.name.split(" ")
-            n.generic_name = name_list[0]
-            n.specific_epithet = name_list[1]
-            n.taxon_rank_group = 'species-group'
+            try:
+                name_list = n.name.split(" ")
+                n.generic_name = name_list[0]
+                n.specific_epithet = name_list[1]
+                n.taxon_rank_group = 'species-group'
+            except IndexError:
+                n.specific_epithet = n.name
         elif n.taxon_rank_obj == genus_rank:
             n.generic_name = n.name
             n.taxon_rank_group = 'genus-group'
