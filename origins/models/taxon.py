@@ -117,26 +117,29 @@ class Nomen(projects.models.PaleoCoreBaseClass):
         """
         citation_text = ""
         pub_obj = self.authorship_reference_obj  # publication object
-        authors = pub_obj.authors
-        year = pub_obj.year
-        article_title = pub_obj.title
-        journal_title = pub_obj.journal
-        volume = pub_obj.volume
-        pages = pub_obj.pages
-        book_title = pub_obj.book_title
-        publisher = pub_obj.publisher
+        try:
+            authors = pub_obj.authors
+            year = pub_obj.year
+            article_title = pub_obj.title
+            journal_title = pub_obj.journal
+            volume = pub_obj.volume
+            pages = pub_obj.pages
+            book_title = pub_obj.book_title
+            publisher = pub_obj.publisher
 
-        # Publication types are:
-        # ['Journal', 'Conference', 'Technical Report',
-        # 'Book', 'Book Chapter', 'Abstract', 'Thesis', 'Unpublished', 'Patent']
-        # Publication bibtex types are:
-        # ['article', 'inproceedings', 'techreport', 'book', 'inbook', 'abstract', 'phdthesis', 'unpublished', 'patent']
-        if pub_obj.type.type in ['article', 'Journal']:
-            citation_text = f'{authors}. {pub_obj.year}. {article_title}. {journal_title}. {volume}: {pages}.'
-        elif pub_obj.type.type in ['book', 'Book', 'Thesis']:
-            citation_text = f'{authors}. {year}. {book_title}. {publisher}.'
-        elif pub_obj.type.type in ['incollection', 'inproceedings', 'inbook', 'Book Chapter']:
-            citation_text = f'{authors}. {year}. {article_title} In: {book_title}. {publisher}. pp. {pages}.'
+            # Publication types are:
+            # ['Journal', 'Conference', 'Technical Report',
+            # 'Book', 'Book Chapter', 'Abstract', 'Thesis', 'Unpublished', 'Patent']
+            # Publication bibtex types are:
+            # ['article', 'inproceedings', 'techreport', 'book', 'inbook', 'abstract', 'phdthesis', 'unpublished', 'patent']
+            if pub_obj.type.type in ['article', 'Journal']:
+                citation_text = f'{authors}. {pub_obj.year}. {article_title}. {journal_title}. {volume}: {pages}.'
+            elif pub_obj.type.type in ['book', 'Book', 'Thesis']:
+                citation_text = f'{authors}. {year}. {book_title}. {publisher}.'
+            elif pub_obj.type.type in ['incollection', 'inproceedings', 'inbook', 'Book Chapter']:
+                citation_text = f'{authors}. {year}. {article_title} In: {book_title}. {publisher}. pp. {pages}.'
+        except AttributeError:
+            pass
         return citation_text
 
     def authorship_reference_id(self):
@@ -144,7 +147,12 @@ class Nomen(projects.models.PaleoCoreBaseClass):
         Get the unique doi identifier for the reference publication
         :return:
         """
-        return self.authorship_reference_obj.doi
+        doi = None
+        try:
+            doi = self.authorship_reference_obj.doi
+        except AttributeError:
+            pass
+        return doi
 
     def from_ttaxon(self, ttaxon):
         """
@@ -208,7 +216,18 @@ class Nomen(projects.models.PaleoCoreBaseClass):
         return self.year
 
     def taxon_rank_label(self):
-        return self.taxon_rank_obj.name
+        label = ''
+        if self.taxon_rank_obj:
+            label = self.taxon_rank_obj.name
+        return label
+
+    def type_status(self):
+        type_status = None
+        try:
+            type_status = self.type_specimen.type_status
+        except AttributeError:
+            pass
+        return type_status
 
     def objective_junior_synonyms(self):
         """

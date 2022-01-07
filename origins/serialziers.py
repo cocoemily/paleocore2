@@ -15,18 +15,19 @@ class NomenSerializer(serializers.ModelSerializer):
     #     lookup_field='pk',
     #     read_only=True
     # )
-    rank = serializers.StringRelatedField()
-    name_reference = serializers.StringRelatedField()
+    # taxon_rank_obj = serializers.StringRelatedField()
+    # authorship_reference_obj = serializers.StringRelatedField()
     type_specimen = serializers.StringRelatedField()
+    taxon_rank = serializers.CharField(source='taxon_rank_label')
 
     class Meta:
         model = Nomen
-        fields = ['name', 'authorship', 'year', 'rank',
-                  'type_specimen_label', 'type_specimen', 'paratypes',
-                  'is_available', 'nomenclatural_status',
-                  'is_objective_synonym', 'is_subjective_synonym',
-                  'name_reference',
-                  'verified_date', 'date_last_modified', 'full_name_html'
+        fields = ['scientific_name', 'name', 'generic_name', 'specific_epithet',
+                  'authorship', 'authorship_year', 'authorship_reference_id', 'scientific_name_id',
+                  'taxon_rank', 'taxon_rank_group', 'nomenclatural_code', 'nomenclatural_status',
+                  'type_specimen', 'paratypes', 'type_taxon', 'type_status',
+                  'is_available',
+                  'verified_date', 'date_last_modified'
                   ]
 
 
