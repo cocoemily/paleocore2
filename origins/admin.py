@@ -491,8 +491,8 @@ class NomenPublicationsInline(admin.TabularInline):
 
 
 class NomenAdmin(admin.ModelAdmin):
-    readonly_fields = ['full_name_html']
-    list_display = ['name', 'authorship', 'year', 'name_reference', 'type_specimen',
+    readonly_fields = ['scientific_name', 'scientific_name_html', 'full_name_html', 'authorship_reference']
+    list_display = ['name', 'authorship', 'year', 'authorship_reference_obj', 'type_specimen',
                     'rank', 'is_objective_synonym', 'is_subjective_synonym', 'is_available',
                     'is_potentially_valid', 'nomenclatural_status',
                     'bc_status',
@@ -501,11 +501,14 @@ class NomenAdmin(admin.ModelAdmin):
                    'is_objective_synonym', 'is_subjective_synonym', 'bc_status']
     inlines = [NomenPublicationsInline]
     search_fields = ['name', 'authorship', 'year']
-    fields = ['name', 'authorship', 'year', 'rank', 'zoobank_id', 'type_specimen_label', 'type_specimen', 'paratypes',
+    fields = ['name', 'generic_name', 'specific_epithet', 'authorship', 'year', 'authorship_reference_obj',
+              'authorship_reference',
+              'rank', 'zoobank_id',
+              'type_specimen_label', 'type_specimen', 'paratypes',
               'is_available', 'is_potentially_valid',
               'nomenclatural_status',
               'bc_status',
-              'remarks', 'is_objective_synonym', 'is_subjective_synonym', 'name_reference',
+              'remarks', 'is_objective_synonym', 'is_subjective_synonym',
               'assigned_to', 'verified_by', 'verified_date',
               'date_created', 'date_last_modified', 'problem', 'problem_comment']
 

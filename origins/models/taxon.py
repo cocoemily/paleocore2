@@ -83,21 +83,21 @@ class Nomen(projects.models.PaleoCoreBaseClass):
     authorship = models.CharField(max_length=255, null=True, blank=True, help_text=authorship_help)
     # TODO rename year to authorship_year
     year = models.IntegerField(null=True, blank=True, help_text=year_help)
-    # TODO rename to authorship_reference_obj
-    name_reference = models.ForeignKey(publications.models.Publication, null=True, blank=True,
+    authorship_reference_obj = models.ForeignKey(publications.models.Publication, null=True, blank=True,
                                        on_delete=models.SET_NULL, related_name='name_reference')
     rank = models.ForeignKey('TaxonRank', null=True, blank=True, on_delete=models.SET_NULL)
     taxon_rank_group = models.CharField(max_length=255, null=True, blank=True,
                                         choices=TAXON_RANK_GROUP_CHOICES, default='species-group')
+    nomenclatural_code = models.CharField('Nom. Code', max_length=255, null=True, blank=True,
+                                          choices=NOMENCLATURAL_CODE_CHOICES, default='ICZN')
+    nomenclatural_status = models.CharField('Nom. Status', max_length=255, null=True, blank=True,
+                                            choices=NOMENCLATURAL_STATUS_CHOICES)
     type_specimen_label = models.CharField(max_length=255, null=True, blank=True, help_text=type_help)
     type_specimen = models.ForeignKey('Fossil', null=True, blank=True, on_delete=models.SET_NULL,
                                       help_text=type_object_help)
     paratypes = models.CharField(max_length=255, null=True, blank=True)
     type_taxon = models.CharField(max_length=255, null=True, blank=True)
-    nomenclatural_code = models.CharField('Nom. Code', max_length=255, null=True, blank=True,
-                                          choices=NOMENCLATURAL_CODE_CHOICES, default='ICZN')
-    nomenclatural_status = models.CharField('Nom. Status', max_length=255, null=True, blank=True,
-                                            choices=NOMENCLATURAL_STATUS_CHOICES)
+
     bc_status = models.CharField('BC Status', max_length=255, null=True, blank=True,
                                  choices=BC_STATUS_CHOICES)
     is_available = models.BooleanField('Available', default=False)
@@ -113,33 +113,33 @@ class Nomen(projects.models.PaleoCoreBaseClass):
     zoobank_id = models.CharField(max_length=255, null=True, blank=True)
 
     # TODO define authorship_reference, authorship_reference_id
-    def authorship_reference(self, publication):
+    def authorship_reference(self):
         """
         Get a basic reference as plain text. Handles articles, books and book chapters.
-        :param publication:
+        :param self.authorship_reference_obj:
         :return:
         """
         citation_text = ""
-        author_list = publication._author_list()
-        if len(author_list) == 1:
-            authors = author_list[0]
-        elif len(author_list) == 2:
-            authors = f"{author_list[0]} and {author_list[1]}"
-        elif len(author_list) > 2:
-            authors = f"{author_list[0]} et al."
-        year = publication.year
-        article_title = publication.title
-        journal_title = publication.journal
-        volume = publication.volume
-        pages = publication.pages
-        book_title = publication.book_title
-        publisher = publication.publisher
+        pub_obj = self.authorship_reference_obj  # publication object
+        authors = pub_obj.authors
+        year = pub_obj.year
+        article_title = pub_obj.title
+        journal_title = pub_obj.journal
+        volume = pub_obj.volume
+        pages = pub_obj.pages
+        book_title = pub_obj.book_title
+        publisher = pub_obj.publisher
 
-        if publication.type in ['article']:
-            citation_text = f'{authors}. {year}. {article_title}. {journal_title}. {volume}: {pages}.'
-        elif publication.type in ['book']:
+        # Publication types are:
+        # ['Journal', 'Conference', 'Technical Report',
+        # 'Book', 'Book Chapter', 'Abstract', 'Thesis', 'Unpublished', 'Patent']
+        # Publication bibtex types are:
+        # ['article', 'inproceedings', 'techreport', 'book', 'inbook', 'abstract', 'phdthesis', 'unpublished', 'patent']
+        if pub_obj.type.type in ['article', 'Journal']:
+            citation_text = f'{authors}. {pub_obj.year}. {article_title}. {journal_title}. {volume}: {pages}.'
+        elif pub_obj.type.type in ['book', 'Book', 'Thesis']:
             citation_text = f'{authors}. {year}. {book_title}. {publisher}.'
-        elif publication.type in ['incollection', 'inproceedings', 'inbook']:
+        elif pub_obj.type.type in ['incollection', 'inproceedings', 'inbook', 'Book Chapter']:
             citation_text = f'{authors}. {year}. {article_title} In: {book_title}. {publisher}. pp. {pages}.'
         return citation_text
 
@@ -230,7 +230,7 @@ class Nomen(projects.models.PaleoCoreBaseClass):
     def __str__(self):
         unicode_string = '['+str(self.id)+']'
         if self.name:
-            unicode_string = unicode_string+' '+self.name
+            unicode_string = unicode_string+' '+self.scientific_name()
         return unicode_string
 
     class Meta:
