@@ -105,7 +105,7 @@ BC_STATUS_CHOICES = (
     (invalid_sm, 'Invalid SM'),
     (invalid_sn, 'Invalid SN'),
     (invalid_so, 'Inavlid SO'),
-    (suppressed, 'Supressed')
+    (suppressed, 'Suppressed')
 )
 
 # Origins Nomenclatural Status Choices
