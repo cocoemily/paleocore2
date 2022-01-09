@@ -111,10 +111,12 @@ BC_STATUS_CHOICES = (
 # Origins Nomenclatural Status Choices
 unavailable = 'unavailable'
 invalid = 'invalid'
+suppressed = 'suppressed'
 potentially_valid = 'potentially_valid'
 NOMENCLATURAL_STATUS_CHOICES = (
     (unavailable, 'unavailable'),
     (invalid, 'invalid'),
+    (suppressed, 'suppressed'),
     (potentially_valid, 'potentially valid'),
 )
 
