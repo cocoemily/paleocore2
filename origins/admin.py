@@ -498,8 +498,9 @@ class NomenAdmin(admin.ModelAdmin):
                     'is_potentially_valid', 'nomenclatural_status',
                     'bc_status',
                     'assigned_to', 'verified_by', 'verified_date']
-    list_filter = ['taxon_rank_obj', 'assigned_to', 'verified_by', 'verified_date', 'is_available', 'is_potentially_valid',
+    list_filter = ['nomenclatural_status', 'taxon_rank_obj', 'assigned_to', 'verified_by', 'verified_date', 'is_available', 'is_potentially_valid',
                    'is_objective_synonym', 'is_subjective_synonym', 'bc_status']
+    list_editable = ['nomenclatural_status']
     inlines = [NomenPublicationsInline]
     search_fields = ['name', 'authorship', 'year']
     fields = ['name', 'scientific_name_id', 'generic_name', 'specific_epithet', 'authorship', 'year',
