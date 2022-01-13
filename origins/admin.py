@@ -502,7 +502,7 @@ class NomenAdmin(admin.ModelAdmin):
                    'is_objective_synonym', 'is_subjective_synonym', 'bc_status']
     list_editable = ['nomenclatural_status']
     inlines = [NomenPublicationsInline]
-    search_fields = ['name', 'authorship', 'year']
+    search_fields = ['name', 'authorship', 'year', 'remarks', 'problem_comment']
     fields = ['name', 'scientific_name_id', 'generic_name', 'specific_epithet', 'authorship', 'year',
               'authorship_reference_obj', 'authorship_reference', 'authorship_reference_id',
               'taxon_rank_obj', 'taxon_rank_label', 'taxon_rank_group',
