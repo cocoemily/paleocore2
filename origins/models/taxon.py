@@ -104,6 +104,7 @@ class Nomen(projects.models.PaleoCoreBaseClass):
     is_potentially_valid = models.BooleanField('Pot. Valid', default=False)
     is_objective_synonym = models.BooleanField('Objective Synonym', default=False)
     is_subjective_synonym = models.BooleanField('Subjective Synonym', default=False)
+    is_established = models.BooleanField('Established', default=False)
 
     references = models.ManyToManyField(publications.models.Publication, blank=True)
     assigned_to = models.CharField('Assigned', max_length=255, null=True, blank=True, choices=VERIFIER_CHOICES)
