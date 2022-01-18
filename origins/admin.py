@@ -533,7 +533,7 @@ class ActiveNomenAdmin(NomenAdmin):
     def get_queryset(self, request):
         species_rank = origins.models.TaxonRank.objects.get(ordinal=70)
         qs = origins.models.Nomen.objects.filter(is_objective_synonym=False).filter(is_subjective_synonym=False)
-        qs = qs.filter(nomenclatural_status=origins.ontologies.potentially_valid).filter(rank=species_rank)
+        qs = qs.filter(nomenclatural_status=origins.ontologies.potentially_valid).filter(taxon_rank_obj=species_rank)
         return qs
 
 
