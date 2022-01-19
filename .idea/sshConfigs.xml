@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project version="4">
+  <component name="SshConfigs">
+    <configs>
+      <sshConfig connectionConfig="{&quot;serverAliveInterval&quot;:300}" host="167.172.118.173" id="c08da72f-6d5f-42b9-b124-440f481972aa" keyPath="$USER_HOME$/.ssh/id_rsa" port="22" customName="paleocore_prod" nameFormat="CUSTOM">
+        <option name="customName" value="paleocore_prod" />
+      </sshConfig>
+      <sshConfig connectionConfig="{&quot;serverAliveInterval&quot;:300}" host="paleocore.net" id="8be911e0-0a28-47d9-9095-e035fd09990f" keyPath="$USER_HOME$/.ssh/id_rsa" port="22" customName="dreed@pcnet_prod" nameFormat="CUSTOM">
+        <option name="customName" value="dreed@pcnet_prod" />
+      </sshConfig>
+    </configs>
+  </component>
+</project>
