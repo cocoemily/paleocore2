@@ -537,33 +537,6 @@ class ActiveNomenAdmin(NomenAdmin):
         return qs
 
 
-class TurkanaFossilAdmin(admin.ModelAdmin):
-    list_display = ['verbatim_catalog_number', 'verbatim_suffix', 'catalog_number', 'region',
-                    'suffix_assigned', 'in_origins', 'origins_fossil']
-    list_filter = ['region', 'suffix_assigned', 'in_origins']
-    search_fields = ['verbatim_catalog_number', 'verbatim_suffix', 'catalog_number']
-    readonly_fields = ['origins_fossil']
-
-    def origins_fossil(self, obj):
-        """
-        Function to search fossil information in origins. Returns a link to the origins fossil list page.
-        :param obj:
-        :return:
-        """
-        if obj.catalog_number:
-            site_url = reverse('admin:origins_fossil_changelist')
-            if obj.collection_code and obj.specimen_number:
-                query_string = f"{obj.collection_code}+{obj.specimen_number}"
-            else:
-                if obj.catalog_number[-1].isalpha():
-                    query_string = f"{obj.catalog_number[:-2].replace(' ','+')}"
-                else:
-                    query_string = f"{obj.catalog_number.replace(' ','+')}"
-            return format_html(f'<a href={site_url}?q={query_string}>{site_url}?q={query_string}</a>')
-        else:
-            return None
-
-
 class TurkFossilAdmin(admin.ModelAdmin):
     list_display = ['catalog_number', 'verbatim_suffix', 'region',
                     'suffix_assigned', 'in_origins', 'to_add', 'to_divide', 'origins_fossil']
@@ -602,5 +575,4 @@ admin.site.register(origins.models.TTaxon, TTaxonAdmin)
 admin.site.register(origins.models.TaxonRank)
 admin.site.register(origins.models.Nomen, NomenAdmin)
 admin.site.register(origins.models.ActiveNomen, ActiveNomenAdmin)
-admin.site.register(origins.models.TurkanaFossil, TurkanaFossilAdmin)
 admin.site.register(origins.models.TurkFossil, TurkFossilAdmin)

@@ -9,7 +9,7 @@ from django.utils.text import slugify
 import pandas
 import re
 from wagtail.core.models import Page
-from origins.models.fossil import TurkanaFossil, TurkFossil
+from origins.models.fossil import TurkFossil
 # import shapefile
 
 # pbdb_file_path = "/Users/reedd/Documents/projects/ete/pbdb/pbdb_test_no_header.csv"
@@ -622,6 +622,10 @@ def update_turkana_fossils_in_origins(regions=['east']):
 
 
 def update_in_origins():
+    """
+    Helper function to update the in_origins field in TurkFossil
+    :return:
+    """
     for f in TurkFossil.objects.all():
         m = get_origins(f)
         if len(m) == 2:
