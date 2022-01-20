@@ -122,6 +122,19 @@ class Fossil(projects.models.PaleoCoreGeomBaseClass):
         else:
             return None
 
+    def get_subtype(self):
+        """
+        Determine if a Fossil instance has a subtype instance and if so what it is.
+        :return: Returns a list of the matching subtype class or classes. Should never be more than one.
+        """
+        result = []
+        try:
+            TurkFossil.objects.get(pk=self.id)
+            result.append(TurkFossil)
+        except TurkFossil.DoesNotExist:
+            pass
+        return result
+
     default_image.short_description = 'Fossil Thumbnail'
     default_image.allow_tags = True
     default_image.mark_safe = True
