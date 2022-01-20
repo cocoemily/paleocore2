@@ -1,33 +1,50 @@
 from django.contrib.gis import admin
-from django.shortcuts import render
+from django.contrib.admin.widgets import AdminFileWidget
 from django.urls import reverse, path
-from django.forms import TextInput, Textarea  # import custom form widgets
-
+from django.utils.html import format_html
+#from imagekit.admin import AdminThumbnail
 
 from import_export import resources
-from mapwidgets.widgets import GooglePointFieldWidget
-from zipfile import ZipFile
+import tempfile
+import unicodecsv
+import os
 
 from .models import *  # import database models from models.py
-from .utilities import *
+import projects.admin
+from django.forms import TextInput, Textarea  # import custom form widgets
+from mapwidgets.widgets import GooglePointFieldWidget
 from .views import *
+from .utilities import *
 
-
+#TODO figure out why this is not deleting all the duplicates
 def find_and_delete_duplicates(modeladmin, request, queryset):
     dups = find_duplicates(queryset)
     numdel = dups.__len__()
 
-    for d in dups:
-        d.delete()
+    if 'apply' in request.POST:
+        for d in dups:
+            d.delete()
 
-    modeladmin.message_user(request,"Deleted {} duplicates".format(numdel))
-    return HttpResponseRedirect(request.get_full_path())
+        modeladmin.message_user(request,"Deleted {} duplicates".format(numdel))
+        return HttpResponseRedirect(request.get_full_path())
+
+    return render(request, 'admin/psr/duplicates.html', context={'items': dups})
+
+
+CUSTOM_MAP_SETTINGS = {
+    "GooglePointFieldWidget": (
+        ("mapCenterLocationName", 'Kazakhstan'),
+        ("mapCenterLocation", [49.14200071858253, 67.33315509322178]),
+    ),
+}
 
 
 psrformfield = {
     models.CharField: {'widget': TextInput(attrs={'size': '50'})},
     models.TextField: {'widget': Textarea(attrs={'rows': 5, 'cols': 75})},
-    models.PointField: {"widget": GooglePointFieldWidget}
+    models.GeometryField: {"widget": GooglePointFieldWidget(settings=CUSTOM_MAP_SETTINGS)},
+    models.PointField: {"widget": GooglePointFieldWidget(settings=CUSTOM_MAP_SETTINGS)},
+    models.MultiPointField: {"widget": GooglePointFieldWidget(settings=CUSTOM_MAP_SETTINGS)},
 }
 
 default_read_only_fields = ('id', 'geom', 'point_x', 'point_y', 'easting', 'northing', 'date_last_modified', 'date_created', 'last_import', 'date_collected',
@@ -80,9 +97,20 @@ class OccurrenceResource(resources.ModelResource):
     class Meta:
         model = Occurrence
 
+#this overrides correctly, but specific forms would need to be made for each admin
+# class OccurrenceForm(forms.ModelForm):
+#     class Meta:
+#         model = Occurrence
+#         exclude = ()
+#         widgets = {
+#             'point': GooglePointFieldWidget,
+#             'geom': GooglePointFieldWidget,
+#         }
+
 
 class OccurrenceAdmin(projects.admin.PaleoCoreOccurrenceAdmin):
     resource_class = OccurrenceResource
+    #forms = OccurrenceForm
     change_list_template = 'admin/psr/psr_change_list.html'
 
     # readonly_fields = default_read_only_fields + (
@@ -93,12 +121,13 @@ class OccurrenceAdmin(projects.admin.PaleoCoreOccurrenceAdmin):
     def get_readonly_fields(self, request, obj=None):
         readonly = []
         fields = default_read_only_fields + (
-        'date_recorded', 'field_number',
-        'found_by', 'recorded_by', 'collector', 'finder',
-         'item_type', 'find_type',)
-        for field in fields:
-            if obj.__dict__.get(field) not in (None, ''):
-                readonly.append(field)
+            'date_recorded', 'field_number',
+            'found_by', 'recorded_by', 'collector', 'finder',
+            'item_type', 'find_type',)
+        if obj is not None:
+            for field in fields:
+                if obj.__dict__.get(field) not in (None, ''):
+                    readonly.append(field)
 
         return readonly
 
@@ -268,7 +297,7 @@ class OccurrenceAdmin(projects.admin.PaleoCoreOccurrenceAdmin):
 
     def get_urls(self):
         tool_item_urls = [
-            path('import_data/', ImportShapefileDirectory.as_view())
+            path('import_data/', psr.views.ImportShapefileDirectory.as_view())
         ]
         return tool_item_urls + super(OccurrenceAdmin, self).get_urls()
 
@@ -367,7 +396,10 @@ class ExcavationOccurrenceAdmin(projects.admin.PaleoCoreOccurrenceAdmin):
 
     def get_urls(self):
         tool_item_urls = [
-            path('import_data/', ImportAccessDatabase.as_view()),
+            path('import_data/', psr.views.ImportAccessDatabase.as_view()),
+            # path(r'^summary/$',permission_required('mlp.change_occurrence',
+            #                         login_url='login/')(self.views.Summary.as_view()),
+            #     name="summary"),
         ]
         return tool_item_urls + super(ExcavationOccurrenceAdmin, self).get_urls()
 
@@ -385,9 +417,11 @@ class GeologicalContextAdmin(projects.admin.PaleoCoreLocalityAdminGoogle):
 
     def get_readonly_fields(self, request, obj=None):
         readonly = []
-        for field in (default_read_only_fields + ('date_collected', 'basis_of_record', 'recorded_by')):
-            if obj.__dict__.get(field) not in (None, ''):
-                readonly.append(field)
+        readonly.append('date_last_modified')
+        if obj is not None:
+            for field in (default_read_only_fields + ('date_collected', 'basis_of_record', 'recorded_by')):
+                if obj.__dict__.get(field) not in (None, ''):
+                    readonly.append(field)
 
         return readonly
 
@@ -456,7 +490,7 @@ class GeologicalContextAdmin(projects.admin.PaleoCoreLocalityAdminGoogle):
 
     actions = [find_and_delete_duplicates, 'export_simple_csv', 'export_shapefile', 'export_photos']
 
-    def export_simple_csv(self, request, queryset, fields_to_export):
+    def export_simple_csv(self, request, queryset):
         fields_to_export = ['id', 'name', 'context_type', 'geology_type', 'description',
                             'dip', 'strike', 'color', 'texture', 'height', 'width', 'depth',
                             'slope_character', 'sediment_presence', 'sediment_character',
@@ -591,8 +625,11 @@ class GeologicalContextAdmin(projects.admin.PaleoCoreLocalityAdminGoogle):
 
     def get_urls(self):
         tool_item_urls = [
-            path('import_data/', ImportShapefileDirectory.as_view()),
-            path('import_json/', ImportJSON.as_view()),
+            path('import_data/', psr.views.ImportShapefileDirectory.as_view()),
+            # path(r'^summary/$',permission_required('mlp.change_occurrence',
+            #                         login_url='login/')(self.views.Summary.as_view()),
+            #     name="summary"),
+            path('import_json/', psr.views.ImportJSON.as_view()),
         ]
         return tool_item_urls + super(GeologicalContextAdmin, self).get_urls()
 

@@ -38,7 +38,7 @@ PSR_ARCHAEOLOGY_VOCABULARY = ( lithics, lithic, ceramic, ceramics, burial, bones
 PSR_GEOLOGY_VOCABULARY = ( hearth, petroglyphs, geosample , "ERT", "GPR", "GPRGRID", "OSL", "ROCK", "Rock", "TOPO", "geosample",
                            "micromorph", "red_thing", "sediment", )
 
-PSR_BIOLOGY_VOCABULARY = ( microfauna, flora )
+PSR_BIOLOGY_VOCABULARY = ( microfauna, flora, "Fauna", "fauna" )
 
 PSR_AGGREGATE_VOCABULARY = ("Bucket", "BUCKET", "Aggregate", "Bulk Find", "aggregate", "bulk", "Bulk")
 
@@ -122,4 +122,3 @@ locality_names = {
     "Tuttybulaq Upper": "Tuttybulaq 2",
     "Zhetiotau": "Jetiotau Cave"
 }
-
