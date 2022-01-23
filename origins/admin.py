@@ -544,6 +544,7 @@ class TurkFossilAdmin(admin.ModelAdmin):
     list_filter = ['region', 'suffix_assigned', 'in_origins']
     search_fields = ['verbatim_inventory_number', 'verbatim_suffix', 'catalog_number']
     readonly_fields = ['origins_fossil']
+    change_list_template = "admin/top_pagination_change_list.html"
 
     def origins_fossil(self, obj):
         """
