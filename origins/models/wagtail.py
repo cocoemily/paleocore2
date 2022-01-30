@@ -146,6 +146,9 @@ class SiteIndexPageRelatedLink(Orderable, RelatedLink):
 
 
 class SiteIndexPage(Page):
+    TEMPLATE_CHOICES = [
+        ('origins/sites_list_view.html', 'Default Template'),
+    ]
     intro = RichTextField(blank=True)
 
     search_fields = Page.search_fields + [
@@ -162,9 +165,16 @@ class SiteIndexPage(Page):
 
         return site_page_list
 
+    @property
+    def get_sites(self):
+        all_sites = origins_models.Site.objects.all()
+        origins_sites = all_sites.filter(origins=True)
+        return origins_sites
+
     def get_context(self, request):
         # Get site_list
         site_page_list = self.get_sites_pages
+        sites_list = self.get_sites
 
         # Filter by tag
         tag = request.GET.get('tag')
@@ -184,6 +194,7 @@ class SiteIndexPage(Page):
         # Update template context
         context = super(SiteIndexPage, self).get_context(request)
         context['site_pages'] = site_page_list
+        context['sites'] = sites_list
         return context
 
 
