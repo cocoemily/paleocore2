@@ -148,8 +148,8 @@
 
       // Get site locations from geoJSON
       let siteSource = new ol.source.Vector({
-        url: {% url sites_geojson %}
-        //url:'https://localhost:8000/origins/origins.geojson',
+      //{% comment %} url: {% url sites_geojson %} {% endcomment %}
+        url:'https://localhost:8000/origins/origins.geojson',
         format: new ol.format.GeoJSON(),
         projection: 'EPSG:4326'
       });
@@ -285,7 +285,7 @@
 	<script type="text/javascript" language="javascript" src="https://cdn.datatables.net/1.10.19/js/dataTables.foundation.min.js"></script>
 	<script type="text/javascript" class="init">
     $(document).ready(function() {
-      $('#sites').DataTable(
+      $('#data-table').DataTable(
         {
           {#"columns":[#}
           {#  null,#}
