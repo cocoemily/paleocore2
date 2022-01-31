@@ -281,22 +281,21 @@
     </script>
 
   <!-- datatable js -->
-  <script type="text/javascript" language="javascript" src="https://cdn.datatables.net/1.10.19/js/jquery.dataTables.min.js"></script>
-	<script type="text/javascript" language="javascript" src="https://cdn.datatables.net/1.10.19/js/dataTables.foundation.min.js"></script>
-	<script type="text/javascript" class="init">
+  <!--
+  Datatables are initiated in the base.html template page.
+  Any changes to the table parameters require that the initated table be destroyed and replaced with new parameters.
+  Example code is given below.
+  ----
+	<script>
     $(document).ready(function() {
       $('#data-table').DataTable(
         {
-          {#"columns":[#}
-          {#  null,#}
-          {#  {"type": "num"},#}
-          {#  null,#}
-          {#  null#}
-          {#],#}
-           "lengthMenu": [25, 50, 75, 100 ],
+          destroy: true,  // cannot initiate Data Table twice. So we must destroy and recreate to change paramenters.
+          "lengthMenu": [25, 50, 75, 100 ],
         }
       );
     } );
-	</script>=
+	</script>
+	-->
 {% endblock %}
 
