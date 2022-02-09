@@ -126,7 +126,10 @@
 
         <!-- Initiate data tables. Visit datatables.net for documentation -->
         $(document).ready(function() {
-          $('#data-table').DataTable();
+          $('#data-table').DataTable({
+            "lengthMenu":[[25,50,100,200,-1], [25,50,100,200, "All"]]
+            }
+          );
           });
       </script>
 
