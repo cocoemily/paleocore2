@@ -2,87 +2,31 @@
 {% load paleocore_utils %}
 
 <!-- Nomina listing -->
-<div>
-  <table id="data-table" class="display" style="width:100%" data-page-length="200">
-    <!-- Table Headers -->
-    <thead>
-    <tr>
-      <!-- Five columns: Index, Scientific Name, Year, Type Specimen, Status -->
-      <th scope="col"></th>
-      <th scope="col">Scientific Name</th>
-      <th scope="col">Year</th>
-      <th scope="col">Type Specimen</th>
-      <th scope="col">Status</th>
-    </tr>
-    </thead>
-
-    <!-- Table Body -->
-    <tbody>
-    <!-- iterate over all names -->
-    {% for nomen in nomina %}
-    <tr>
-      <!-- Column 1 Index -->
-      <th scope="row">{{ forloop.counter }}</th>
-
-      <!-- Column 2 Scientific Name -->
-      <td>
-        <a href=" {% pageurl page %}detail/{{nomen.id}}"><em>{{ nomen.name}}</em> {{nomen.authorship}}</a>
-      </td>
-
-      <!-- Column 3 Year -->
-      <td>
-        {% if nomen.year %}
-          {{ nomen.year }}
-        {% else %}
-          &nbsp;
-        {% endif %}
-      </td>
-
-      <!-- Column 4 Type Specimen -->
-      {% comment %}
-      The code block below tests if the nomen has an associated type_specimen fk. If so, it uses the
-      type_specimen.type_status and type_specimen.organism_id  to populate the type specimen listing.
-      The type_specimen.organism_id is used instead of catalog_catalog number to avoid suffixes.
-
-      If there is no fk to a type specimen object then the text in nomen.type_label field is used instead.
-      {% endcomment %}
-
-      <td>
-        {% if nomen.type_specimen %}
-            {% if nomen.type_specimen.type_status %}
-              {{nomen.type_specimen.type_status | title}}:
-              {% if nomen.type_specimen.organism_id %}
-                {{ nomen.type_specimen.organism_id }}<br/>
-              {% else %}
-                {{nomen.type_specimen.catalog_number}}<br/>
-              {% endif %}
-            {% else %}
-              {{ nomen.type_specimen.catalog_number }}<br/>
-            {% endif %}
-        {% else %}
-          {{ nomen.type_specimen_label}}
-        {% endif %}
-      </td>
-
-      <!-- Column 5 Nomenclatural Status -->
-      <td>
-        {% if nomen.nomenclatural_status %}
-          {{ nomen.nomenclatural_status|unslugify|capfirst }}
-        {% else %}
-          &nbsp;
-        {% endif %}
-      </td>
-    </tr>
-    {% endfor %}
-    </tbody>
-  </table>
-</div>
 
 <!-- elaborate listing -->
-{% comment %}
-<div>
-  {% for nomen in nomina %}
-    <div id="nomen">
+
+<div id="nomen">
+  {% for tfossil in type_fossils %}
+  <div class="card">
+    <div class="card-divider">
+      <h5>{{tfossil.continent}}-{{tfossil.site.name}}:
+        {% if tfossil.organism_id %}{{tfossil.organism_id}}
+        {% else %} {{tfossil.catalog_number}}
+        {% endif %}
+
+      </h5>
+    </div>
+    <div class="card-section">
+      {% for nomen in tfossil.nomen_set.all %}
+      <a href=" {% pageurl page %}detail/{{nomen.id}}"><em>{{ nomen.name}}</em> {{nomen.authorship}}</a><br/>
+      {% endfor %}
+    </div>
+  </div>
+  {% endfor %}
+
+
+      <!--
+      {% comment %}
       <h5><a href=" {% pageurl page  %}detail/{{nomen.id}}"><em>{{ nomen.name}}</em> {{nomen.authorship}}</a></h5>
 
         <div class="nomen-type">
@@ -126,8 +70,9 @@
       {% endif %}
     </div>
   {% endfor %}
+  {% endcomment %}-->
 </div>
-{% endcomment %}
+
 
 <!-- accordian listing -->
 {% comment %}
@@ -170,20 +115,3 @@
 </div>
 {% endcomment %}
 
-{% comment %}
-The javascript block below is a template that can be called if the default data-table needs to be
-re-initialized and overwritten.
-{% endcomment %}
-
-{% comment %}
-{% block site_js %}
-<script>
-  $(document).foundation();
-
-  <!-- Initiate data tables. Visit datatables.net for documentation -->
-  $(document).ready(function() {
-    $('#data-table').DataTable();
-    });
-</script>
-{% endblock %}
-{% endcomment %}

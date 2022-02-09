@@ -81,6 +81,24 @@
   </div>
 
   <div>
+    <!-- Main Reference -->
+    {% if nomen.authorship_reference_obj %}
+      <h6>Authorship Reference</h6>
+
+      {% with publication=nomen.authorship_reference_obj %}
+        <div class="card">
+          <div class="card-section">
+
+          {% include 'publications/publication.html' %}
+          </div>
+        </div>
+      {% endwith %}
+    {% endif %}
+
+
+
+  </div>
+  <div>
     <!-- Additional References -->
     {% if nomen.references.all %}
       <h6>Additional References</h6>
