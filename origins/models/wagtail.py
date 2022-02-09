@@ -59,10 +59,17 @@ class NominaListView(Page):
 
     def get_context(self, request):
         # Update template context
-        qs = origins_models.Nomen.objects.all()
+        qs = origins_models.Nomen.objects.all().select_related('authorship_reference_obj', 'type_specimen')
+        tqs = origins_models.Fossil.objects.filter(is_type_specimen=True).select_related('site')
+        tqs = tqs.order_by('continent', 'site__name')
         count = qs.count()
         context = super(NominaListView, self).get_context(request)
         context['nomina'] = qs
+        context['type_fossils'] = tqs
+        context['type_fossils_africa'] = tqs.filter(continent='Africa')
+        context['type_fossils_asia'] = tqs.filter(continent='Asia')
+        context['type_fossils_europe'] = tqs.filter(continent='Europe')
+        context['type_fossil_count'] = tqs.count()
         context['count'] = count
 
         return context
@@ -303,8 +310,46 @@ SitePage.promote_panels = Page.promote_panels + [
 ]
 
 
-
+# Prototype Fossil List Views
+# class FossilListViewRelatedLink(Orderable, RelatedLink):
+#     page = ParentalKey('FossilListView', related_name='fossil_related_links')
 #
+#
+# class FossilListView(Page):
+#     """
+#     Type Fossil List View Page
+#     """
+#     TEMPLATE_CHOICES = [
+#         ('origins/fossil_list_view.html', 'Default Template'),
+#     ]
+#
+#     subtitle = models.CharField(max_length=255, blank=True)
+#     intro = RichTextField(blank=True)
+#     body = StreamField([
+#         ('paragraph', blocks.RichTextBlock()),
+#         ('image', ImageChooserBlock()),
+#         ('html', blocks.RawHTMLBlock()),
+#     ])
+#
+#     template_string = models.CharField(max_length=255, choices=TEMPLATE_CHOICES, default='pages/standard_page.html')
+#
+#     search_fields = Page.search_fields + [
+#         index.SearchField('intro'),
+#         index.SearchField('body'),
+#     ]
+#
+#     def get_context(self, request):
+#         # Update template context
+#         qs = origins_models.Fossil.objects.all()
+#         count = qs.count()
+#         context = super(FossilListView, self).get_context(request)
+#         context['fossils'] = qs
+#         context['count'] = count
+#
+#         return context
+#
+
+#  Old Fossil List View -- Deprecated
 # class OriginsFossilIndexPageRelatedLink(Orderable, RelatedLink):
 #     page = ParentalKey('OriginsFossilIndexPage', related_name='fossil_related_links')
 #
