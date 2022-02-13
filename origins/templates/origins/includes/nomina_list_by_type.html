@@ -17,7 +17,7 @@
       </h5>
     </div>
     <div class="card-section">
-      {% for nomen in tfossil.nomen_set.all %}
+      {% for nomen in tfossil.nomen_set.all|dictsort:"year" %}
       <a href=" {% pageurl page %}detail/{{nomen.id}}"><em>{{ nomen.name}}</em> {{nomen.authorship}}</a>
       &nbsp;|&nbsp;{{nomen.nomenclatural_status}}<br/>
       {% endfor %}
