@@ -217,8 +217,26 @@ class ElementInLine(admin.StackedInline):
     fieldsets = biology_element_fieldsets
 
 
+def get_biology_field_names_for_export():
+    """
+    Get a list of field names to be included in a full Biology export
+    :return:
+    """
+    b = Biology()
+    concrete_fields = b.get_concrete_field_names()
+    method_fields = b.method_fields_to_export()
+    fk_fields = [f.name for f in b._meta.get_fields() if f.is_relation]
+    return concrete_fields + method_fields + fk_fields
+
+
+class BiologyResource(resources.ModelResource):
+    class Meta:
+        model = Biology
+        fields = Biology().get_concrete_field_names()
+
+
 class BiologyAdmin(OccurrenceAdmin):
-    # fieldsets = biology_fieldsets
+    resource_class = BiologyResource
     inlines = (BiologyInline, ImagesInline, FilesInline)
     list_display = list(default_list_display) + ['thumbnail', 'element']
     list_display.pop(list_display.index('item_type'))
