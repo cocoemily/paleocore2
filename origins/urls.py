@@ -15,12 +15,12 @@ urlpatterns = [
     # ex. /origins/origins.geojson  Note no trailing slash!
 
     # Uncomment to share origins geospatial data
-    # re_path(r'^origins.geojson$',
-    #         views.MyGeoJSONLayerView.as_view(model=Site,
-    #                                          crs=False,
-    #                                          properties=['name', 'min_ma', 'max_ma', 'formation'],
-    #                                          geometry_field='geom'),
-    #         name='sites_geojson'),
+    re_path(r'^origins.geojson$',
+            views.MyGeoJSONLayerView.as_view(model=Site,
+                                             crs=False,
+                                             properties=['name', 'min_ma', 'max_ma', 'formation'],
+                                             geometry_field='geom'),
+            name='sites_geojson'),
 
     # Uncomment to expose countries geospatial dataset
     re_path(r'^countries.geojson$',
