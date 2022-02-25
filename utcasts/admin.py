@@ -41,6 +41,7 @@ class FossilAdmin(ImportExportModelAdmin, admin.ModelAdmin):
         # ReferenceInline, # the number of references significantly slows page loads
         PhotosInline,
     ]
+    save_as = True
 
 
 class PrimateAdmin(ImportExportModelAdmin, admin.ModelAdmin):
