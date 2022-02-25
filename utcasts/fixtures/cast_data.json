@@ -1,0 +1,2187 @@
+[
+{
+    "model": "utcasts.fossil",
+    "pk": 1,
+    "fields": {
+        "catalog_number": "KNM-ER-3733",
+        "ut_catalog_id": null,
+        "scientific_name": "Homo erectus",
+        "site": "Koobi Fora, Kenya",
+        "is_type_specimen": true,
+        "ut_storage_location": null,
+        "age": "1.8 MY",
+        "description": null,
+        "remarks": null
+    }
+},
+{
+    "model": "utcasts.fossil",
+    "pk": 2,
+    "fields": {
+        "catalog_number": "OH 9",
+        "ut_catalog_id": null,
+        "scientific_name": "Homo ergaster",
+        "site": "Olduvai Gorge, Tanzania",
+        "is_type_specimen": true,
+        "ut_storage_location": null,
+        "age": "1.4 MY",
+        "description": "Frontal and calvarium",
+        "remarks": null
+    }
+},
+{
+    "model": "utcasts.fossil",
+    "pk": 3,
+    "fields": {
+        "catalog_number": "KNM-WT-15000",
+        "ut_catalog_id": null,
+        "scientific_name": "Homo erectus",
+        "site": "West Turkana, Kenya",
+        "is_type_specimen": false,
+        "ut_storage_location": null,
+        "age": null,
+        "description": null,
+        "remarks": null
+    }
+},
+{
+    "model": "utcasts.fossil",
+    "pk": 4,
+    "fields": {
+        "catalog_number": "Neanderthal 1",
+        "ut_catalog_id": null,
+        "scientific_name": "Homo neanderthalensis",
+        "site": "Kleine Feldhofer Grotte, Germany",
+        "is_type_specimen": true,
+        "ut_storage_location": null,
+        "age": "40 ka",
+        "description": null,
+        "remarks": null
+    }
+},
+{
+    "model": "utcasts.fossil",
+    "pk": 5,
+    "fields": {
+        "catalog_number": "Mauer 1",
+        "ut_catalog_id": null,
+        "scientific_name": "Homo heidelbergensis",
+        "site": "Mauer, Germany",
+        "is_type_specimen": true,
+        "ut_storage_location": null,
+        "age": "609 ka",
+        "description": "Complete mandible, missing only the left p3 and p4.",
+        "remarks": null
+    }
+},
+{
+    "model": "utcasts.fossil",
+    "pk": 6,
+    "fields": {
+        "catalog_number": "La Ferrassie 1",
+        "ut_catalog_id": null,
+        "scientific_name": "Homo neanderthalensis",
+        "site": "La Ferrassie, France",
+        "is_type_specimen": false,
+        "ut_storage_location": null,
+        "age": "70-50 ka",
+        "description": null,
+        "remarks": null
+    }
+},
+{
+    "model": "utcasts.fossil",
+    "pk": 7,
+    "fields": {
+        "catalog_number": "Spy",
+        "ut_catalog_id": null,
+        "scientific_name": "Homo neanderthalensis",
+        "site": "Grotto of Spy d'Orneau, Belgium",
+        "is_type_specimen": false,
+        "ut_storage_location": null,
+        "age": "60 ka",
+        "description": null,
+        "remarks": null
+    }
+},
+{
+    "model": "utcasts.fossil",
+    "pk": 8,
+    "fields": {
+        "catalog_number": "Kabwe 1",
+        "ut_catalog_id": null,
+        "scientific_name": "Homo rhodesiensis",
+        "site": "Broken Hill, Zambia",
+        "is_type_specimen": false,
+        "ut_storage_location": null,
+        "age": "724-324 ka",
+        "description": null,
+        "remarks": null
+    }
+},
+{
+    "model": "utcasts.fossil",
+    "pk": 9,
+    "fields": {
+        "catalog_number": "Sangiran 11",
+        "ut_catalog_id": null,
+        "scientific_name": "Homo erectus",
+        "site": "Sangiran, Indonesia",
+        "is_type_specimen": false,
+        "ut_storage_location": null,
+        "age": null,
+        "description": null,
+        "remarks": null
+    }
+},
+{
+    "model": "utcasts.fossil",
+    "pk": 10,
+    "fields": {
+        "catalog_number": "Skhul V",
+        "ut_catalog_id": null,
+        "scientific_name": "Homo sapiens",
+        "site": "Mount Carmel, Israel",
+        "is_type_specimen": false,
+        "ut_storage_location": "Homo sapiens : 4",
+        "age": "120 - 80 ka",
+        "description": null,
+        "remarks": null
+    }
+},
+{
+    "model": "utcasts.fossil",
+    "pk": 11,
+    "fields": {
+        "catalog_number": "STS 52",
+        "ut_catalog_id": null,
+        "scientific_name": "Australopithecus africanus",
+        "site": "Sterkfontein, Republic of South Africa",
+        "is_type_specimen": false,
+        "ut_storage_location": null,
+        "age": "2.8 - 2.3 MY",
+        "description": null,
+        "remarks": null
+    }
+},
+{
+    "model": "utcasts.fossil",
+    "pk": 12,
+    "fields": {
+        "catalog_number": "STS 71",
+        "ut_catalog_id": null,
+        "scientific_name": "Australopithecus africanus",
+        "site": "Sterkfontein, Republic of South Africa",
+        "is_type_specimen": false,
+        "ut_storage_location": null,
+        "age": "2.8 - 2.4 MY",
+        "description": null,
+        "remarks": null
+    }
+},
+{
+    "model": "utcasts.fossil",
+    "pk": 13,
+    "fields": {
+        "catalog_number": "STS 5",
+        "ut_catalog_id": null,
+        "scientific_name": "Australopithecus africanus",
+        "site": "Sterkfontein, Republic of South Africa",
+        "is_type_specimen": false,
+        "ut_storage_location": null,
+        "age": "2.5 - 2.1 MY",
+        "description": null,
+        "remarks": null
+    }
+},
+{
+    "model": "utcasts.fossil",
+    "pk": 14,
+    "fields": {
+        "catalog_number": "KNM-ER-1813",
+        "ut_catalog_id": null,
+        "scientific_name": "Australopithecus africanus",
+        "site": "Koobi Fora, Kenya",
+        "is_type_specimen": false,
+        "ut_storage_location": null,
+        "age": null,
+        "description": null,
+        "remarks": null
+    }
+},
+{
+    "model": "utcasts.fossil",
+    "pk": 15,
+    "fields": {
+        "catalog_number": "KNM-WT-17000",
+        "ut_catalog_id": null,
+        "scientific_name": "Paranthropus aethiopicus",
+        "site": "West Turkana, Kenya",
+        "is_type_specimen": true,
+        "ut_storage_location": null,
+        "age": "2.5 MY",
+        "description": null,
+        "remarks": null
+    }
+},
+{
+    "model": "utcasts.fossil",
+    "pk": 16,
+    "fields": {
+        "catalog_number": "Omo 18",
+        "ut_catalog_id": null,
+        "scientific_name": "Paranthropus aethiopicus",
+        "site": "Omo River, Omo Valley, Ethiopia",
+        "is_type_specimen": true,
+        "ut_storage_location": null,
+        "age": "2.5 MY",
+        "description": null,
+        "remarks": null
+    }
+},
+{
+    "model": "utcasts.fossil",
+    "pk": 18,
+    "fields": {
+        "catalog_number": "SK 85",
+        "ut_catalog_id": null,
+        "scientific_name": "Paranthropus robustus",
+        "site": "Swartkrans, Republic of South Africa",
+        "is_type_specimen": false,
+        "ut_storage_location": null,
+        "age": null,
+        "description": null,
+        "remarks": null
+    }
+},
+{
+    "model": "utcasts.fossil",
+    "pk": 19,
+    "fields": {
+        "catalog_number": "SK 84",
+        "ut_catalog_id": null,
+        "scientific_name": "Paranthropus robustus",
+        "site": "Swartkrans, Republic of South Africa",
+        "is_type_specimen": false,
+        "ut_storage_location": null,
+        "age": null,
+        "description": null,
+        "remarks": null
+    }
+},
+{
+    "model": "utcasts.fossil",
+    "pk": 20,
+    "fields": {
+        "catalog_number": "TM 1605",
+        "ut_catalog_id": null,
+        "scientific_name": "Paranthropus robustus",
+        "site": "Kromdraai, Blaauwbank River Valley, South Africa",
+        "is_type_specimen": false,
+        "ut_storage_location": null,
+        "age": null,
+        "description": null,
+        "remarks": null
+    }
+},
+{
+    "model": "utcasts.fossil",
+    "pk": 21,
+    "fields": {
+        "catalog_number": "SK 50",
+        "ut_catalog_id": null,
+        "scientific_name": "Paranthropus robustus",
+        "site": "Swartkrans, Republic of South Africa",
+        "is_type_specimen": false,
+        "ut_storage_location": null,
+        "age": null,
+        "description": null,
+        "remarks": null
+    }
+},
+{
+    "model": "utcasts.fossil",
+    "pk": 22,
+    "fields": {
+        "catalog_number": "SK 82",
+        "ut_catalog_id": null,
+        "scientific_name": "Paranthropus robustus",
+        "site": "Swartkrans, Republic of South Africa",
+        "is_type_specimen": false,
+        "ut_storage_location": null,
+        "age": null,
+        "description": null,
+        "remarks": null
+    }
+},
+{
+    "model": "utcasts.fossil",
+    "pk": 23,
+    "fields": {
+        "catalog_number": "TM 1517",
+        "ut_catalog_id": null,
+        "scientific_name": "Paranthropus robustus",
+        "site": "Kromdraai, Blaauwbank River Valley, South Africa",
+        "is_type_specimen": true,
+        "ut_storage_location": null,
+        "age": "2 MY",
+        "description": null,
+        "remarks": null
+    }
+},
+{
+    "model": "utcasts.fossil",
+    "pk": 24,
+    "fields": {
+        "catalog_number": "SK 13",
+        "ut_catalog_id": null,
+        "scientific_name": "Paranthropus robustus",
+        "site": "Swartkrans, Republic of South Africa",
+        "is_type_specimen": false,
+        "ut_storage_location": null,
+        "age": null,
+        "description": null,
+        "remarks": null
+    }
+},
+{
+    "model": "utcasts.fossil",
+    "pk": 25,
+    "fields": {
+        "catalog_number": "SK 45",
+        "ut_catalog_id": null,
+        "scientific_name": "Paranthropus robustus",
+        "site": "Swartkrans, Republic of South Africa",
+        "is_type_specimen": false,
+        "ut_storage_location": null,
+        "age": null,
+        "description": null,
+        "remarks": null
+    }
+},
+{
+    "model": "utcasts.fossil",
+    "pk": 26,
+    "fields": {
+        "catalog_number": "TM 1536",
+        "ut_catalog_id": null,
+        "scientific_name": "Paranthropus robustus",
+        "site": "Kromdraai, Blaauwbank River Valley, South Africa",
+        "is_type_specimen": false,
+        "ut_storage_location": null,
+        "age": null,
+        "description": null,
+        "remarks": null
+    }
+},
+{
+    "model": "utcasts.fossil",
+    "pk": 27,
+    "fields": {
+        "catalog_number": "SK 61",
+        "ut_catalog_id": null,
+        "scientific_name": "Paranthropus robustus",
+        "site": "Swartkrans, Republic of South Africa",
+        "is_type_specimen": false,
+        "ut_storage_location": null,
+        "age": null,
+        "description": null,
+        "remarks": null
+    }
+},
+{
+    "model": "utcasts.fossil",
+    "pk": 28,
+    "fields": {
+        "catalog_number": "SK 64",
+        "ut_catalog_id": null,
+        "scientific_name": "Paranthropus robustus",
+        "site": "Swartkrans, Republic of South Africa",
+        "is_type_specimen": false,
+        "ut_storage_location": null,
+        "age": null,
+        "description": null,
+        "remarks": null
+    }
+},
+{
+    "model": "utcasts.fossil",
+    "pk": 29,
+    "fields": {
+        "catalog_number": "SK 23",
+        "ut_catalog_id": null,
+        "scientific_name": "Paranthropus robustus",
+        "site": "Swartkrans, Republic of South Africa",
+        "is_type_specimen": false,
+        "ut_storage_location": null,
+        "age": null,
+        "description": null,
+        "remarks": null
+    }
+},
+{
+    "model": "utcasts.fossil",
+    "pk": 30,
+    "fields": {
+        "catalog_number": "SK 12",
+        "ut_catalog_id": null,
+        "scientific_name": "Paranthropus robustus",
+        "site": "Swartkrans, Republic of South Africa",
+        "is_type_specimen": false,
+        "ut_storage_location": null,
+        "age": "1.8 - 1.5 MY",
+        "description": null,
+        "remarks": null
+    }
+},
+{
+    "model": "utcasts.fossil",
+    "pk": 31,
+    "fields": {
+        "catalog_number": "SK 48",
+        "ut_catalog_id": null,
+        "scientific_name": "Paranthropus robustus",
+        "site": "Swartkrans, Republic of South Africa",
+        "is_type_specimen": false,
+        "ut_storage_location": null,
+        "age": "1.8 - 1.5 MY",
+        "description": null,
+        "remarks": null
+    }
+},
+{
+    "model": "utcasts.fossil",
+    "pk": 32,
+    "fields": {
+        "catalog_number": "SK 46",
+        "ut_catalog_id": null,
+        "scientific_name": "Paranthropus robustus",
+        "site": "Swartkrans, Republic of South Africa",
+        "is_type_specimen": false,
+        "ut_storage_location": null,
+        "age": "1.8 - 1.5 MY",
+        "description": null,
+        "remarks": null
+    }
+},
+{
+    "model": "utcasts.fossil",
+    "pk": 33,
+    "fields": {
+        "catalog_number": "SK 47",
+        "ut_catalog_id": null,
+        "scientific_name": "Paranthropus robustus",
+        "site": "Swartkrans, Republic of South Africa",
+        "is_type_specimen": false,
+        "ut_storage_location": null,
+        "age": null,
+        "description": null,
+        "remarks": null
+    }
+},
+{
+    "model": "utcasts.fossil",
+    "pk": 34,
+    "fields": {
+        "catalog_number": "Taung 1",
+        "ut_catalog_id": null,
+        "scientific_name": "Australopithecus africanus",
+        "site": "Taung, Republic of South Africa",
+        "is_type_specimen": true,
+        "ut_storage_location": null,
+        "age": "2.8 MY",
+        "description": null,
+        "remarks": null
+    }
+},
+{
+    "model": "utcasts.fossil",
+    "pk": 35,
+    "fields": {
+        "catalog_number": "MLD 7",
+        "ut_catalog_id": null,
+        "scientific_name": "Australopithecus africanus",
+        "site": "Makapansgat, Republic of South Africa",
+        "is_type_specimen": false,
+        "ut_storage_location": null,
+        "age": null,
+        "description": null,
+        "remarks": null
+    }
+},
+{
+    "model": "utcasts.fossil",
+    "pk": 36,
+    "fields": {
+        "catalog_number": "MLD 2",
+        "ut_catalog_id": null,
+        "scientific_name": "Australopithecus africanus",
+        "site": "Makapansgat, Republic of South Africa",
+        "is_type_specimen": false,
+        "ut_storage_location": null,
+        "age": null,
+        "description": null,
+        "remarks": null
+    }
+},
+{
+    "model": "utcasts.fossil",
+    "pk": 37,
+    "fields": {
+        "catalog_number": "MLD 1",
+        "ut_catalog_id": null,
+        "scientific_name": "Australopithecus africanus",
+        "site": "Makapansgat, Republic of South Africa",
+        "is_type_specimen": true,
+        "ut_storage_location": null,
+        "age": null,
+        "description": null,
+        "remarks": null
+    }
+},
+{
+    "model": "utcasts.fossil",
+    "pk": 38,
+    "fields": {
+        "catalog_number": "MLD 20",
+        "ut_catalog_id": null,
+        "scientific_name": "Australopithecus africanus",
+        "site": "Makapansgat, Republic of South Africa",
+        "is_type_specimen": false,
+        "ut_storage_location": null,
+        "age": null,
+        "description": null,
+        "remarks": null
+    }
+},
+{
+    "model": "utcasts.fossil",
+    "pk": 39,
+    "fields": {
+        "catalog_number": "STS 14",
+        "ut_catalog_id": null,
+        "scientific_name": "Australopithecus africanus",
+        "site": "Sterkfontein, Republic of South Africa",
+        "is_type_specimen": false,
+        "ut_storage_location": null,
+        "age": "2.5 MY",
+        "description": null,
+        "remarks": null
+    }
+},
+{
+    "model": "utcasts.fossil",
+    "pk": 40,
+    "fields": {
+        "catalog_number": "STS 24",
+        "ut_catalog_id": null,
+        "scientific_name": "Australopithecus africanus",
+        "site": "Sterkfontein, Republic of South Africa",
+        "is_type_specimen": false,
+        "ut_storage_location": null,
+        "age": null,
+        "description": null,
+        "remarks": null
+    }
+},
+{
+    "model": "utcasts.fossil",
+    "pk": 42,
+    "fields": {
+        "catalog_number": "STS 68",
+        "ut_catalog_id": null,
+        "scientific_name": "Australopithecus africanus",
+        "site": "Sterkfontein, Republic of South Africa",
+        "is_type_specimen": false,
+        "ut_storage_location": null,
+        "age": null,
+        "description": null,
+        "remarks": null
+    }
+},
+{
+    "model": "utcasts.fossil",
+    "pk": 43,
+    "fields": {
+        "catalog_number": "STS 8",
+        "ut_catalog_id": null,
+        "scientific_name": "Australopithecus africanus",
+        "site": "Sterkfontein, Republic of South Africa",
+        "is_type_specimen": false,
+        "ut_storage_location": null,
+        "age": null,
+        "description": null,
+        "remarks": null
+    }
+},
+{
+    "model": "utcasts.fossil",
+    "pk": 44,
+    "fields": {
+        "catalog_number": "STS 7",
+        "ut_catalog_id": null,
+        "scientific_name": "Australopithecus africanus",
+        "site": "Sterkfontein, Republic of South Africa",
+        "is_type_specimen": false,
+        "ut_storage_location": null,
+        "age": null,
+        "description": null,
+        "remarks": null
+    }
+},
+{
+    "model": "utcasts.fossil",
+    "pk": 45,
+    "fields": {
+        "catalog_number": "Sangiran 17",
+        "ut_catalog_id": null,
+        "scientific_name": "Homo erectus",
+        "site": "Sangiran, Indonesia",
+        "is_type_specimen": false,
+        "ut_storage_location": null,
+        "age": "800 ka",
+        "description": null,
+        "remarks": null
+    }
+},
+{
+    "model": "utcasts.fossil",
+    "pk": 46,
+    "fields": {
+        "catalog_number": "KNM-ER-1470",
+        "ut_catalog_id": null,
+        "scientific_name": "Homo rudolfensis",
+        "site": "Koobi Fora, Kenya",
+        "is_type_specimen": true,
+        "ut_storage_location": null,
+        "age": null,
+        "description": null,
+        "remarks": null
+    }
+},
+{
+    "model": "utcasts.fossil",
+    "pk": 47,
+    "fields": {
+        "catalog_number": "KNM-ER-1470A",
+        "ut_catalog_id": null,
+        "scientific_name": "Homo rudolfensis",
+        "site": "Koobi Fora, Kenya",
+        "is_type_specimen": true,
+        "ut_storage_location": null,
+        "age": null,
+        "description": null,
+        "remarks": null
+    }
+},
+{
+    "model": "utcasts.fossil",
+    "pk": 48,
+    "fields": {
+        "catalog_number": "KNM-ER-1470B",
+        "ut_catalog_id": null,
+        "scientific_name": "Homo rudolfensis",
+        "site": "Koobi Fora, Kenya",
+        "is_type_specimen": true,
+        "ut_storage_location": null,
+        "age": null,
+        "description": null,
+        "remarks": null
+    }
+},
+{
+    "model": "utcasts.fossil",
+    "pk": 49,
+    "fields": {
+        "catalog_number": "KNM-ER-1470C",
+        "ut_catalog_id": null,
+        "scientific_name": "Homo rudolfensis",
+        "site": "Koobi Fora, Kenya",
+        "is_type_specimen": true,
+        "ut_storage_location": null,
+        "age": null,
+        "description": null,
+        "remarks": null
+    }
+},
+{
+    "model": "utcasts.fossil",
+    "pk": 50,
+    "fields": {
+        "catalog_number": "KNM-ER-1480",
+        "ut_catalog_id": null,
+        "scientific_name": "Homo rudolfensis",
+        "site": "Koobi Fora, Kenya",
+        "is_type_specimen": false,
+        "ut_storage_location": null,
+        "age": null,
+        "description": null,
+        "remarks": null
+    }
+},
+{
+    "model": "utcasts.fossil",
+    "pk": 51,
+    "fields": {
+        "catalog_number": "KNM-ER-1482",
+        "ut_catalog_id": null,
+        "scientific_name": "Homo rudolfensis",
+        "site": "Koobi Fora, Kenya",
+        "is_type_specimen": false,
+        "ut_storage_location": null,
+        "age": null,
+        "description": null,
+        "remarks": null
+    }
+},
+{
+    "model": "utcasts.fossil",
+    "pk": 52,
+    "fields": {
+        "catalog_number": "KNM-ER-738",
+        "ut_catalog_id": null,
+        "scientific_name": "Homo habilis",
+        "site": "Koobi Fora, Kenya",
+        "is_type_specimen": false,
+        "ut_storage_location": null,
+        "age": null,
+        "description": null,
+        "remarks": null
+    }
+},
+{
+    "model": "utcasts.fossil",
+    "pk": 53,
+    "fields": {
+        "catalog_number": "KNM-ER-741",
+        "ut_catalog_id": null,
+        "scientific_name": "Homo habilis",
+        "site": "Koobi Fora, Kenya",
+        "is_type_specimen": false,
+        "ut_storage_location": null,
+        "age": null,
+        "description": null,
+        "remarks": null
+    }
+},
+{
+    "model": "utcasts.fossil",
+    "pk": 54,
+    "fields": {
+        "catalog_number": "KNM-ER-1805",
+        "ut_catalog_id": null,
+        "scientific_name": "Homo habilis",
+        "site": "Koobi Fora, Kenya",
+        "is_type_specimen": false,
+        "ut_storage_location": null,
+        "age": null,
+        "description": null,
+        "remarks": null
+    }
+},
+{
+    "model": "utcasts.fossil",
+    "pk": 55,
+    "fields": {
+        "catalog_number": "KNM-ER-1805A",
+        "ut_catalog_id": null,
+        "scientific_name": "Homo habilis",
+        "site": "Koobi Fora, Kenya",
+        "is_type_specimen": false,
+        "ut_storage_location": null,
+        "age": null,
+        "description": null,
+        "remarks": null
+    }
+},
+{
+    "model": "utcasts.fossil",
+    "pk": 56,
+    "fields": {
+        "catalog_number": "KNM-ER-1805B",
+        "ut_catalog_id": null,
+        "scientific_name": "Homo habilis",
+        "site": "Koobi Fora, Kenya",
+        "is_type_specimen": false,
+        "ut_storage_location": null,
+        "age": null,
+        "description": null,
+        "remarks": null
+    }
+},
+{
+    "model": "utcasts.fossil",
+    "pk": 57,
+    "fields": {
+        "catalog_number": "KNM-ER-1813",
+        "ut_catalog_id": null,
+        "scientific_name": "Homo habilis",
+        "site": "Koobi Fora, Kenya",
+        "is_type_specimen": true,
+        "ut_storage_location": null,
+        "age": null,
+        "description": null,
+        "remarks": null
+    }
+},
+{
+    "model": "utcasts.fossil",
+    "pk": 58,
+    "fields": {
+        "catalog_number": "OH 8",
+        "ut_catalog_id": null,
+        "scientific_name": "Homo habilis",
+        "site": "Olduvai Gorge, Tanzania",
+        "is_type_specimen": false,
+        "ut_storage_location": null,
+        "age": null,
+        "description": null,
+        "remarks": null
+    }
+},
+{
+    "model": "utcasts.fossil",
+    "pk": 59,
+    "fields": {
+        "catalog_number": "OH 13",
+        "ut_catalog_id": null,
+        "scientific_name": "Homo habilis",
+        "site": "Olduvai Gorge, Tanzania",
+        "is_type_specimen": false,
+        "ut_storage_location": null,
+        "age": null,
+        "description": null,
+        "remarks": null
+    }
+},
+{
+    "model": "utcasts.fossil",
+    "pk": 60,
+    "fields": {
+        "catalog_number": "OH 24",
+        "ut_catalog_id": null,
+        "scientific_name": "Homo habilis",
+        "site": "Olduvai Gorge, Tanzania",
+        "is_type_specimen": false,
+        "ut_storage_location": null,
+        "age": null,
+        "description": null,
+        "remarks": null
+    }
+},
+{
+    "model": "utcasts.fossil",
+    "pk": 61,
+    "fields": {
+        "catalog_number": "KNM-ER-1472A",
+        "ut_catalog_id": null,
+        "scientific_name": "Homo rudolfensis",
+        "site": "Koobi Fora, Kenya",
+        "is_type_specimen": false,
+        "ut_storage_location": null,
+        "age": null,
+        "description": null,
+        "remarks": null
+    }
+},
+{
+    "model": "utcasts.fossil",
+    "pk": 62,
+    "fields": {
+        "catalog_number": "KNM-ER-1472B",
+        "ut_catalog_id": null,
+        "scientific_name": "Homo rudolfensis",
+        "site": "Koobi Fora, Kenya",
+        "is_type_specimen": false,
+        "ut_storage_location": null,
+        "age": null,
+        "description": null,
+        "remarks": null
+    }
+},
+{
+    "model": "utcasts.fossil",
+    "pk": 63,
+    "fields": {
+        "catalog_number": "KNM-ER-1481A",
+        "ut_catalog_id": null,
+        "scientific_name": "Homo rudolfensis",
+        "site": "Koobi Fora, Kenya",
+        "is_type_specimen": false,
+        "ut_storage_location": null,
+        "age": null,
+        "description": null,
+        "remarks": null
+    }
+},
+{
+    "model": "utcasts.fossil",
+    "pk": 64,
+    "fields": {
+        "catalog_number": "KNM-ER-1481A/2",
+        "ut_catalog_id": null,
+        "scientific_name": "Homo rudolfensis",
+        "site": "Koobi Fora, Kenya",
+        "is_type_specimen": false,
+        "ut_storage_location": null,
+        "age": null,
+        "description": null,
+        "remarks": null
+    }
+},
+{
+    "model": "utcasts.fossil",
+    "pk": 65,
+    "fields": {
+        "catalog_number": "KNM-ER-1481B",
+        "ut_catalog_id": null,
+        "scientific_name": "Homo rudolfensis",
+        "site": "Koobi Fora, Kenya",
+        "is_type_specimen": false,
+        "ut_storage_location": null,
+        "age": null,
+        "description": null,
+        "remarks": null
+    }
+},
+{
+    "model": "utcasts.fossil",
+    "pk": 66,
+    "fields": {
+        "catalog_number": "KNM-ER-1481C",
+        "ut_catalog_id": null,
+        "scientific_name": "Homo rudolfensis",
+        "site": "Koobi Fora, Kenya",
+        "is_type_specimen": false,
+        "ut_storage_location": null,
+        "age": null,
+        "description": null,
+        "remarks": null
+    }
+},
+{
+    "model": "utcasts.fossil",
+    "pk": 67,
+    "fields": {
+        "catalog_number": "KNM-ER-1481D",
+        "ut_catalog_id": null,
+        "scientific_name": "Homo rudolfensis",
+        "site": "Koobi Fora, Kenya",
+        "is_type_specimen": false,
+        "ut_storage_location": null,
+        "age": null,
+        "description": null,
+        "remarks": null
+    }
+},
+{
+    "model": "utcasts.fossil",
+    "pk": 68,
+    "fields": {
+        "catalog_number": "KNM-ER-3883",
+        "ut_catalog_id": null,
+        "scientific_name": "Homo ergaster",
+        "site": "Koobi Fora, Kenya",
+        "is_type_specimen": true,
+        "ut_storage_location": null,
+        "age": null,
+        "description": null,
+        "remarks": null
+    }
+},
+{
+    "model": "utcasts.fossil",
+    "pk": 69,
+    "fields": {
+        "catalog_number": "OH 12A",
+        "ut_catalog_id": null,
+        "scientific_name": "Homo ergaster",
+        "site": "Olduvai Gorge, Tanzania",
+        "is_type_specimen": false,
+        "ut_storage_location": null,
+        "age": null,
+        "description": null,
+        "remarks": null
+    }
+},
+{
+    "model": "utcasts.fossil",
+    "pk": 70,
+    "fields": {
+        "catalog_number": "OH 12B",
+        "ut_catalog_id": null,
+        "scientific_name": "Homo ergaster",
+        "site": "Olduvai Gorge, Tanzania",
+        "is_type_specimen": false,
+        "ut_storage_location": null,
+        "age": null,
+        "description": null,
+        "remarks": null
+    }
+},
+{
+    "model": "utcasts.fossil",
+    "pk": 71,
+    "fields": {
+        "catalog_number": "OH 12C",
+        "ut_catalog_id": null,
+        "scientific_name": "Homo ergaster",
+        "site": "Olduvai Gorge, Tanzania",
+        "is_type_specimen": false,
+        "ut_storage_location": null,
+        "age": null,
+        "description": null,
+        "remarks": null
+    }
+},
+{
+    "model": "utcasts.fossil",
+    "pk": 72,
+    "fields": {
+        "catalog_number": "OH 12D",
+        "ut_catalog_id": null,
+        "scientific_name": "Homo ergaster",
+        "site": "Olduvai Gorge, Tanzania",
+        "is_type_specimen": false,
+        "ut_storage_location": null,
+        "age": null,
+        "description": null,
+        "remarks": null
+    }
+},
+{
+    "model": "utcasts.fossil",
+    "pk": 73,
+    "fields": {
+        "catalog_number": "OH 12E",
+        "ut_catalog_id": null,
+        "scientific_name": "Homo erectus",
+        "site": "Olduvai Gorge, Tanzania",
+        "is_type_specimen": false,
+        "ut_storage_location": null,
+        "age": null,
+        "description": null,
+        "remarks": null
+    }
+},
+{
+    "model": "utcasts.fossil",
+    "pk": 74,
+    "fields": {
+        "catalog_number": "OH 12F",
+        "ut_catalog_id": null,
+        "scientific_name": "Homo ergaster",
+        "site": "Olduvai Gorge, Tanzania",
+        "is_type_specimen": false,
+        "ut_storage_location": null,
+        "age": null,
+        "description": null,
+        "remarks": null
+    }
+},
+{
+    "model": "utcasts.fossil",
+    "pk": 75,
+    "fields": {
+        "catalog_number": "SK 847",
+        "ut_catalog_id": null,
+        "scientific_name": "Homo ergaster",
+        "site": "Swartkrans, Republic of South Africa",
+        "is_type_specimen": false,
+        "ut_storage_location": null,
+        "age": null,
+        "description": null,
+        "remarks": null
+    }
+},
+{
+    "model": "utcasts.fossil",
+    "pk": 76,
+    "fields": {
+        "catalog_number": "KNM-ER-820",
+        "ut_catalog_id": null,
+        "scientific_name": "Homo ergaster",
+        "site": "Koobi Fora, Kenya",
+        "is_type_specimen": false,
+        "ut_storage_location": null,
+        "age": null,
+        "description": null,
+        "remarks": null
+    }
+},
+{
+    "model": "utcasts.fossil",
+    "pk": 77,
+    "fields": {
+        "catalog_number": "KNM-ER-992A",
+        "ut_catalog_id": null,
+        "scientific_name": "Homo ergaster",
+        "site": "Koobi Fora, Kenya",
+        "is_type_specimen": true,
+        "ut_storage_location": null,
+        "age": null,
+        "description": null,
+        "remarks": null
+    }
+},
+{
+    "model": "utcasts.fossil",
+    "pk": 78,
+    "fields": {
+        "catalog_number": "KNM-ER-992B",
+        "ut_catalog_id": null,
+        "scientific_name": "Homo ergaster",
+        "site": "Koobi Fora, Kenya",
+        "is_type_specimen": false,
+        "ut_storage_location": null,
+        "age": null,
+        "description": null,
+        "remarks": null
+    }
+},
+{
+    "model": "utcasts.fossil",
+    "pk": 80,
+    "fields": {
+        "catalog_number": "OH 28",
+        "ut_catalog_id": null,
+        "scientific_name": "Homo ergaster",
+        "site": "Olduvai Gorge, Tanzania",
+        "is_type_specimen": false,
+        "ut_storage_location": null,
+        "age": null,
+        "description": null,
+        "remarks": null
+    }
+},
+{
+    "model": "utcasts.fossil",
+    "pk": 81,
+    "fields": {
+        "catalog_number": "SK 15",
+        "ut_catalog_id": null,
+        "scientific_name": "Homo ergaster",
+        "site": "Swartkrans, Republic of South Africa",
+        "is_type_specimen": false,
+        "ut_storage_location": null,
+        "age": null,
+        "description": null,
+        "remarks": null
+    }
+},
+{
+    "model": "utcasts.fossil",
+    "pk": 82,
+    "fields": {
+        "catalog_number": "Modjokerto",
+        "ut_catalog_id": null,
+        "scientific_name": "Homo erectus",
+        "site": "Java, Indonesia",
+        "is_type_specimen": false,
+        "ut_storage_location": null,
+        "age": null,
+        "description": null,
+        "remarks": null
+    }
+},
+{
+    "model": "utcasts.fossil",
+    "pk": 83,
+    "fields": {
+        "catalog_number": "Sangiran 6",
+        "ut_catalog_id": null,
+        "scientific_name": "Homo erectus",
+        "site": "Sangiran, Indonesia",
+        "is_type_specimen": false,
+        "ut_storage_location": null,
+        "age": null,
+        "description": null,
+        "remarks": null
+    }
+},
+{
+    "model": "utcasts.fossil",
+    "pk": 84,
+    "fields": {
+        "catalog_number": "Sangiran 4",
+        "ut_catalog_id": null,
+        "scientific_name": "Homo erectus",
+        "site": "Sangiran, Indonesia",
+        "is_type_specimen": false,
+        "ut_storage_location": null,
+        "age": null,
+        "description": null,
+        "remarks": null
+    }
+},
+{
+    "model": "utcasts.fossil",
+    "pk": 85,
+    "fields": {
+        "catalog_number": "Sangiran 18",
+        "ut_catalog_id": null,
+        "scientific_name": "Homo erectus",
+        "site": "Sangiran, Indonesia",
+        "is_type_specimen": false,
+        "ut_storage_location": null,
+        "age": null,
+        "description": null,
+        "remarks": null
+    }
+},
+{
+    "model": "utcasts.fossil",
+    "pk": 86,
+    "fields": {
+        "catalog_number": "Trinil 1",
+        "ut_catalog_id": null,
+        "scientific_name": "Homo erectus",
+        "site": "Java, Indonesia",
+        "is_type_specimen": false,
+        "ut_storage_location": null,
+        "age": null,
+        "description": null,
+        "remarks": null
+    }
+},
+{
+    "model": "utcasts.fossil",
+    "pk": 87,
+    "fields": {
+        "catalog_number": "Trinil 2",
+        "ut_catalog_id": null,
+        "scientific_name": "Homo erectus",
+        "site": "Java, Indonesia",
+        "is_type_specimen": true,
+        "ut_storage_location": null,
+        "age": null,
+        "description": null,
+        "remarks": null
+    }
+},
+{
+    "model": "utcasts.fossil",
+    "pk": 88,
+    "fields": {
+        "catalog_number": "Trinil 3",
+        "ut_catalog_id": null,
+        "scientific_name": "Homo erectus",
+        "site": "Java, Indonesia",
+        "is_type_specimen": false,
+        "ut_storage_location": null,
+        "age": null,
+        "description": null,
+        "remarks": null
+    }
+},
+{
+    "model": "utcasts.fossil",
+    "pk": 89,
+    "fields": {
+        "catalog_number": "Trinil 615",
+        "ut_catalog_id": null,
+        "scientific_name": "Homo erectus",
+        "site": "Java, Indonesia",
+        "is_type_specimen": false,
+        "ut_storage_location": null,
+        "age": null,
+        "description": null,
+        "remarks": null
+    }
+},
+{
+    "model": "utcasts.fossil",
+    "pk": 90,
+    "fields": {
+        "catalog_number": "Ngandong",
+        "ut_catalog_id": null,
+        "scientific_name": "Homo erectus",
+        "site": "Ngandong, Java, Indonesia",
+        "is_type_specimen": false,
+        "ut_storage_location": null,
+        "age": null,
+        "description": null,
+        "remarks": null
+    }
+},
+{
+    "model": "utcasts.fossil",
+    "pk": 91,
+    "fields": {
+        "catalog_number": "Ngandong 11",
+        "ut_catalog_id": null,
+        "scientific_name": "Homo erectus",
+        "site": "Ngandong, Java, Indonesia",
+        "is_type_specimen": false,
+        "ut_storage_location": null,
+        "age": null,
+        "description": null,
+        "remarks": null
+    }
+},
+{
+    "model": "utcasts.fossil",
+    "pk": 92,
+    "fields": {
+        "catalog_number": "Ngandong Tibia B",
+        "ut_catalog_id": null,
+        "scientific_name": "Homo erectus",
+        "site": "Ngandong, Java, Indonesia",
+        "is_type_specimen": false,
+        "ut_storage_location": null,
+        "age": null,
+        "description": null,
+        "remarks": null
+    }
+},
+{
+    "model": "utcasts.fossil",
+    "pk": 93,
+    "fields": {
+        "catalog_number": "Ngandong Solo",
+        "ut_catalog_id": null,
+        "scientific_name": "Homo erectus",
+        "site": "Ngandong, Java, Indonesia",
+        "is_type_specimen": false,
+        "ut_storage_location": null,
+        "age": null,
+        "description": null,
+        "remarks": null
+    }
+},
+{
+    "model": "utcasts.fossil",
+    "pk": 94,
+    "fields": {
+        "catalog_number": "Sangiran 2",
+        "ut_catalog_id": null,
+        "scientific_name": "Homo erectus",
+        "site": "Sangiran, Indonesia",
+        "is_type_specimen": false,
+        "ut_storage_location": null,
+        "age": null,
+        "description": null,
+        "remarks": null
+    }
+},
+{
+    "model": "utcasts.fossil",
+    "pk": 95,
+    "fields": {
+        "catalog_number": "Hauser Man",
+        "ut_catalog_id": null,
+        "scientific_name": "Homo neanderthalensis",
+        "site": null,
+        "is_type_specimen": false,
+        "ut_storage_location": null,
+        "age": null,
+        "description": null,
+        "remarks": null
+    }
+},
+{
+    "model": "utcasts.fossil",
+    "pk": 96,
+    "fields": {
+        "catalog_number": "Mousteriensis",
+        "ut_catalog_id": null,
+        "scientific_name": "Homo neanderthalensis",
+        "site": null,
+        "is_type_specimen": false,
+        "ut_storage_location": null,
+        "age": null,
+        "description": null,
+        "remarks": null
+    }
+},
+{
+    "model": "utcasts.fossil",
+    "pk": 97,
+    "fields": {
+        "catalog_number": "Tabun 1",
+        "ut_catalog_id": null,
+        "scientific_name": "Homo neanderthalensis",
+        "site": "Mount Carmel, Israel",
+        "is_type_specimen": false,
+        "ut_storage_location": null,
+        "age": "120 ka",
+        "description": null,
+        "remarks": null
+    }
+},
+{
+    "model": "utcasts.fossil",
+    "pk": 98,
+    "fields": {
+        "catalog_number": "Spy No.2",
+        "ut_catalog_id": null,
+        "scientific_name": "Homo neanderthalensis",
+        "site": "Grotto of Spy d'Orneau, Belgium",
+        "is_type_specimen": false,
+        "ut_storage_location": null,
+        "age": null,
+        "description": null,
+        "remarks": null
+    }
+},
+{
+    "model": "utcasts.fossil",
+    "pk": 99,
+    "fields": {
+        "catalog_number": "La Chapelle-aux-saints",
+        "ut_catalog_id": null,
+        "scientific_name": "Homo neanderthalensis",
+        "site": "La Chapelle-aux-saints, France",
+        "is_type_specimen": false,
+        "ut_storage_location": null,
+        "age": "60 ka",
+        "description": null,
+        "remarks": null
+    }
+},
+{
+    "model": "utcasts.fossil",
+    "pk": 100,
+    "fields": {
+        "catalog_number": "Guattari 1",
+        "ut_catalog_id": null,
+        "scientific_name": "Homo neanderthalensis",
+        "site": "Grotta Guattari (Monte Circeo)",
+        "is_type_specimen": false,
+        "ut_storage_location": null,
+        "age": null,
+        "description": null,
+        "remarks": null
+    }
+},
+{
+    "model": "utcasts.fossil",
+    "pk": 101,
+    "fields": {
+        "catalog_number": "710",
+        "ut_catalog_id": null,
+        "scientific_name": "Australopithecus prometheus",
+        "site": null,
+        "is_type_specimen": false,
+        "ut_storage_location": null,
+        "age": null,
+        "description": null,
+        "remarks": null
+    }
+},
+{
+    "model": "utcasts.fossil",
+    "pk": 102,
+    "fields": {
+        "catalog_number": "AL 288",
+        "ut_catalog_id": null,
+        "scientific_name": "Australopithecus afarensis",
+        "site": "Hadar, Ethiopia",
+        "is_type_specimen": false,
+        "ut_storage_location": null,
+        "age": "3.2 MY",
+        "description": null,
+        "remarks": null
+    }
+},
+{
+    "model": "utcasts.fossil",
+    "pk": 103,
+    "fields": {
+        "catalog_number": "AL 333-hand",
+        "ut_catalog_id": null,
+        "scientific_name": "Australopithecus afarensis",
+        "site": "Hadar, Ethiopia",
+        "is_type_specimen": false,
+        "ut_storage_location": null,
+        "age": "3.2 MY",
+        "description": null,
+        "remarks": null
+    }
+},
+{
+    "model": "utcasts.fossil",
+    "pk": 104,
+    "fields": {
+        "catalog_number": "AL 333-3",
+        "ut_catalog_id": null,
+        "scientific_name": "Australopithecus afarensis",
+        "site": "Hadar, Ethiopia",
+        "is_type_specimen": false,
+        "ut_storage_location": null,
+        "age": "3.2 MY",
+        "description": null,
+        "remarks": null
+    }
+},
+{
+    "model": "utcasts.fossil",
+    "pk": 105,
+    "fields": {
+        "catalog_number": "AL 333-4",
+        "ut_catalog_id": null,
+        "scientific_name": "Australopithecus afarensis",
+        "site": "Hadar, Ethiopia",
+        "is_type_specimen": false,
+        "ut_storage_location": null,
+        "age": "3.2 MY",
+        "description": null,
+        "remarks": null
+    }
+},
+{
+    "model": "utcasts.fossil",
+    "pk": 106,
+    "fields": {
+        "catalog_number": "AL 333-5",
+        "ut_catalog_id": null,
+        "scientific_name": "Australopithecus afarensis",
+        "site": "Hadar, Ethiopia",
+        "is_type_specimen": false,
+        "ut_storage_location": null,
+        "age": "3.2 MY",
+        "description": null,
+        "remarks": null
+    }
+},
+{
+    "model": "utcasts.fossil",
+    "pk": 107,
+    "fields": {
+        "catalog_number": "AL 333-41",
+        "ut_catalog_id": null,
+        "scientific_name": "Australopithecus afarensis",
+        "site": "Hadar, Ethiopia",
+        "is_type_specimen": false,
+        "ut_storage_location": null,
+        "age": "3.2 MY",
+        "description": null,
+        "remarks": null
+    }
+},
+{
+    "model": "utcasts.fossil",
+    "pk": 108,
+    "fields": {
+        "catalog_number": "AL 333-42",
+        "ut_catalog_id": null,
+        "scientific_name": "Australopithecus afarensis",
+        "site": "Hadar, Ethiopia",
+        "is_type_specimen": false,
+        "ut_storage_location": null,
+        "age": "3.2 MY",
+        "description": null,
+        "remarks": null
+    }
+},
+{
+    "model": "utcasts.fossil",
+    "pk": 109,
+    "fields": {
+        "catalog_number": "AL 333-45",
+        "ut_catalog_id": null,
+        "scientific_name": "Australopithecus afarensis",
+        "site": "Hadar, Ethiopia",
+        "is_type_specimen": false,
+        "ut_storage_location": null,
+        "age": "3.2 MY",
+        "description": null,
+        "remarks": null
+    }
+},
+{
+    "model": "utcasts.fossil",
+    "pk": 110,
+    "fields": {
+        "catalog_number": "AL 333-56",
+        "ut_catalog_id": null,
+        "scientific_name": "Australopithecus afarensis",
+        "site": "Hadar, Ethiopia",
+        "is_type_specimen": false,
+        "ut_storage_location": null,
+        "age": "3.2 MY",
+        "description": null,
+        "remarks": null
+    }
+},
+{
+    "model": "utcasts.fossil",
+    "pk": 111,
+    "fields": {
+        "catalog_number": "AL 333-110",
+        "ut_catalog_id": null,
+        "scientific_name": "Australopithecus afarensis",
+        "site": "Hadar, Ethiopia",
+        "is_type_specimen": false,
+        "ut_storage_location": null,
+        "age": "3.2 MY",
+        "description": null,
+        "remarks": null
+    }
+},
+{
+    "model": "utcasts.fossil",
+    "pk": 112,
+    "fields": {
+        "catalog_number": "AL 333-111",
+        "ut_catalog_id": null,
+        "scientific_name": "Australopithecus afarensis",
+        "site": "Hadar, Ethiopia",
+        "is_type_specimen": false,
+        "ut_storage_location": null,
+        "age": "3.2 MY",
+        "description": null,
+        "remarks": null
+    }
+},
+{
+    "model": "utcasts.fossil",
+    "pk": 113,
+    "fields": {
+        "catalog_number": "AL 333x-26",
+        "ut_catalog_id": null,
+        "scientific_name": "Australopithecus africanus",
+        "site": "Hadar, Ethiopia",
+        "is_type_specimen": false,
+        "ut_storage_location": null,
+        "age": null,
+        "description": null,
+        "remarks": null
+    }
+},
+{
+    "model": "utcasts.fossil",
+    "pk": 114,
+    "fields": {
+        "catalog_number": "KNM-WT-40000",
+        "ut_catalog_id": null,
+        "scientific_name": "Kenyanthropus platyops",
+        "site": "West Turkana, Kenya",
+        "is_type_specimen": true,
+        "ut_storage_location": null,
+        "age": "3.5 MY",
+        "description": null,
+        "remarks": null
+    }
+},
+{
+    "model": "utcasts.fossil",
+    "pk": 115,
+    "fields": {
+        "catalog_number": "STS 8",
+        "ut_catalog_id": null,
+        "scientific_name": "Australopithecus africanus",
+        "site": "Sterkfontein, Republic of South Africa",
+        "is_type_specimen": false,
+        "ut_storage_location": null,
+        "age": null,
+        "description": null,
+        "remarks": null
+    }
+},
+{
+    "model": "utcasts.fossil",
+    "pk": 116,
+    "fields": {
+        "catalog_number": "STS 68",
+        "ut_catalog_id": null,
+        "scientific_name": "Australopithecus africanus",
+        "site": "Sterkfontein, Republic of South Africa",
+        "is_type_specimen": false,
+        "ut_storage_location": null,
+        "age": null,
+        "description": null,
+        "remarks": null
+    }
+},
+{
+    "model": "utcasts.fossil",
+    "pk": 117,
+    "fields": {
+        "catalog_number": "TM 1512",
+        "ut_catalog_id": null,
+        "scientific_name": "Australopithecus africanus",
+        "site": "Kromdraai, Blaauwbank River Valley, South Africa",
+        "is_type_specimen": false,
+        "ut_storage_location": null,
+        "age": null,
+        "description": null,
+        "remarks": null
+    }
+},
+{
+    "model": "utcasts.fossil",
+    "pk": 118,
+    "fields": {
+        "catalog_number": "MLD 7A",
+        "ut_catalog_id": null,
+        "scientific_name": "Australopithecus africanus",
+        "site": "Makapansgat, Republic of South Africa",
+        "is_type_specimen": false,
+        "ut_storage_location": null,
+        "age": null,
+        "description": null,
+        "remarks": null
+    }
+},
+{
+    "model": "utcasts.fossil",
+    "pk": 119,
+    "fields": {
+        "catalog_number": "MLD 19",
+        "ut_catalog_id": null,
+        "scientific_name": "Australopithecus africanus",
+        "site": "Makapansgat, Republic of South Africa",
+        "is_type_specimen": false,
+        "ut_storage_location": null,
+        "age": null,
+        "description": null,
+        "remarks": null
+    }
+},
+{
+    "model": "utcasts.fossil",
+    "pk": 120,
+    "fields": {
+        "catalog_number": "OH 5",
+        "ut_catalog_id": null,
+        "scientific_name": "Paranthropus boisei",
+        "site": "Olduvai Gorge, Tanzania",
+        "is_type_specimen": true,
+        "ut_storage_location": null,
+        "age": "1.8 MY",
+        "description": null,
+        "remarks": null
+    }
+},
+{
+    "model": "utcasts.fossil",
+    "pk": 121,
+    "fields": {
+        "catalog_number": "KNM-ER-732",
+        "ut_catalog_id": null,
+        "scientific_name": "Paranthropus boisei",
+        "site": "Koobi Fora, Kenya",
+        "is_type_specimen": false,
+        "ut_storage_location": null,
+        "age": null,
+        "description": null,
+        "remarks": null
+    }
+},
+{
+    "model": "utcasts.fossil",
+    "pk": 122,
+    "fields": {
+        "catalog_number": "KNM-ER-739",
+        "ut_catalog_id": null,
+        "scientific_name": "Paranthropus boisei",
+        "site": "Koobi Fora, Kenya",
+        "is_type_specimen": false,
+        "ut_storage_location": null,
+        "age": null,
+        "description": null,
+        "remarks": null
+    }
+},
+{
+    "model": "utcasts.fossil",
+    "pk": 123,
+    "fields": {
+        "catalog_number": "KNM-ER-740",
+        "ut_catalog_id": null,
+        "scientific_name": "Paranthropus boisei",
+        "site": "Koobi Fora, Kenya",
+        "is_type_specimen": false,
+        "ut_storage_location": null,
+        "age": null,
+        "description": null,
+        "remarks": null
+    }
+},
+{
+    "model": "utcasts.fossil",
+    "pk": 124,
+    "fields": {
+        "catalog_number": "KNM-ER-801B",
+        "ut_catalog_id": null,
+        "scientific_name": "Paranthropus boisei",
+        "site": "Koobi Fora, Kenya",
+        "is_type_specimen": false,
+        "ut_storage_location": null,
+        "age": null,
+        "description": null,
+        "remarks": null
+    }
+},
+{
+    "model": "utcasts.fossil",
+    "pk": 125,
+    "fields": {
+        "catalog_number": "KNM-ER-813",
+        "ut_catalog_id": null,
+        "scientific_name": "Paranthropus boisei",
+        "site": "Koobi Fora, Kenya",
+        "is_type_specimen": false,
+        "ut_storage_location": null,
+        "age": null,
+        "description": null,
+        "remarks": null
+    }
+},
+{
+    "model": "utcasts.fossil",
+    "pk": 126,
+    "fields": {
+        "catalog_number": "KNM-ER-818",
+        "ut_catalog_id": null,
+        "scientific_name": "Paranthropus boisei",
+        "site": "Koobi Fora, Kenya",
+        "is_type_specimen": false,
+        "ut_storage_location": null,
+        "age": null,
+        "description": null,
+        "remarks": null
+    }
+},
+{
+    "model": "utcasts.fossil",
+    "pk": 127,
+    "fields": {
+        "catalog_number": "KNM CH 1",
+        "ut_catalog_id": null,
+        "scientific_name": "Paranthropus boisei",
+        "site": "Koobi Fora, Kenya",
+        "is_type_specimen": false,
+        "ut_storage_location": null,
+        "age": null,
+        "description": null,
+        "remarks": null
+    }
+},
+{
+    "model": "utcasts.fossil",
+    "pk": 128,
+    "fields": {
+        "catalog_number": "KNM-ER-407A",
+        "ut_catalog_id": null,
+        "scientific_name": "Paranthropus boisei",
+        "site": "Koobi Fora, Kenya",
+        "is_type_specimen": false,
+        "ut_storage_location": null,
+        "age": null,
+        "description": null,
+        "remarks": null
+    }
+},
+{
+    "model": "utcasts.fossil",
+    "pk": 129,
+    "fields": {
+        "catalog_number": "KNM-ER-407B",
+        "ut_catalog_id": null,
+        "scientific_name": "Paranthropus boisei",
+        "site": "Koobi Fora, Kenya",
+        "is_type_specimen": false,
+        "ut_storage_location": null,
+        "age": null,
+        "description": null,
+        "remarks": null
+    }
+},
+{
+    "model": "utcasts.fossil",
+    "pk": 130,
+    "fields": {
+        "catalog_number": "KNM-ER-407C",
+        "ut_catalog_id": null,
+        "scientific_name": "Paranthropus boisei",
+        "site": "Koobi Fora, Kenya",
+        "is_type_specimen": false,
+        "ut_storage_location": null,
+        "age": null,
+        "description": null,
+        "remarks": null
+    }
+},
+{
+    "model": "utcasts.fossil",
+    "pk": 131,
+    "fields": {
+        "catalog_number": "KNM-ER-729",
+        "ut_catalog_id": null,
+        "scientific_name": "Paranthropus boisei",
+        "site": "Koobi Fora, Kenya",
+        "is_type_specimen": false,
+        "ut_storage_location": null,
+        "age": null,
+        "description": null,
+        "remarks": null
+    }
+},
+{
+    "model": "utcasts.fossil",
+    "pk": 132,
+    "fields": {
+        "catalog_number": "KNM-ER-3230",
+        "ut_catalog_id": null,
+        "scientific_name": "Paranthropus boisei",
+        "site": "Koobi Fora, Kenya",
+        "is_type_specimen": false,
+        "ut_storage_location": null,
+        "age": null,
+        "description": null,
+        "remarks": null
+    }
+},
+{
+    "model": "utcasts.fossil",
+    "pk": 133,
+    "fields": {
+        "catalog_number": "Peninj 1",
+        "ut_catalog_id": null,
+        "scientific_name": "Paranthropus boisei",
+        "site": "Lake Natron, Tanzania",
+        "is_type_specimen": false,
+        "ut_storage_location": null,
+        "age": null,
+        "description": null,
+        "remarks": null
+    }
+},
+{
+    "model": "utcasts.fossil",
+    "pk": 134,
+    "fields": {
+        "catalog_number": "SK 18",
+        "ut_catalog_id": null,
+        "scientific_name": "Paranthropus robustus",
+        "site": "Swartkrans, Republic of South Africa",
+        "is_type_specimen": false,
+        "ut_storage_location": null,
+        "age": null,
+        "description": null,
+        "remarks": null
+    }
+},
+{
+    "model": "utcasts.fossil",
+    "pk": 136,
+    "fields": {
+        "catalog_number": "SK 97",
+        "ut_catalog_id": null,
+        "scientific_name": "Paranthropus robustus",
+        "site": "Swartkrans, Republic of South Africa",
+        "is_type_specimen": false,
+        "ut_storage_location": null,
+        "age": null,
+        "description": null,
+        "remarks": null
+    }
+},
+{
+    "model": "utcasts.fossil",
+    "pk": 137,
+    "fields": {
+        "catalog_number": "OH 7",
+        "ut_catalog_id": null,
+        "scientific_name": "Homo habilis",
+        "site": "Olduvai Gorge, Tanzania",
+        "is_type_specimen": true,
+        "ut_storage_location": null,
+        "age": "1.75 MY",
+        "description": null,
+        "remarks": null
+    }
+},
+{
+    "model": "utcasts.photo",
+    "pk": 1,
+    "fields": {
+        "image": "fossils/IMG-3233_MrGYxuh.jpg",
+        "fossil": 10,
+        "description": "",
+        "default_image": true
+    }
+},
+{
+    "model": "utcasts.photo",
+    "pk": 3,
+    "fields": {
+        "image": "fossils/Screen_Shot_2021-10-05_at_9.11.52_PM_GPQYfuf.png",
+        "fossil": 12,
+        "description": "",
+        "default_image": true
+    }
+},
+{
+    "model": "utcasts.photo",
+    "pk": 4,
+    "fields": {
+        "image": "fossils/Screen_Shot_2021-10-05_at_9.17.05_PM.png",
+        "fossil": 13,
+        "description": "",
+        "default_image": true
+    }
+},
+{
+    "model": "utcasts.photo",
+    "pk": 6,
+    "fields": {
+        "image": "fossils/Screen_Shot_2021-10-05_at_9.21.28_PM.png",
+        "fossil": 34,
+        "description": "",
+        "default_image": true
+    }
+},
+{
+    "model": "utcasts.photo",
+    "pk": 7,
+    "fields": {
+        "image": "fossils/Screen_Shot_2021-10-05_at_9.22.47_PM.png",
+        "fossil": 15,
+        "description": "",
+        "default_image": true
+    }
+},
+{
+    "model": "utcasts.photo",
+    "pk": 8,
+    "fields": {
+        "image": "fossils/Screen_Shot_2021-10-05_at_9.25.37_PM.png",
+        "fossil": 32,
+        "description": "",
+        "default_image": true
+    }
+},
+{
+    "model": "utcasts.photo",
+    "pk": 9,
+    "fields": {
+        "image": "fossils/Screen_Shot_2021-10-05_at_9.27.08_PM.png",
+        "fossil": 31,
+        "description": "",
+        "default_image": true
+    }
+},
+{
+    "model": "utcasts.photo",
+    "pk": 10,
+    "fields": {
+        "image": "fossils/Screen_Shot_2021-10-05_at_9.29.25_PM.png",
+        "fossil": 1,
+        "description": "",
+        "default_image": true
+    }
+},
+{
+    "model": "utcasts.photo",
+    "pk": 11,
+    "fields": {
+        "image": "fossils/Screen_Shot_2021-10-05_at_9.31.16_PM.png",
+        "fossil": 2,
+        "description": "",
+        "default_image": true
+    }
+},
+{
+    "model": "utcasts.photo",
+    "pk": 12,
+    "fields": {
+        "image": "fossils/Screen_Shot_2021-10-05_at_9.36.39_PM.png",
+        "fossil": 6,
+        "description": "",
+        "default_image": true
+    }
+},
+{
+    "model": "utcasts.photo",
+    "pk": 13,
+    "fields": {
+        "image": "fossils/Screen_Shot_2021-10-05_at_9.38.31_PM.png",
+        "fossil": 8,
+        "description": "",
+        "default_image": true
+    }
+},
+{
+    "model": "utcasts.photo",
+    "pk": 15,
+    "fields": {
+        "image": "fossils/Screen_Shot_2021-10-05_at_9.44.03_PM.png",
+        "fossil": 23,
+        "description": "",
+        "default_image": true
+    }
+},
+{
+    "model": "utcasts.photo",
+    "pk": 16,
+    "fields": {
+        "image": "fossils/Screen_Shot_2021-10-05_at_9.45.46_PM.png",
+        "fossil": 11,
+        "description": "",
+        "default_image": true
+    }
+},
+{
+    "model": "utcasts.photo",
+    "pk": 17,
+    "fields": {
+        "image": "fossils/Screen_Shot_2021-10-05_at_9.46.22_PM.png",
+        "fossil": 39,
+        "description": "",
+        "default_image": true
+    }
+},
+{
+    "model": "utcasts.photo",
+    "pk": 18,
+    "fields": {
+        "image": "fossils/Screen_Shot_2021-10-05_at_9.48.25_PM.png",
+        "fossil": 5,
+        "description": "",
+        "default_image": true
+    }
+},
+{
+    "model": "utcasts.photo",
+    "pk": 19,
+    "fields": {
+        "image": "fossils/Screen_Shot_2021-10-05_at_9.49.47_PM.png",
+        "fossil": 4,
+        "description": "",
+        "default_image": true
+    }
+},
+{
+    "model": "utcasts.photo",
+    "pk": 20,
+    "fields": {
+        "image": "fossils/Screen_Shot_2021-10-05_at_9.50.56_PM_awN4bnM.png",
+        "fossil": 7,
+        "description": "",
+        "default_image": true
+    }
+},
+{
+    "model": "utcasts.photo",
+    "pk": 21,
+    "fields": {
+        "image": "fossils/Screen_Shot_2021-10-05_at_9.57.04_PM.png",
+        "fossil": 45,
+        "description": "",
+        "default_image": true
+    }
+},
+{
+    "model": "utcasts.photo",
+    "pk": 22,
+    "fields": {
+        "image": "fossils/Screen_Shot_2021-10-28_at_12.54.30_PM_54t0tSV.png",
+        "fossil": 102,
+        "description": "",
+        "default_image": true
+    }
+}
+]

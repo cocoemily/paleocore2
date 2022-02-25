@@ -63,6 +63,11 @@ if 'paleosites' in settings.INSTALLED_APPS:
         path('paleosites/', include(('paleosites.urls', 'paleosites'), namespace="paleosites")),
     ]
 
+if 'utcasts' in settings.INSTALLED_APPS:
+    urlpatterns += [
+        path('utcasts/', include(('utcasts.urls', 'utcasts'), namespace='utcasts')),
+    ]
+
 # For anything not caught by a more specific rule above, hand over to
     # Wagtail's serving mechanism. This should be the last item in the urlpatterns list.
 urlpatterns += [
