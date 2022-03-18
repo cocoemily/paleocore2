@@ -334,6 +334,8 @@ CELERYD_LOG_COLOR = False
 # New setting for Django 3
 DEFAULT_AUTO_FIELD = 'django.db.models.AutoField'
 
+DATA_UPLOAD_MAX_NUMBER_FIELDS = None  # turn off checks for max number of fields in a form
+
 # Setting for Django REST framework
 # REST_FRAMEWORK = {
 #     'DEFAULT_PAGINATION_CLASS': 'rest_framework.pagination.PageNumberPagination',
