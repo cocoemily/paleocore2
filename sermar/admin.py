@@ -84,9 +84,9 @@ class BiologyResource(resources.ModelResource):
 
 
 class BiologyAdmin(ImportExportModelAdmin):
-    list_display = ['id', 'collection', 'morphotype_id', 'element_id',  'loan', 'disposition']
+    list_display = ['id', 'barcode', 'collection', 'morphotype_id', 'element_id',  'loan', 'disposition']
     list_filter = ['collection_code', 'loan', 'morphotype_id']
-    search_fields = ['id']
+    search_fields = ['id', 'barcode', 'item_number',  'cataglog_number']
 
     resource_class = BiologyResource
 
