@@ -41,10 +41,28 @@ class Occurrence(projects.models.PaleoCoreOccurrenceBaseClass):
         return str(self.catalog_number)
 
     def nalma(self):
-        return self.locality.NALMA
+        """
+        Get the related NALMA data for a Biology instance from its locality.
+        :return:
+        """
+        nalma=''
+        try:
+            nalma = self.locality.NALMA
+        except AttributeError:
+            nalma = None
+        return nalma
 
     def sub_age(self):
-        return self.locality.sub_age
+        """
+        Get teh related sub age for a Biology instance from its locality.
+        :return:
+        """
+        sub_age=''
+        try:
+            sub_age = self.locality.sub_age
+        except AttributeError:
+            sub_age = None
+        return sub_age
 
     @staticmethod
     def method_fields_to_export():
