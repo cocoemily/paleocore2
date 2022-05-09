@@ -102,8 +102,9 @@ INSTALLED_APPS = (
     'eval',  # Evaluation
     'paleosites',  # paleosites
     'turkana',
-    'sermar.apps.SermarConfig',  # serengeti mara project
+    'sermar',  # serengeti mara project
     'utcasts',
+    'wormil', # Woranso-Mille project
 
     'wagtail.contrib.routable_page',
     'wagtail.contrib.sitemaps',
