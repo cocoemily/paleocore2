@@ -3,6 +3,7 @@ from django.contrib.gis.db import models
 import projects.models
 
 
+# Location - Locality design pattern
 class Locality(projects.models.PaleoCoreLocalityBaseClass):
 
     class Meta:
@@ -20,7 +21,7 @@ class Specimen(projects.models.PaleoCoreOccurrenceBaseClass):
     item_part = models.CharField("Item Part", max_length=10, null=True, blank=True)
     catalog_number = models.CharField("Catalog #", max_length=255, blank=True, null=True)
     scientific_name = models.CharField("Sci Name", max_length=255, null=True, blank=True)
-    description = models.CharField("Description", max_length=255, blank=True, null=True)
+    description = models.TextField("Description", blank=True, null=True)
     collector = models.CharField(max_length=50, blank=True, null=True)
     finder = models.CharField(max_length=50, blank=True, null=True)
     disposition = models.CharField(max_length=255, blank=True, null=True)
