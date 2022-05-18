@@ -16,6 +16,8 @@ from django.contrib.gis.geos import Point
 
 from django.contrib import admin
 from mptt.admin import MPTTModelAdmin
+from import_export.admin import ImportExportActionModelAdmin
+from import_export import resources
 
 
 class ReferenceAdmin(admin.ModelAdmin):
@@ -47,6 +49,11 @@ class SitePublicationsInline(admin.TabularInline):
     extra = 1
     verbose_name = "Publication"
     verbose_name_plural = "Publications"
+
+
+class SiteResource(resources.ModelResource):
+    class Meta:
+        model = origins.models.Site
 
 
 class SiteAdmin(PaleoCoreLocalityAdminGoogle):
@@ -103,8 +110,10 @@ class SiteAdmin(PaleoCoreLocalityAdminGoogle):
     ]
 
 
-class ActiveSiteAdmin(SiteAdmin):
-    list_display = ['id', 'name', 'country', 'max_ma', 'min_ma', 'fossil_count', 'formation']
+class ActiveSiteAdmin(SiteAdmin, ImportExportActionModelAdmin):
+    resource_class = SiteResource
+    list_display = ['id', 'name', 'country', 'max_ma', 'min_ma', 'fossil_count', 'formation',
+                    'verbatim_collection_name']
 
     def get_queryset(self, request):
         return origins.models.Site.objects.filter(origins=True)
@@ -570,7 +579,7 @@ class TurkFossilAdmin(admin.ModelAdmin):
 admin.site.register(origins.models.Context, ContextAdmin)
 admin.site.register(origins.models.Reference, ReferenceAdmin)
 admin.site.register(origins.models.Fossil, FossilAdmin)
-admin.site.register(origins.models.Site, SiteAdmin)
+admin.site.register(origins.models.Site, ActiveSiteAdmin)
 #admin.site.register(Taxon, TaxonAdmin)
 admin.site.register(origins.models.TTaxon, TTaxonAdmin)
 admin.site.register(origins.models.TaxonRank)

@@ -7,11 +7,12 @@
     <!-- Table Headers -->
     <thead>
     <tr>
-      <!-- Five columns: Index, Scientific Name, Year, Type Specimen, Status -->
+      <!-- Six columns: Index, Scientific Name, Year, Taxon Rank, Type Specimen, Status -->
       <th scope="col"></th>
       <th scope="col">Scientific Name</th>
       <th scope="col">Year</th>
-      <th scope="col">Type Specimen</th>
+      <th scope="col">Taxonomic Rank</th>
+      <th scope="col">Type Specimen/Species</th>
       <th scope="col">Status</th>
     </tr>
     </thead>
@@ -22,7 +23,7 @@
     {% for nomen in nomina %}
     <tr>
       <!-- Column 1 Index -->
-      <th scope="row">{{ forloop.counter }}</th>
+      <td scope="row">{{ forloop.counter }}</td>
 
       <!-- Column 2 Scientific Name -->
       <td>
@@ -38,6 +39,14 @@
         {% endif %}
       </td>
 
+      <!-- Column 4 Rank -->
+      <td>
+      {% if nomen.taxon_rank_group %}
+          {{ nomen.taxon_rank_label }}
+      {% endif %}
+      </td>
+
+
       <!-- Column 4 Type Specimen -->
       {% comment %}
       The code block below tests if the nomen has an associated type_specimen fk. If so, it uses the
@@ -48,6 +57,7 @@
       {% endcomment %}
 
       <td>
+      {% if nomen.taxon_rank_group == 'species-group' %}
         {% if nomen.type_specimen %}
             {% if nomen.type_specimen.type_status %}
               {{nomen.type_specimen.type_status | title}}:
@@ -62,12 +72,15 @@
         {% else %}
           {{ nomen.type_specimen_label}}
         {% endif %}
+      {% elif nomen.taxon_rank_group == 'genus-group' %}
+        <em>{{ nomen.type_taxon }}</em>
+      {% endif %}
       </td>
 
       <!-- Column 5 Nomenclatural Status -->
       <td>
         {% if nomen.nomenclatural_status %}
-          {{ nomen.nomenclatural_status|unslugify|capfirst }}
+        {{ nomen.nomenclatural_status|unslugify|capfirst }}
         {% else %}
           &nbsp;
         {% endif %}

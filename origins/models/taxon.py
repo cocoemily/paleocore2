@@ -217,10 +217,10 @@ class Nomen(projects.models.PaleoCoreBaseClass):
         return self.year
 
     def taxon_rank_label(self):
-        label = ''
+        tr_label = ''
         if self.taxon_rank_obj:
-            label = self.taxon_rank_obj.name
-        return label
+            tr_label = self.taxon_rank_obj.name
+        return tr_label
 
     def type_status(self):
         type_status = None
