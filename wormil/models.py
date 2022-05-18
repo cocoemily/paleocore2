@@ -44,6 +44,7 @@ class Locality(projects.models.PaleoCoreLocalityBaseClass):
     class Meta:
         verbose_name = 'Locality'
         verbose_name_plural = 'Localities'
+        ordering = ['locality_id']
 
     def __str__(self):
         return f"[{self.id}] {self.locality_id}"
@@ -91,4 +92,7 @@ class Fossil(Specimen):
     life_stage = models.CharField(max_length=50, blank=True, null=True)
     biology_remarks = models.TextField(max_length=500, null=True, blank=True)
     taxonomic_problem = models.BooleanField(null=True, blank=True)
+
+    class Meta:
+        ordering = ['catalog_number']
 
