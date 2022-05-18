@@ -116,8 +116,8 @@ class NomenViewSet(viewsets.ReadOnlyModelViewSet):
     """
     API endpoint that allows Nomina to be viewed
     """
-    queryset = Nomen.objects.exclude(taxon_rank_group='family-group')
-    # queryset = Nomen.objects.all()
+    #queryset = Nomen.objects.exclude(taxon_rank_group='family-group')
+    queryset = Nomen.objects.all()
     serializer_class = NomenSerializer
     # permission_classes = [permissions.IsAuthenticated]
 
