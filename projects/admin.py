@@ -4,6 +4,7 @@ from django.forms import TextInput, Textarea  # import custom form widgets
 from mapwidgets.widgets import GooglePointFieldWidget
 import csv
 from django.http import StreamingHttpResponse
+from import_export import resources
 from import_export.admin import ImportExportActionModelAdmin
 
 
@@ -33,7 +34,6 @@ default_readonly_fields = [
 ]
 
 default_list_display = ['catalog_number',
-
                         'basis_of_record',
                         'item_type',
                         'collector',
@@ -217,7 +217,7 @@ class PaleoCoreLocalityAdminGoogle(admin.ModelAdmin):
         return response
 
 
-class TaxonomyAdmin(admin.ModelAdmin):
+class TaxonomyAdmin(ImportExportActionModelAdmin):
     list_display = ('label', 'rank', 'name', 'full_name', 'biology_usages')
     readonly_fields = ['id', 'biology_usages']
     fields = ['id', 'name', 'parent', 'label', 'rank']

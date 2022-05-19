@@ -9,7 +9,7 @@ from django.core.paginator import Paginator, EmptyPage, PageNotAnInteger
 from django.apps import apps
 from django.apps.config import AppConfig
 from django.utils import timezone
-from django.contrib.gis.geos import Point
+from django.contrib.gis.geos import Point, Polygon
 from django_countries.fields import CountryField
 from django.utils.html import format_html
 # Wagtail imports
@@ -619,6 +619,11 @@ APP_CHOICES = app_choices()
 
 
 class ProjectPage(Page):
+    """
+    Paleo Core projects page. Summary details about each project
+    Inherits from Page:
+    Title
+    """
     intro = RichTextField()
     body = StreamField([
         ('heading', blocks.CharBlock(classname="full title")),
@@ -635,6 +640,7 @@ class ProjectPage(Page):
         related_name='+'
     )
     location = models.PointField(srid=4326, null=True, blank=True)
+    extent = models.PolygonField(srid=4326, null=True, blank=True)
 
     search_fields = Page.search_fields + [
         index.SearchField('body'),
@@ -841,7 +847,8 @@ ProjectPage.content_panels = [
     StreamFieldPanel('body'),
     InlinePanel('carousel_items', label="Carousel items"),
     InlinePanel('related_links', label="Related links"),
-    GeoPanel('location')
+    GeoPanel('location'),
+    FieldPanel('extent')
 ]
 
 ProjectPage.promote_panels = Page.promote_panels + [
