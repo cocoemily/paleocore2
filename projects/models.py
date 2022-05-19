@@ -29,6 +29,7 @@ from taggit.models import TaggedItemBase
 from utils.models import RelatedLink, CarouselItem
 from ckeditor.fields import RichTextField as CKRichTextField
 from projects.ontologies import PERIOD_CHOICES, EPOCH_CHOICES, AGE_CHOICES
+from users.models import User
 
 
 # MODELS
@@ -566,7 +567,7 @@ class ProjectsIndexPage(Page):
 
         # Pagination
         page = request.GET.get('page')
-        paginator = Paginator(projects, 10)  # Show 10 projects per page
+        paginator = Paginator(projects, 20)  # Show 20 projects per page
         try:
             projects = paginator.page(page)
         except PageNotAnInteger:
