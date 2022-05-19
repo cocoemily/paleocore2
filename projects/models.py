@@ -779,7 +779,7 @@ class ProjectPage(Page):
             if self.app_label in ('cc', 'fc'):
                 content_type = None  # cc and fc have no fossil occurrences
             # use the Fossil model for eppe
-            elif self.app_label == 'eppe':
+            elif self.app_label in ('eppe', 'wormil'):
                 content_type = ContentType.objects.get(app_label=self.app_label, model='fossil')
             # all others use Biology model
             else:
