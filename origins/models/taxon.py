@@ -253,7 +253,7 @@ class Nomen(projects.models.PaleoCoreBaseClass):
         return unicode_string
 
     class Meta:
-        ordering = ['name']
+        ordering = ['name', 'year']
         verbose_name = 'Nomen'
         verbose_name_plural = 'Nomina'
 
