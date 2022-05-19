@@ -21,7 +21,7 @@ class FossilAdmin(PaleoCoreOccurrenceAdmin):
     list_display = ['id', 'catalog_number', 'locality', 'found_by', 'recorded_by', 'description']
     readonly_fields = ['latitude', 'longitude']
     list_filter = ['collection_code', 'recorded_by', 'in_situ', 'matrix_adhering']
-    search_fields = ['catalog_number', 'description', 'scientific_name', 'collector']
+    search_fields = ['catalog_number', 'description', 'scientific_name', 'found_by']
     list_display_links = ['id', 'catalog_number']
 
 
