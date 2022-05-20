@@ -734,6 +734,8 @@ class ProjectPage(Page):
                 content_type = ContentType.objects.get(app_label=self.slug, model='context')
             elif self.slug == 'eppe':  # eppe uses find as basic record
                 content_type = ContentType.objects.get(app_label=self.slug, model='find')
+            elif self.slug == 'wormil':  # wormil uses specimen
+                content_type = ContentType.objects.get(app_label=self.slug, model='specimen')
             else:  # all others use occurrence
                 try:
                     content_type = ContentType.objects.get(app_label=self.slug, model='occurrence')
