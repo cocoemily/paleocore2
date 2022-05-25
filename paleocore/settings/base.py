@@ -105,6 +105,7 @@ INSTALLED_APPS = (
     'sermar',  # serengeti mara project
     'utcasts',
     'wormil', # Woranso-Mille project
+    'inca',  # Inca Multiregional Database
 
     'wagtail.contrib.routable_page',
     'wagtail.contrib.sitemaps',
