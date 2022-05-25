@@ -11,7 +11,7 @@ class LocalityAdmin(PaleoCoreLocalityAdminGoogle):
                     'macrobotanical_evidence', 'macrobotanical_present',
                     ]
     list_filter = ['collection_code', 'year_established', 'archaeology_present',
-                   'macrobotanical_present', 'uncollected_fossils_present']
+                   'macrobotanical_present']
     search_fields = ['locality_id', 'name', 'bed']
 
 
