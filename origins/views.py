@@ -105,6 +105,10 @@ class NominaReportView(generic.ListView):
     template_name = 'origins/nomina_report_view.html'
     context_object_name = 'nomina'
 
+    def get_queryset(self):
+        return Nomen.objects.exclude(taxon_rank_group='family-group').select_related(
+            'authorship_reference_obj', 'type_specimen')
+
 
 class ZoteroListView(generic.ListView):
     template_name = 'origins/zotero_list.html'
