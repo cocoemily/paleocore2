@@ -2,117 +2,26 @@
 {% load paleocore_utils %}
 
 <!-- Nomina listing -->
-
-<!-- elaborate listing -->
-
 <div id="nomen">
   {% for tfossil in type_fossils %}
+  <!-- Type Site-Fossil Card -->
   <div class="card">
     <div class="card-divider">
       <h5>{{tfossil.continent}}-{{tfossil.site.name}}:
         {% if tfossil.organism_id %}{{tfossil.organism_id}}
         {% else %} {{tfossil.catalog_number}}
         {% endif %}
-
       </h5>
     </div>
+    <!-- Nomen listings for Site-Fossil -->
     <div class="card-section">
       {% for nomen in tfossil.nomen_set.all|dictsort:"year" %}
       <a href=" {% pageurl page %}detail/{{nomen.id}}"><em>{{ nomen.name}}</em> {{nomen.authorship}}</a>
-      &nbsp;|&nbsp;{{nomen.nomenclatural_status}}<br/>
+      &nbsp;|&nbsp;Status: {{nomen.nomenclatural_status|unslugify|capfirst}}<br/>
       {% endfor %}
     </div>
+    <!-- End Nomen listing -->
   </div>
+  <!-- End Type Site-Fossil Card -->
   {% endfor %}
-
-
-      <!--
-      {% comment %}
-      <h5><a href=" {% pageurl page  %}detail/{{nomen.id}}"><em>{{ nomen.name}}</em> {{nomen.authorship}}</a></h5>
-
-        <div class="nomen-type">
-          {% if nomen.type_specimen %}
-            {% if nomen.type_specimen.type_status %}
-            {{nomen.type_specimen.type_status | title}}:
-              {% if nomen.type_specimen.organism_id %}
-                {{ nomen.type_specimen.organism_id }}<br/>
-              {% else %}
-                {{nomen.type_specimen.catalog_number}}<br/>
-              {% endif %}
-            {% else %}
-            Type Specimen: {{ nomen.type_specimen.catalog_number }}<br/>
-            {% endif %}
-          {% endif %}
-          {% if nomen.nomenclatural_status %}
-            Nomenclatural Status:
-            {% if nomen.nomenclatural_status in valid %}
-            Available - Valid<br/>
-            {% elif nomen.nomenclatural_status in invalid %}
-            Available - Invalid<br/>
-            {% elif nomen.nomenclatural_status in unavailable %}
-            Unavailable<br/>
-            {% endif %}
-          {% endif %}
-        </div>
-
-
-      {% if nomen.name_reference %}
-          {% with nomen.name_reference as publication %}
-            {{ publication.authors }}. {{ publication.year }}. {{ publication.title }}{% if not publication.title_ends_with_punct %}.{% endif %}
-            {% if publication.journal %}<em>{{ publication.journal }}</em>.{% endif %}
-            {% if publication.book_title %} <em>{{ publication.book_title }}</em>.{% endif %}
-            {% if publication.publisher %} {{ publication.publisher }},{% endif %}
-            {% if publication.institution %} {{ publication.institution }}.{% endif %}
-            {% if publication.volume %} <b>{{ publication.volume }}</b>{% endif %}
-            {% if publication.number %} ({{ publication.number }}){% endif %}
-            {% if publication.pages %}:{{ publication.pages }}{% endif %}
-            {% if publication.url %}<br/><a href="{{publication.url}}" target="_blank"><i class="fa fa-external-link-alt"></i> {% endif %}{{publication.url}}{% if publication.url %}</a>{% endif %}
-          {% endwith %}
-      {% endif %}
-    </div>
-  {% endfor %}
-  {% endcomment %}-->
 </div>
-
-
-<!-- accordian listing -->
-{% comment %}
-<div>
-  <ul class="accordion" data-accordion data-multi-expand="true" data-allow-all-closed="true">
-    {% for name in nomina %}
-      <li class="accordion-item" data-accordion-item>
-        <h5><a href="{% url 'origins:taxon_detail_view' name.id %}">{{ name.name }}</a></h5>
-        <div class="accordion-content" data-tab-content>
-          <!-- main reference -->
-          {% for publication in name.name_reference.all %}
-          {{ publication.authors }}. {{ publication.title }}
-          {% if not publication.title_ends_with_punct %}.{% endif %}
-          {% if publication.journal %} {{ publication.journal }},{% endif %}
-          {% if publication.book_title %} {{ publication.book_title }},{% endif %}
-          {% if publication.publisher %} {{ publication.publisher }},{% endif %}
-          {% if publication.institution %} {{ publication.institution }},{% endif %}
-          {% if publication.volume %} volume {{ publication.volume }},{% endif %}
-          {% if publication.number %} issue {{ publication.number }},{% endif %}
-          {% if publication.pages %} pages {{ publication.pages }},{% endif %}
-          {% if publication.month %} {{ publication.month_long }}{% endif %} {{ publication.year }}.<br/>
-          {% endfor %}
-          <!-- additional references -->
-          {% for publication in name.references.all %}
-          {{ publication.authors }}. {{ publication.title }}
-          {% if not publication.title_ends_with_punct %}.{% endif %}
-          {% if publication.journal %} {{ publication.journal }},{% endif %}
-          {% if publication.book_title %} {{ publication.book_title }},{% endif %}
-          {% if publication.publisher %} {{ publication.publisher }},{% endif %}
-          {% if publication.institution %} {{ publication.institution }},{% endif %}
-          {% if publication.volume %} volume {{ publication.volume }},{% endif %}
-          {% if publication.number %} issue {{ publication.number }},{% endif %}
-          {% if publication.pages %} pages {{ publication.pages }},{% endif %}
-          {% if publication.month %} {{ publication.month_long }}{% endif %} {{ publication.year }}.<br/>
-          {% endfor %}
-        </div>
-      </li>
-    {% endfor %}
-  </ul>
-</div>
-{% endcomment %}
-

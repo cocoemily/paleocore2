@@ -1,114 +1,37 @@
 {% load paleocore_utils %}
-<!-- simple listing -->
+<!-- Nomen Detail -->
 <div id="nomen">
-  <!-- Title: Nomen and Authorship -->
-  <div>
-    <h5><em>
-      {{ nomen.name}}</em> {{nomen.authorship}}
-      {% if user.is_staff %}
-        <a href="{% url 'admin:origins_nomen_change' nomen.id %}"> [EDIT] </a>
-      {% endif %}
-    </h5>
+  <!-- Title Card -->
+  {% include 'origins/includes/nomen_title_card.html' %}
+  <!-- End Title Card -->
 
-<!-- pdf link -->
-  </div>
-  <hr/>
-  <!-- Name reference -->
-  <div>
-    {% if nomen.name_reference %}
-    <h6>Authorship Reference</h6>
-      <div class="card">
-          <div class="card-section">
-          {% with nomen.name_reference as publication %}
-            {% include 'publications/publication.html' %}<br/>
-          {% endwith %}
-          </div>
-      </div>
-    {% endif %}
-  </div>
+  <!-- Details Card -->
+  {% include 'origins/includes/nomen_details_card.html' %}
+  <!-- End Details Card -->
 
-  <!-- Details -->
-  <div>
-    <!-- Nomen Details -->
-    <h6>Details</h6>
-    {% if nomen.type_specimen or nomen.nomenclatural_status or nomen.verified_date %}
-      <div class="card">
+  <!-- Remarks Card -->
+  {% include 'origins/includes/nomen_remarks_card.html' %}
+  <!-- End Remarks Card -->
 
-        <!-- Details -->
-        <div class="card-divider">
+  <!-- Authorship Reference Card -->
+  {% include 'origins/includes/authorship_reference_card.html' %}
+  <!-- End Authorship Reference Card -->
 
-            <!-- Nomenclatural Status -->
-            Status:
-            {% if nomen.nomenclatural_status %}
-              {{ nomen.nomenclatural_status|unslugify|capfirst }}<br/>
-            {% else %} undetermined<br/>
-            {% endif %}
-
-            <!-- Type Specimen -->
-            {% if nomen.type_specimen %}
-              {% if nomen.type_specimen.type_status %}
-                {{nomen.type_specimen.type_status | title}}:
-                {% if nomen.type_specimen.organism_id %}
-                  {{ nomen.type_specimen.organism_id }}<br/>
-                {% else %}
-                  {{nomen.type_specimen.catalog_number}}<br/>
-                {% endif %}
-              {% else %}
-                {{ nomen.type_specimen.catalog_number }}<br/>
-              {% endif %}
-            {% else %}
-              No details available.
-            {% endif %}
-
-        </div>
-
-        <!-- Remarks -->
-        {% if nomen.remarks and nomen.verified_date %}
-        <div class="card-section">
-          {{ nomen.remarks | safe}}
-
-        </div>
-        {% endif %}
-
-      </div>
-    {% else %}
-      <div class="card">
-        <div class="card-section">
-        No details available.
-        </div>
-      </div>
-    {% endif %}
-  </div>
-
-  <div>
-    <!-- Main Reference -->
-    {% if nomen.authorship_reference_obj %}
-      <h6>Authorship Reference</h6>
-
-      {% with publication=nomen.authorship_reference_obj %}
-        <div class="card">
-          <div class="card-section">
-
-          {% include 'publications/publication.html' %}
-          </div>
-        </div>
-      {% endwith %}
-    {% endif %}
-
-
-
-  </div>
   <div>
     <!-- Additional References -->
+    <!-- Additional references section and cards are completely hidden if no additional refs -->
     {% if nomen.references.all %}
-      <h6>Additional References</h6>
-      {% for publication in nomen.references.all|dictsort:"year" %}
         <div class="card">
           <div class="card-section">
-          {% include 'publications/publication.html' %}
+            <h6>Additional References</h6>
+            {% for publication in nomen.references.all|dictsort:"year" %}
+            {% include 'publications/publication.html' %}
+            {% if forloop.last %}
+            {% else %}<hr/>
+            {% endif %}
+            {% endfor %}
           </div>
         </div>
-      {% endfor %}
     {% endif %}
   </div>
 </div>

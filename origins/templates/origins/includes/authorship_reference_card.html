@@ -1,0 +1,17 @@
+<!-- Authorship Reference Card -->
+<div class="card">
+  <div class="card-section">
+    <!-- Main Reference -->
+    {% if nomen.authorship_reference_obj %}
+      <h6>Authorship Reference</h6>
+      {% with publication=nomen.authorship_reference_obj %}
+      <div>
+      {% include 'publications/publication.html' %}
+      </div>
+      {% endwith %}
+    {% else %}
+    No authorship reference available.
+    {% endif %}
+  </div>
+</div>
+<!-- End Authorship Refrence Card -->

@@ -1,0 +1,73 @@
+{% load paleocore_utils %}
+
+<!-- Title -->
+<h2><em>
+  {{ nomen.name}}</em> {{nomen.authorship}}
+</h2>
+<!-- End Title -->
+
+<!-- Details Card -->
+<h4>Details</h4>
+<!-- Taxonomic Rank -->
+Taxonomic Rank:
+{% if nomen.taxon_rank_obj %}
+  {{ nomen.taxon_rank_obj.name|capfirst }}<br/>
+{% else %} No rank details available.<br/>
+{% endif %}
+<!-- End Taxonomic Rank -->
+
+<!-- Type Specimen_Species -->
+{% if nomen.type_specimen %}
+  {% if nomen.type_specimen.type_status %}
+    {{nomen.type_specimen.type_status | title}}:
+    {% if nomen.type_specimen.organism_id %}
+      {{ nomen.type_specimen.organism_id }}<br/>
+    {% else %}
+      {{nomen.type_specimen.catalog_number}}<br/>
+    {% endif %}
+  {% else %}
+    {{ nomen.type_specimen.catalog_number }}<br/>
+  {% endif %}
+{% else %} No type specimen details available.<br/>
+{% endif %}
+<!-- End Type Specimen_Species -->
+
+<!-- Nomenclatural Status -->
+Status:
+{% if nomen.nomenclatural_status %}
+  {{ nomen.nomenclatural_status|unslugify|capfirst }}<br/>
+{% else %} No status details available.<br/>
+{% endif %}
+<!-- End Nomenclatural Status -->
+<!-- End Details Card -->
+
+<!-- Remarks -->
+<h4>Remarks</h4>
+{% if nomen.remarks and nomen.verified_date %}
+  {{ nomen.remarks | safe}}
+{% else %}
+  No remarks available. <br/>
+{% endif %}
+<!-- End Remarks -->
+
+
+  {% comment Authorship reference %}
+  {% include 'origins/includes/authorship_reference_card.html' %}
+  {% endcomment %}
+
+  {% comment Additional references %}
+  <div>
+    <!-- Additional References -->
+    {% if nomen.references.all %}
+      <h6>Additional References</h6>
+      {% for publication in nomen.references.all|dictsort:"year" %}
+        <div class="card">
+          <div class="card-section">
+          {% include 'publications/publication.html' %}
+          </div>
+        </div>
+      {% endfor %}
+    {% endif %}
+  </div>
+  {% endcomment %}
+

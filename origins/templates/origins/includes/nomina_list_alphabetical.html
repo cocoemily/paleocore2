@@ -1,0 +1,20 @@
+{% load paleocore_utils %}
+<div id="nomen">
+  {% for nomen in nomina %}
+  <!-- Title Card -->
+  {% include 'origins/includes/nomen_title_card.html' %}
+  <!-- End Title Card -->
+
+  <!-- Details Card -->
+  {% include 'origins/includes/nomen_details_card.html' %}
+  <!-- End Details Card -->
+
+  <!-- Remarks Card -->
+  {% include 'origins/includes/nomen_remarks_card.html' %}
+  <!-- End Remarks Card -->
+
+  <!-- Authorship Reference Card -->
+  {% include 'origins/includes/authorship_reference_card.html' %}
+  <!-- End Authorship Refrence Card -->
+  {% endfor %}
+</div>

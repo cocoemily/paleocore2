@@ -100,6 +100,12 @@ class TaxonDetailView(generic.DetailView):
     model = TTaxon
 
 
+class NominaReportView(generic.ListView):
+    model = Nomen
+    template_name = 'origins/nomina_report_view.html'
+    context_object_name = 'nomina'
+
+
 class ZoteroListView(generic.ListView):
     template_name = 'origins/zotero_list.html'
     context_object_name = 'zotero'
