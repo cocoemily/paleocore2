@@ -4,8 +4,8 @@ import uuid
 from django.contrib.gis.db import models
 from django.contrib.contenttypes.models import ContentType
 from django.core.paginator import Paginator, EmptyPage, PageNotAnInteger
-
 from django.utils.html import mark_safe, format_html
+from ckeditor.fields import RichTextField as CKRichTextField
 
 # Paleo Core imports
 import projects.models
@@ -106,6 +106,8 @@ class Nomen(projects.models.PaleoCoreBaseClass):
     is_subjective_synonym = models.BooleanField('Subjective Synonym', default=False)
     is_established = models.BooleanField('Established', default=False)
 
+    usage_remarks = CKRichTextField("Usage Remarks", null=True, blank=True,
+                                    help_text='Remarks about frequency of usage of the name in the literature.')
     references = models.ManyToManyField(publications.models.Publication, blank=True)
     assigned_to = models.CharField('Assigned', max_length=255, null=True, blank=True, choices=VERIFIER_CHOICES)
     verified_by = models.CharField('Verified', max_length=255, null=True, blank=True, choices=VERIFIER_CHOICES)
@@ -338,14 +340,14 @@ class TTaxon(MPTTModel, projects.models.Taxon):
         """
         scientific_name_html = ''
         name_string = "{otag}{name}{ctag} {auth}".format(otag='<i>' if self.rank.ordinal >= 60 else "",
-                                                        name=self.name,
-                                                        ctag='</i>' if self.rank.ordinal >= 60 else "",
-                                                        auth=self.authorship if self.authorship else "")
+                                                         name=self.name,
+                                                         ctag='</i>' if self.rank.ordinal >= 60 else "",
+                                                         auth=self.authorship if self.authorship else "")
         if self.authorship:
             scientific_name_html = '<i>' + self.name + '</i> ' + self.authorship
         else:
             scientific_name_html = '<i>' + self.name + '</i>'
-        #return format_html(scientific_name_html)
+        # return format_html(scientific_name_html)
         return format_html(name_string)
 
     class Meta:

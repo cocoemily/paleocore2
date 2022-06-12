@@ -511,7 +511,7 @@ class NomenAdmin(admin.ModelAdmin):
                    'is_available', 'is_potentially_valid', 'is_established',
                    'is_objective_synonym', 'is_subjective_synonym', 'bc_status']
     inlines = [NomenPublicationsInline]
-    search_fields = ['name', 'authorship', 'year', 'remarks', 'problem_comment']
+    search_fields = ['name', 'authorship', 'year', 'remarks', 'usage_remarks', 'problem_comment']
     fields = ['name', 'scientific_name_id', 'generic_name', 'specific_epithet', 'authorship', 'year',
               'authorship_reference_obj', 'authorship_reference', 'authorship_reference_id',
               'taxon_rank_obj', 'taxon_rank_label', 'taxon_rank_group',
@@ -519,7 +519,7 @@ class NomenAdmin(admin.ModelAdmin):
               'nomenclatural_code', 'nomenclatural_status',
               'bc_status',
               'is_available', 'is_potentially_valid', 'is_established',
-              'remarks', 'is_objective_synonym', 'is_subjective_synonym',
+              'remarks', 'usage_remarks', 'is_objective_synonym', 'is_subjective_synonym',
               'assigned_to', 'verified_by', 'verified_date',
               'date_created', 'date_last_modified', 'problem', 'problem_comment']
 
