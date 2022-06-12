@@ -17,19 +17,27 @@ Taxonomic Rank:
 <!-- End Taxonomic Rank -->
 
 <!-- Type Specimen_Species -->
-{% if nomen.type_specimen %}
-  {% if nomen.type_specimen.type_status %}
-    {{nomen.type_specimen.type_status | title}}:
-    {% if nomen.type_specimen.organism_id %}
-      {{ nomen.type_specimen.organism_id }}<br/>
-    {% else %}
-      {{nomen.type_specimen.catalog_number}}<br/>
-    {% endif %}
+
+{% if nomen.taxon_rank_group == 'species-group' %}
+  {% if nomen.type_specimen %}
+    {% if nomen.type_specimen.type_status %}
+      {{nomen.type_specimen.type_status | title}}:  <!-- e.g. Holotype: --->
+        {% if nomen.type_specimen.organism_id %}
+          {{ nomen.type_specimen.organism_id }}<br/>
+        {% else %}
+          {{nomen.type_specimen.catalog_number}}<br/>
+        {% endif %}
+      {% else %}
+          Type specimen: {{ nomen.type_specimen.catalog_number }}<br/>
+      {% endif %}
   {% else %}
-    {{ nomen.type_specimen.catalog_number }}<br/>
+      {{ nomen.type_specimen_label}}
   {% endif %}
-{% else %} No type specimen details available.<br/>
+{% elif nomen.taxon_rank_group == 'genus-group' %}
+  Type species: <em>{{ nomen.type_taxon }}</em><br/>
+{% else %} No type information available.
 {% endif %}
+
 <!-- End Type Specimen_Species -->
 
 <!-- Nomenclatural Status -->
