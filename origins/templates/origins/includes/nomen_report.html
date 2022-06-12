@@ -31,7 +31,7 @@ Taxonomic Rank:
           Type specimen: {{ nomen.type_specimen.catalog_number }}<br/>
       {% endif %}
   {% else %}
-      {{ nomen.type_specimen_label}}
+      {{ nomen.type_specimen_label}}<br/>
   {% endif %}
 {% elif nomen.taxon_rank_group == 'genus-group' %}
   Type species: <em>{{ nomen.type_taxon }}</em><br/>
