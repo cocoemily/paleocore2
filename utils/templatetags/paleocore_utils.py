@@ -141,4 +141,11 @@ def adverts(context):
 # Custom filter to convert slugs to plain text, e.g. potentially_valid -> potentially valid
 @register.filter(name='unslugify')
 def unslugify(string):
-    return string.replace('_', ' ')
+    """
+    Custom filter to convert slug to a string by replacing underscores with spaces.
+    If passed None will return None
+    """
+    unslug_string = string
+    if string:
+        unslug_string = string.replace('_', ' ')
+    return unslug_string
