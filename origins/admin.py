@@ -103,9 +103,9 @@ class SiteAdmin(PaleoCoreLocalityAdminGoogle):
         ('Location', {
             'fields': [('country', ), ('location_remarks', ), ('latitude', 'longitude'), ('geom',)]
         }),
-        # ('References', {
-        #     'fields': [('references',),]
-        # }),
+        ('Administration', {
+             'fields': [('problem', 'problem_comment',)]
+         }),
 
     ]
 
