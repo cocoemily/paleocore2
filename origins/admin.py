@@ -58,7 +58,7 @@ class SiteResource(resources.ModelResource):
 
 class SiteAdmin(PaleoCoreLocalityAdminGoogle):
     save_as = True
-    list_display = ['id', 'name', 'country',
+    list_display = ['id', 'name', 'country', 'problem',
                     # 'verbatim_collection_name',
                     # 'longitude', 'latitude',
                     # 'verbatim_early_interval',
@@ -82,7 +82,7 @@ class SiteAdmin(PaleoCoreLocalityAdminGoogle):
                      'verbatim_reference_no',
                      'origins'
                      ]
-    list_filter = ['origins', 'country']
+    list_filter = ['origins', 'country', 'problem']
     list_per_page = 500
     inlines = [SitePublicationsInline]
 
