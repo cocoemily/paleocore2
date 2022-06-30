@@ -505,11 +505,11 @@ class NomenAdmin(admin.ModelAdmin):
     list_display = ['name', 'authorship', 'year', 'authorship_reference_obj', 'type_specimen',
                     'taxon_rank_obj', 'is_objective_synonym', 'is_subjective_synonym', 'is_available', 'is_established',
                     'is_potentially_valid', 'nomenclatural_status',
-                    'bc_status',
+                    'bc_status', 'problem',
                     'assigned_to', 'verified_by', 'verified_date']
     list_filter = ['nomenclatural_status', 'taxon_rank_obj', 'assigned_to', 'verified_by', 'verified_date',
                    'is_available', 'is_potentially_valid', 'is_established',
-                   'is_objective_synonym', 'is_subjective_synonym', 'bc_status']
+                   'is_objective_synonym', 'is_subjective_synonym', 'bc_status', 'problem']
     inlines = [NomenPublicationsInline]
     search_fields = ['name', 'authorship', 'year', 'remarks', 'usage_remarks', 'problem_comment']
     fields = ['name', 'scientific_name_id', 'generic_name', 'specific_epithet', 'authorship', 'year',
