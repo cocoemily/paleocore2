@@ -124,7 +124,9 @@ NOMENCLATURAL_STATUS_CHOICES = (
 conditional = 'conditionally proposed'
 fictional = 'fictional'
 nomen_nudum = 'nomen nudum'
-improperly_formed ='improperly formed'
+improperly_formed = 'improperly formed'
+improperly_published = 'improperly published'
+lacks_type = 'lacks type specimen or species'
 homonym = 'homonym'
 objective_synonym = 'objective synonym'
 STATUS_REMARK_CHOICES=(
@@ -132,6 +134,8 @@ STATUS_REMARK_CHOICES=(
     (fictional, 'Fictional'),
     (nomen_nudum, 'Nomen nudum'),
     (improperly_formed, 'Improperly formed'),
+    (improperly_published, 'Improperly published'),
+    (lacks_type, 'Lacks type specimen/species'),
     (homonym, 'Homonym'),
     (objective_synonym, 'Objective synonym')
 )
