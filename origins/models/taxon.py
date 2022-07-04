@@ -13,7 +13,7 @@ import publications.models
 from mptt.models import MPTTModel, TreeForeignKey
 
 from origins.ontologies import NOMENCLATURAL_STATUS_CHOICES, BC_STATUS_CHOICES, NOMENCLATURAL_CODE_CHOICES, \
-    TAXON_RANK_GROUP_CHOICES, TYPE_CHOICES, CLASSIFICATION_STATUS_CHOICES, VERIFIER_CHOICES
+    STATUS_REMARK_CHOICES, TAXON_RANK_GROUP_CHOICES, TYPE_CHOICES, CLASSIFICATION_STATUS_CHOICES, VERIFIER_CHOICES
 
 from wagtail.admin.edit_handlers import FieldPanel, StreamFieldPanel, InlinePanel
 from .wagtail import NomenDetailRelatedLink
@@ -92,6 +92,8 @@ class Nomen(projects.models.PaleoCoreBaseClass):
                                           choices=NOMENCLATURAL_CODE_CHOICES, default='ICZN')
     nomenclatural_status = models.CharField('Nom. Status', max_length=255, null=True, blank=True,
                                             choices=NOMENCLATURAL_STATUS_CHOICES)
+    status_remark = models.CharField(max_length=255, null=True, blank=True,
+                                            choices=STATUS_REMARK_CHOICES)
     type_specimen_label = models.CharField(max_length=255, null=True, blank=True, help_text=type_help)
     type_specimen = models.ForeignKey('Fossil', null=True, blank=True, on_delete=models.SET_NULL,
                                       help_text=type_object_help)

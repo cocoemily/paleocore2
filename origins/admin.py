@@ -504,10 +504,11 @@ class NomenAdmin(admin.ModelAdmin):
                        'authorship_year', 'authorship_reference_id', 'taxon_rank_label']
     list_display = ['name', 'authorship', 'year', 'authorship_reference_obj', 'type_specimen',
                     'taxon_rank_obj', 'is_objective_synonym', 'is_subjective_synonym', 'is_available', 'is_established',
-                    'is_potentially_valid', 'nomenclatural_status',
+                    'is_potentially_valid', 'nomenclatural_status', 'status_remark',
                     'bc_status', 'problem',
                     'assigned_to', 'verified_by', 'verified_date']
-    list_filter = ['nomenclatural_status', 'taxon_rank_obj', 'assigned_to', 'verified_by', 'verified_date',
+    list_editable = ['status_remark']
+    list_filter = ['nomenclatural_status', 'status_remark', 'taxon_rank_obj', 'assigned_to', 'verified_by', 'verified_date',
                    'is_available', 'is_potentially_valid', 'is_established',
                    'is_objective_synonym', 'is_subjective_synonym', 'bc_status', 'problem']
     inlines = [NomenPublicationsInline]
@@ -516,7 +517,7 @@ class NomenAdmin(admin.ModelAdmin):
               'authorship_reference_obj', 'authorship_reference', 'authorship_reference_id',
               'taxon_rank_obj', 'taxon_rank_label', 'taxon_rank_group',
               'type_specimen_label', 'type_specimen', 'paratypes', 'type_taxon',
-              'nomenclatural_code', 'nomenclatural_status',
+              'nomenclatural_code', 'nomenclatural_status', 'status_remark',
               'bc_status',
               'is_available', 'is_potentially_valid', 'is_established',
               'remarks', 'usage_remarks', 'is_objective_synonym', 'is_subjective_synonym',

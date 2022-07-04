@@ -120,6 +120,22 @@ NOMENCLATURAL_STATUS_CHOICES = (
     (potentially_valid, 'potentially valid'),
 )
 
+# Origins Nomenclatural Status Remark Choices
+conditional = 'conditionally proposed'
+fictional = 'fictional'
+nomen_nudum = 'nomen nudum'
+improperly_formed ='improperly formed'
+homonym = 'homonym'
+objective_synonym = 'objective synonym'
+STATUS_REMARK_CHOICES=(
+    (conditional, 'Conditionally proposed'),
+    (fictional, 'Fictional'),
+    (nomen_nudum, 'Nomen nudum'),
+    (improperly_formed, 'Improperly formed'),
+    (homonym, 'Homonym'),
+    (objective_synonym, 'Objective synonym')
+)
+
 # Classification Status Choices
 accepted = 'accepted'
 junior_synonym = 'junior_synonym'
