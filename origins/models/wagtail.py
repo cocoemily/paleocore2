@@ -59,7 +59,7 @@ class NominaListView(Page):
 
     def get_context(self, request):
         # Update template context
-        qs = origins_models.Nomen.objects.exclude(taxon_rank_group='family-group').select_related('authorship_reference_obj', 'type_specimen')
+        qs = origins_models.Nomen.objects.filter(taxon_rank_obj__id__lt=60).select_related('authorship_reference_obj', 'type_specimen')
         tqs = origins_models.Fossil.objects.filter(is_type_specimen=True).select_related('site')
         tqs = tqs.order_by('continent', 'site__name')
         count = qs.count()
