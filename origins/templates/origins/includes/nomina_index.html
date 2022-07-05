@@ -14,6 +14,7 @@
       <th scope="col">Taxonomic Rank</th>
       <th scope="col">Type Specimen/Species</th>
       <th scope="col">Status</th>
+      <th scope="col">Remark</th>
     </tr>
     </thead>
 
@@ -81,6 +82,14 @@
       <td>
         {% if nomen.nomenclatural_status %}
         {{ nomen.nomenclatural_status|unslugify|capfirst }}
+        {% else %}
+          &nbsp;
+        {% endif %}
+      </td>
+      <!-- Column 6 Nomenclatural Status Remark-->
+      <td>
+        {% if nomen.status_remark %}
+        {{ nomen.status_remark|unslugify|capfirst }}
         {% else %}
           &nbsp;
         {% endif %}
