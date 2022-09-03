@@ -1,4 +1,4 @@
-Django==3.2.12
+Django==3.2.15
 wagtail==2.15.2
 celery==5.2.3
 django-compressor==2.4.1
