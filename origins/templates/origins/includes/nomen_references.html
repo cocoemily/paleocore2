@@ -2,7 +2,14 @@
 
 <!-- Authorship Reference -->
 <!-- Simple reference output. It is not dynamically formatted by reference type (book, article etc.) -->
+<p>
+{% if nomen.authorship_reference %}
+{{nomen.authorship_reference}}
+{% else %}{{nomen}} - No Reference Available
+{% endif %}
+</p>
 
+{% comment %}
 {% if nomen.authorship_reference_obj %}
   {% with publication=nomen.authorship_reference_obj %}
     {% autoescape off %}
@@ -20,6 +27,6 @@
   No authorship reference available.<br/>
 {% endif %}
 &nbsp;
-
+{% endcomment %}
 
 <!-- End Authorship Reference -->

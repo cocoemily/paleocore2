@@ -124,6 +124,7 @@ class Nomen(projects.models.PaleoCoreBaseClass):
         pub_obj = self.authorship_reference_obj  # publication object
         try:
             authors = pub_obj.authors
+            authors_last = ", ".join([a[-1]+', '+a[-2] for a in pub_obj.authors_list_split])
             year = pub_obj.year
             article_title = pub_obj.title
             journal_title = pub_obj.journal
@@ -132,17 +133,12 @@ class Nomen(projects.models.PaleoCoreBaseClass):
             book_title = pub_obj.book_title
             publisher = pub_obj.publisher
 
-            # Publication types are:
-            # ['Journal', 'Conference', 'Technical Report',
-            # 'Book', 'Book Chapter', 'Abstract', 'Thesis', 'Unpublished', 'Patent']
-            # Publication bibtex types are:
-            # ['article', 'inproceedings', 'techreport', 'book', 'inbook', 'abstract', 'phdthesis', 'unpublished', 'patent']
             if pub_obj.type.type in ['article', 'Journal']:
-                citation_text = f'{authors}. {pub_obj.year}. {article_title}. {journal_title}. {volume}: {pages}.'
+                citation_text = f'{authors_last} {pub_obj.year}. {article_title}. {journal_title}. {volume}: {pages}.'
             elif pub_obj.type.type in ['book', 'Book', 'Thesis']:
-                citation_text = f'{authors}. {year}. {book_title}. {publisher}.'
+                citation_text = f'{authors_last} {year}. {book_title}. {publisher}.'
             elif pub_obj.type.type in ['incollection', 'inproceedings', 'inbook', 'Book Chapter']:
-                citation_text = f'{authors}. {year}. {article_title} In: {book_title}. {publisher}. pp. {pages}.'
+                citation_text = f'{authors_last} {year}. {article_title} In: {book_title}. {publisher}. pp. {pages}.'
         except AttributeError:
             pass
         return citation_text
