@@ -7,7 +7,17 @@
 <!-- End Title -->
 
 <!-- Details Card -->
+<div>
 <h4>Details</h4>
+<!-- Year -->
+Year:
+{% if nomen.year %}
+  {{ nomen.year }}<br/>
+{% else %}
+  No year available.<br/>
+{% endif %}
+<!-- End Year -->
+
 <!-- Taxonomic Rank -->
 Taxonomic Rank:
 {% if nomen.taxon_rank_obj %}
@@ -17,7 +27,6 @@ Taxonomic Rank:
 <!-- End Taxonomic Rank -->
 
 <!-- Type Specimen_Species -->
-
 {% if nomen.taxon_rank_group == 'species-group' %}
   {% if nomen.type_specimen %}
     {% if nomen.type_specimen.type_status %}
@@ -37,7 +46,6 @@ Taxonomic Rank:
   Type species: <em>{{ nomen.type_taxon }}</em><br/>
 {% else %} No type information available.
 {% endif %}
-
 <!-- End Type Specimen_Species -->
 
 <!-- Nomenclatural Status -->
@@ -47,7 +55,45 @@ Status:
 {% else %} No status details available.<br/>
 {% endif %}
 <!-- End Nomenclatural Status -->
+
+<!-- Nomenclatural Status Remark -->
+Remark:
+{% if nomen.status_remark %}
+  {{ nomen.status_remark|unslugify|capfirst }}<br/>
+{% else %}
+&nbsp;<br/>
+{% endif %}
+<!-- End Nomenclatural Status Remark -->
+&nbsp;
+</div>
 <!-- End Details Card -->
+
+
+<!-- Authorship Reference -->
+<!-- Simple reference output. It is not dynamically formatted by reference type (book, article etc.) -->
+<div>
+{% if nomen.authorship_reference_obj %}
+      <h4>Authorship Reference</h4>
+      {% with publication=nomen.authorship_reference_obj %}
+      <div>
+      {% autoescape off %}
+      {{ publication.authors }}. {{ publication.year }}.
+        {{ publication.title }}{% if not publication.title_ends_with_punct %}.{% endif %}{% if publication.journal %} {{ publication.journal }}.{% endif %}
+        {% if publication.book_title %} {{ publication.book_title }},{% endif %}
+        {% if publication.publisher %} {{ publication.publisher }},{% endif %}
+        {% if publication.institution %} {{ publication.institution }},{% endif %}
+        {% if publication.volume %}{{ publication.volume }},{% endif %}
+        {% if publication.pages %} {{ publication.pages }}{% endif %}.
+      {% endautoescape %}
+      </div>
+      {% endwith %}
+    {% else %}
+    No authorship reference available.
+    {% endif %}
+&nbsp;
+</div>
+
+<!-- End Authorship Reference -->
 
 <!-- Remarks -->
 <h4>Remarks</h4>

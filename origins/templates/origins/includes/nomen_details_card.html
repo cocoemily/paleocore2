@@ -3,6 +3,13 @@
 <div class="card">
   <div class="card-section">
     <h6>Details</h6>
+    <!-- Year -->
+    Year:
+    {% if nomen.year %}
+      {{ nomen.year }}<br/>
+    {% else %} No year available.<br/>
+    {% endif %}
+    <!-- End Year -->
     <!-- Taxonomic Rank -->
     Taxonomic Rank:
     {% if nomen.taxon_rank_obj %}
@@ -34,6 +41,15 @@
     {% else %} No status details available.<br/>
     {% endif %}
     <!-- End Nomenclatural Status -->
+
+    <!-- Nomenclatural Status Remark -->
+    Remark:
+    {% if nomen.status_remark %}
+      {{ nomen.status_remark|unslugify|capfirst }}<br/>
+    {% else %}
+    &nbsp;<br/>
+    {% endif %}
+    <!-- End Nomenclatural Status Remark -->
   </div>
   <!-- End Details Section -->
 </div>
