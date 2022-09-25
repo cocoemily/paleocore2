@@ -133,8 +133,12 @@ class Nomen(projects.models.PaleoCoreBaseClass):
             book_title = pub_obj.book_title
             publisher = pub_obj.publisher
 
+            # Curretnly using JHE format.
+            # For edited volumes the editors need to be added to the title.
+            # There is no field in the publications model for editors
+
             if pub_obj.type.type in ['article', 'Journal']:
-                citation_text = f'{authors_last} {pub_obj.year}. {article_title}. {journal_title}. {volume}: {pages}.'
+                citation_text = f'{authors_last} {pub_obj.year}. {article_title}. {journal_title}. {volume}, {pages}.'
             elif pub_obj.type.type in ['book', 'Book', 'Thesis']:
                 citation_text = f'{authors_last} {year}. {book_title}. {publisher}.'
             elif pub_obj.type.type in ['incollection', 'inproceedings', 'inbook', 'Book Chapter']:
