@@ -144,8 +144,11 @@ class Nomen(projects.models.PaleoCoreBaseClass):
             elif pub_obj.type.type in ['incollection', 'inproceedings', 'inbook', 'Book Chapter']:
                 citation_text = f'{authors_last} {year}. {article_title} In: {book_title}. {publisher}. pp. {pages}.'
 
+            # Replace instances of 'None' with ''
+            citation_text = citation_text.replace('None', '')
             # Remove any double periods from abbreviated titles etc.
             citation_text = citation_text.replace('..', '.')
+
         except AttributeError:
             pass
         return citation_text
