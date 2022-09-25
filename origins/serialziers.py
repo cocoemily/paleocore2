@@ -32,7 +32,7 @@ class NomenSerializer(serializers.ModelSerializer):
         fields = ['scientific_name', 'name', 'generic_name', 'specific_epithet',
                   'authorship', 'authorship_year', 'authorship_reference', 'authorship_reference_id',
                   'scientific_name_id',
-                  'taxon_rank', 'taxon_rank_group', 'nomenclatural_code', 'nomenclatural_status',
+                  'taxon_rank', 'taxon_rank_group', 'nomenclatural_code', 'nomenclatural_status', 'status_remark',
                   'type_specimen', 'paratypes', 'type_taxon', 'type_status',
                   'is_available',
                   'verified_date', 'date_last_modified'
