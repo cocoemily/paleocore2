@@ -103,9 +103,10 @@ INSTALLED_APPS = (
     'paleosites',  # paleosites
     'turkana',
     'sermar',  # serengeti mara project
-    'utcasts',
+    'utcasts',  # UT lab cast management app
     'wormil', # Woranso-Mille project
     'inca',  # Inca Multiregional Database
+    'idit',  # taxonomic identification app
 
     'wagtail.contrib.routable_page',
     'wagtail.contrib.sitemaps',

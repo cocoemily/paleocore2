@@ -19,6 +19,9 @@ from wagtail_feeds.feeds import (
 )
 
 admin.autodiscover()
+admin.site.site_header = 'Paleo Core Admin'  # Default is 'Django Administration'
+admin.site.index_title = 'Site Administration'  # Default is 'Site Administration'
+admin.site.site_title = 'Paleo Core'  # Default is 'Django site admin'
 
 
 urlpatterns = [
