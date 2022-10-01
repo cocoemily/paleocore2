@@ -51,7 +51,7 @@
       <!-- Column 4 Type Specimen -->
       {% comment %}
       The code block below tests if the nomen has an associated type_specimen fk. If so, it uses the
-      type_specimen.type_status and type_specimen.organism_id  to populate the type specimen listing.
+      type_specimen.organism_id  to populate the type specimen listing.
       The type_specimen.organism_id is used instead of catalog_catalog number to avoid suffixes.
 
       If there is no fk to a type specimen object then the text in nomen.type_label field is used instead.
@@ -60,8 +60,8 @@
       <td>
       {% if nomen.taxon_rank_group == 'species-group' %}
         {% if nomen.type_specimen %}
-            {% if nomen.type_specimen.type_status %}
-              {{nomen.type_specimen.type_status | title}}:
+            {% if nomen.type_specimen_status %}
+              {{nomen.type_specimen_status | title}}:
               {% if nomen.type_specimen.organism_id %}
                 {{ nomen.type_specimen.organism_id }}<br/>
               {% else %}
@@ -109,8 +109,8 @@
 
         <div class="nomen-type">
           {% if nomen.type_specimen %}
-            {% if nomen.type_specimen.type_status %}
-            {{nomen.type_specimen.type_status | title}}:
+            {% if nomen.type_specimen_status %}
+            {{nomen.type_specimen_status | title}}:
               {% if nomen.type_specimen.organism_id %}
                 {{ nomen.type_specimen.organism_id }}<br/>
               {% else %}

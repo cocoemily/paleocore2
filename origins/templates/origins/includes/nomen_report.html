@@ -29,8 +29,8 @@ Taxonomic Rank:
 <!-- Type Specimen_Species -->
 {% if nomen.taxon_rank_group == 'species-group' %}
   {% if nomen.type_specimen %}
-    {% if nomen.type_specimen.type_status %}
-      {{nomen.type_specimen.type_status | title}}:  <!-- e.g. Holotype: --->
+    {% if nomen.type_specimen_status %}
+      {{nomen.type_specimen_status | title}}:  <!-- e.g. Holotype: --->
         {% if nomen.type_specimen.organism_id %}
           {{ nomen.type_specimen.organism_id }}<br/>
         {% else %}

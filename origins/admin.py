@@ -513,16 +513,74 @@ class NomenAdmin(admin.ModelAdmin):
                    'is_objective_synonym', 'is_subjective_synonym', 'bc_status', 'problem']
     inlines = [NomenPublicationsInline]
     search_fields = ['name', 'authorship', 'year', 'remarks', 'usage_remarks', 'problem_comment']
-    fields = ['name', 'scientific_name_id', 'generic_name', 'specific_epithet', 'authorship', 'year',
-              'authorship_reference_obj', 'authorship_reference', 'authorship_reference_id',
-              'taxon_rank_obj', 'taxon_rank_label', 'taxon_rank_group',
-              'type_specimen_label', 'type_specimen', 'paratypes', 'type_taxon',
-              'nomenclatural_code', 'nomenclatural_status', 'status_remark',
-              'bc_status',
-              'is_available', 'is_potentially_valid', 'is_established',
-              'remarks', 'usage_remarks', 'is_objective_synonym', 'is_subjective_synonym',
-              'assigned_to', 'verified_by', 'verified_date',
-              'date_created', 'date_last_modified', 'problem', 'problem_comment']
+    # fields = ['name', 'scientific_name_id', 'generic_name', 'specific_epithet',
+    #           'authorship', 'year', 'authorship_reference_obj', 'authorship_reference', 'authorship_reference_id',
+    #           'taxon_rank_obj', 'taxon_rank_label', 'taxon_rank_group',
+    #           'type_specimen_label', 'type_specimen', 'type_specimen_status', 'paratypes', 'type_taxon',
+    #           'nomenclatural_code', 'nomenclatural_status', 'status_remark',
+    #           'is_available', 'is_potentially_valid', 'is_established',
+    #           'bc_status', 'remarks', 'usage_remarks',
+    #           'is_objective_synonym', 'is_subjective_synonym',
+    #           'assigned_to', 'verified_by', 'verified_date',
+    #           'date_created', 'date_last_modified', 'problem', 'problem_comment']
+
+    fieldsets = [
+        ('Nomen Details', {
+            'fields': [
+                ('name', 'scientific_name_id'),
+                ('generic_name', 'specific_epithet',)
+            ],
+        }),
+        ('Authorship', {
+            'fields': [
+                ('authorship', 'year'),
+                ('authorship_reference_obj',),
+                ('authorship_reference',),
+                ('authorship_reference_id',),
+            ],
+        }),
+        ('Taxon Rank', {
+            'fields': [
+                ('taxon_rank_obj',),
+                ('taxon_rank_label',),
+                ('taxon_rank_group',),
+            ],
+        }),
+        ('Type Specimen', {
+            'fields': [('type_specimen_label',),
+                       ('type_specimen', 'type_specimen_status'),
+                       ('paratypes',),
+                       ('type_taxon',),
+            ],
+        }),
+        ('Nomenclatural Status', {
+            'fields': [
+                ('nomenclatural_status', 'nomenclatural_code',),
+                ('is_available',),
+                ('is_potentially_valid',),
+                ('is_established',),
+                ('is_objective_synonym',),
+                ('is_subjective_synonym',),
+                ('status_remark',),
+            ]
+        }),
+        ('Remarks', {
+            'fields': [
+                ('bc_status',),
+                ('remarks',),
+                ('usage_remarks',),
+
+            ],
+        }),
+        ('Validation', {
+            'fields': [
+                ('assigned_to', 'verified_by', 'verified_date',),
+                ('date_created', 'date_last_modified',),
+                ('problem',),
+                ('problem_comment',),
+            ],
+        }),
+    ]
 
     def formfield_for_foreignkey(self, db_field, request=None, **kwargs):
         """
