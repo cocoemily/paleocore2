@@ -37,7 +37,7 @@ class NominaListViewRelatedLink(Orderable, RelatedLink):
 
 class NominaListView(Page):
     """
-    Nomina List View Page
+    Nomina List View Wagtail Page
     """
     TEMPLATE_CHOICES = [
         ('origins/nomina_list_view.html', 'Default Template'),
@@ -59,7 +59,8 @@ class NominaListView(Page):
 
     def get_context(self, request):
         # Update template context
-        qs = origins_models.Nomen.objects.filter(taxon_rank_obj__id__lt=60).select_related('authorship_reference_obj', 'type_specimen')
+        qs = origins_models.Nomen.objects.filter(taxon_rank_obj__ordinal__gte=60)
+        qs = qs.select_related('authorship_reference_obj', 'type_specimen')
         tqs = origins_models.Fossil.objects.filter(is_type_specimen=True).select_related('site')
         tqs = tqs.order_by('continent', 'site__name')
         count = qs.count()
