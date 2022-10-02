@@ -561,6 +561,7 @@ class NomenAdmin(admin.ModelAdmin):
                 ('is_established',),
                 ('is_objective_synonym',),
                 ('is_subjective_synonym',),
+                ('is_inquirenda',),
                 ('status_remark',),
             ]
         }),
