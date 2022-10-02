@@ -18,6 +18,9 @@ from origins.ontologies import NOMENCLATURAL_STATUS_CHOICES, BC_STATUS_CHOICES, 
 from wagtail.admin.edit_handlers import FieldPanel, StreamFieldPanel, InlinePanel
 from .wagtail import NomenDetailRelatedLink
 
+# Variables
+INQUIRENDA_HELP = 'Nomina needing further investigation regarding their status' \
+                  ' are flagged as nomina inquirenda'
 
 # Taxonomy models inherited from projects.TaxonRank base project
 class TaxonRank(projects.models.TaxonRank):
@@ -108,6 +111,7 @@ class Nomen(projects.models.PaleoCoreBaseClass):
     is_objective_synonym = models.BooleanField('Objective Synonym', default=False)
     is_subjective_synonym = models.BooleanField('Subjective Synonym', default=False)
     is_established = models.BooleanField('Established', default=False)
+    is_inquirenda = models.BooleanField('Inquirenda', default=False, help_text=INQUIRENDA_HELP)
 
     usage_remarks = CKRichTextField("Usage Remarks", null=True, blank=True,
                                     help_text='Remarks about frequency of usage of the name in the literature.')
