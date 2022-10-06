@@ -22,7 +22,7 @@ def update_locality_dates(apps, schema_editor):
 class Migration(migrations.Migration):
 
     dependencies = [
-        ('gdb', '0004_auto_20211001_1853'),
+        ('gdb', '0004_auto_20221001_1853'),
     ]
 
     operations = [
