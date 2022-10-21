@@ -16,6 +16,8 @@ from django.contrib.gis.geos import Point
 
 from django.contrib import admin
 from mptt.admin import MPTTModelAdmin
+from import_export.admin import ImportExportActionModelAdmin
+from import_export import resources
 
 
 class ReferenceAdmin(admin.ModelAdmin):
@@ -49,9 +51,14 @@ class SitePublicationsInline(admin.TabularInline):
     verbose_name_plural = "Publications"
 
 
+class SiteResource(resources.ModelResource):
+    class Meta:
+        model = origins.models.Site
+
+
 class SiteAdmin(PaleoCoreLocalityAdminGoogle):
     save_as = True
-    list_display = ['id', 'name', 'country',
+    list_display = ['id', 'name', 'country', 'problem',
                     # 'verbatim_collection_name',
                     # 'longitude', 'latitude',
                     # 'verbatim_early_interval',
@@ -75,7 +82,7 @@ class SiteAdmin(PaleoCoreLocalityAdminGoogle):
                      'verbatim_reference_no',
                      'origins'
                      ]
-    list_filter = ['origins', 'country']
+    list_filter = ['origins', 'country', 'problem']
     list_per_page = 500
     inlines = [SitePublicationsInline]
 
@@ -96,15 +103,17 @@ class SiteAdmin(PaleoCoreLocalityAdminGoogle):
         ('Location', {
             'fields': [('country', ), ('location_remarks', ), ('latitude', 'longitude'), ('geom',)]
         }),
-        # ('References', {
-        #     'fields': [('references',),]
-        # }),
+        ('Administration', {
+             'fields': [('problem', 'problem_comment',)]
+         }),
 
     ]
 
 
-class ActiveSiteAdmin(SiteAdmin):
-    list_display = ['id', 'name', 'country', 'max_ma', 'min_ma', 'fossil_count', 'formation']
+class ActiveSiteAdmin(SiteAdmin, ImportExportActionModelAdmin):
+    resource_class = SiteResource
+    list_display = ['id', 'name', 'country', 'max_ma', 'min_ma', 'fossil_count', 'formation',
+                    'verbatim_collection_name']
 
     def get_queryset(self, request):
         return origins.models.Site.objects.filter(origins=True)
@@ -495,24 +504,84 @@ class NomenAdmin(admin.ModelAdmin):
                        'authorship_year', 'authorship_reference_id', 'taxon_rank_label']
     list_display = ['name', 'authorship', 'year', 'authorship_reference_obj', 'type_specimen',
                     'taxon_rank_obj', 'is_objective_synonym', 'is_subjective_synonym', 'is_available', 'is_established',
-                    'is_potentially_valid', 'nomenclatural_status',
-                    'bc_status',
+                    'is_potentially_valid', 'nomenclatural_status', 'status_remark',
+                    'bc_status', 'problem',
                     'assigned_to', 'verified_by', 'verified_date']
-    list_filter = ['nomenclatural_status', 'taxon_rank_obj', 'assigned_to', 'verified_by', 'verified_date',
+    list_editable = ['status_remark']
+    list_filter = ['nomenclatural_status', 'status_remark', 'taxon_rank_obj', 'assigned_to', 'verified_by', 'verified_date',
                    'is_available', 'is_potentially_valid', 'is_established',
-                   'is_objective_synonym', 'is_subjective_synonym', 'bc_status']
+                   'is_objective_synonym', 'is_subjective_synonym', 'bc_status', 'problem']
     inlines = [NomenPublicationsInline]
-    search_fields = ['name', 'authorship', 'year', 'remarks', 'problem_comment']
-    fields = ['name', 'scientific_name_id', 'generic_name', 'specific_epithet', 'authorship', 'year',
-              'authorship_reference_obj', 'authorship_reference', 'authorship_reference_id',
-              'taxon_rank_obj', 'taxon_rank_label', 'taxon_rank_group',
-              'type_specimen_label', 'type_specimen', 'paratypes', 'type_taxon',
-              'nomenclatural_code', 'nomenclatural_status',
-              'bc_status',
-              'is_available', 'is_potentially_valid', 'is_established',
-              'remarks', 'is_objective_synonym', 'is_subjective_synonym',
-              'assigned_to', 'verified_by', 'verified_date',
-              'date_created', 'date_last_modified', 'problem', 'problem_comment']
+    search_fields = ['name', 'authorship', 'year', 'remarks', 'usage_remarks', 'problem_comment']
+    # fields = ['name', 'scientific_name_id', 'generic_name', 'specific_epithet',
+    #           'authorship', 'year', 'authorship_reference_obj', 'authorship_reference', 'authorship_reference_id',
+    #           'taxon_rank_obj', 'taxon_rank_label', 'taxon_rank_group',
+    #           'type_specimen_label', 'type_specimen', 'type_specimen_status', 'paratypes', 'type_taxon',
+    #           'nomenclatural_code', 'nomenclatural_status', 'status_remark',
+    #           'is_available', 'is_potentially_valid', 'is_established',
+    #           'bc_status', 'remarks', 'usage_remarks',
+    #           'is_objective_synonym', 'is_subjective_synonym',
+    #           'assigned_to', 'verified_by', 'verified_date',
+    #           'date_created', 'date_last_modified', 'problem', 'problem_comment']
+
+    fieldsets = [
+        ('Nomen Details', {
+            'fields': [
+                ('name', 'scientific_name_id'),
+                ('generic_name', 'specific_epithet',)
+            ],
+        }),
+        ('Authorship', {
+            'fields': [
+                ('authorship', 'year'),
+                ('authorship_reference_obj',),
+                ('authorship_reference',),
+                ('authorship_reference_id',),
+            ],
+        }),
+        ('Taxon Rank', {
+            'fields': [
+                ('taxon_rank_obj',),
+                ('taxon_rank_label',),
+                ('taxon_rank_group',),
+            ],
+        }),
+        ('Type Specimen', {
+            'fields': [('type_specimen_label',),
+                       ('type_specimen', 'type_specimen_status'),
+                       ('paratypes',),
+                       ('type_taxon',),
+            ],
+        }),
+        ('Nomenclatural Status', {
+            'fields': [
+                ('nomenclatural_status', 'nomenclatural_code',),
+                ('is_available',),
+                ('is_potentially_valid',),
+                ('is_established',),
+                ('is_objective_synonym',),
+                ('is_subjective_synonym',),
+                ('is_inquirenda',),
+                ('status_remark',),
+            ]
+        }),
+        ('Remarks', {
+            'fields': [
+                ('bc_status',),
+                ('remarks',),
+                ('usage_remarks',),
+
+            ],
+        }),
+        ('Validation', {
+            'fields': [
+                ('assigned_to', 'verified_by', 'verified_date',),
+                ('date_created', 'date_last_modified',),
+                ('problem',),
+                ('problem_comment',),
+            ],
+        }),
+    ]
 
     def formfield_for_foreignkey(self, db_field, request=None, **kwargs):
         """
@@ -537,33 +606,6 @@ class ActiveNomenAdmin(NomenAdmin):
         return qs
 
 
-class TurkanaFossilAdmin(admin.ModelAdmin):
-    list_display = ['verbatim_catalog_number', 'verbatim_suffix', 'catalog_number', 'region',
-                    'suffix_assigned', 'in_origins', 'origins_fossil']
-    list_filter = ['region', 'suffix_assigned', 'in_origins']
-    search_fields = ['verbatim_catalog_number', 'verbatim_suffix', 'catalog_number']
-    readonly_fields = ['origins_fossil']
-
-    def origins_fossil(self, obj):
-        """
-        Function to search fossil information in origins. Returns a link to the origins fossil list page.
-        :param obj:
-        :return:
-        """
-        if obj.catalog_number:
-            site_url = reverse('admin:origins_fossil_changelist')
-            if obj.collection_code and obj.specimen_number:
-                query_string = f"{obj.collection_code}+{obj.specimen_number}"
-            else:
-                if obj.catalog_number[-1].isalpha():
-                    query_string = f"{obj.catalog_number[:-2].replace(' ','+')}"
-                else:
-                    query_string = f"{obj.catalog_number.replace(' ','+')}"
-            return format_html(f'<a href={site_url}?q={query_string}>{site_url}?q={query_string}</a>')
-        else:
-            return None
-
-
 class TurkFossilAdmin(admin.ModelAdmin):
     list_display = ['catalog_number', 'verbatim_suffix', 'region',
                     'suffix_assigned', 'in_origins', 'to_add', 'to_divide', 'origins_fossil']
@@ -571,6 +613,7 @@ class TurkFossilAdmin(admin.ModelAdmin):
     list_filter = ['region', 'suffix_assigned', 'in_origins']
     search_fields = ['verbatim_inventory_number', 'verbatim_suffix', 'catalog_number']
     readonly_fields = ['origins_fossil']
+    change_list_template = "admin/top_pagination_change_list.html"
 
     def origins_fossil(self, obj):
         """
@@ -596,11 +639,10 @@ class TurkFossilAdmin(admin.ModelAdmin):
 admin.site.register(origins.models.Context, ContextAdmin)
 admin.site.register(origins.models.Reference, ReferenceAdmin)
 admin.site.register(origins.models.Fossil, FossilAdmin)
-admin.site.register(origins.models.Site, SiteAdmin)
+admin.site.register(origins.models.Site, ActiveSiteAdmin)
 #admin.site.register(Taxon, TaxonAdmin)
 admin.site.register(origins.models.TTaxon, TTaxonAdmin)
 admin.site.register(origins.models.TaxonRank)
 admin.site.register(origins.models.Nomen, NomenAdmin)
 admin.site.register(origins.models.ActiveNomen, ActiveNomenAdmin)
-admin.site.register(origins.models.TurkanaFossil, TurkanaFossilAdmin)
 admin.site.register(origins.models.TurkFossil, TurkFossilAdmin)

@@ -1,0 +1,32 @@
+{% load paleocore_utils %}
+
+<!-- Authorship Reference -->
+<!-- Simple reference output. It is not dynamically formatted by reference type (book, article etc.) -->
+<p>
+{% if nomen.authorship_reference %}
+{{nomen.authorship_reference}}
+{% else %}{{nomen}} - No Reference Available
+{% endif %}
+</p>
+
+{% comment %}
+{% if nomen.authorship_reference_obj %}
+  {% with publication=nomen.authorship_reference_obj %}
+    {% autoescape off %}
+      {{publication.authors}}.
+      {{ publication.year }}.
+      {{ publication.title }}{% if not publication.title_ends_with_punct %}.{% endif %}{% if publication.journal %} {{ publication.journal }}.{% endif %}
+      {% if publication.book_title %} {{ publication.book_title }},{% endif %}
+      {% if publication.publisher %} {{ publication.publisher }},{% endif %}
+      {% if publication.institution %} {{ publication.institution }},{% endif %}
+      {% if publication.volume %}{{ publication.volume }},{% endif %}
+      {% if publication.pages %} {{ publication.pages }}{% endif %}.<br/>
+    {% endautoescape %}
+  {% endwith %}
+  {% else %}
+  No authorship reference available.<br/>
+{% endif %}
+&nbsp;
+{% endcomment %}
+
+<!-- End Authorship Reference -->

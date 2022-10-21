@@ -37,7 +37,7 @@ class NominaListViewRelatedLink(Orderable, RelatedLink):
 
 class NominaListView(Page):
     """
-    Nomina List View Page
+    Nomina List View Wagtail Page
     """
     TEMPLATE_CHOICES = [
         ('origins/nomina_list_view.html', 'Default Template'),
@@ -59,10 +59,18 @@ class NominaListView(Page):
 
     def get_context(self, request):
         # Update template context
-        qs = origins_models.Nomen.objects.all()
+        qs = origins_models.Nomen.objects.filter(taxon_rank_obj__ordinal__gte=60)
+        qs = qs.select_related('authorship_reference_obj', 'type_specimen')
+        tqs = origins_models.Fossil.objects.filter(is_type_specimen=True).select_related('site')
+        tqs = tqs.order_by('continent', 'site__name')
         count = qs.count()
         context = super(NominaListView, self).get_context(request)
         context['nomina'] = qs
+        context['type_fossils'] = tqs
+        context['type_fossils_africa'] = tqs.filter(continent='Africa')
+        context['type_fossils_asia'] = tqs.filter(continent='Asia')
+        context['type_fossils_europe'] = tqs.filter(continent='Europe')
+        context['type_fossil_count'] = tqs.count()
         context['count'] = count
 
         return context
@@ -146,6 +154,9 @@ class SiteIndexPageRelatedLink(Orderable, RelatedLink):
 
 
 class SiteIndexPage(Page):
+    TEMPLATE_CHOICES = [
+        ('origins/sites_list_view.html', 'Default Template'),
+    ]
     intro = RichTextField(blank=True)
 
     search_fields = Page.search_fields + [
@@ -162,9 +173,16 @@ class SiteIndexPage(Page):
 
         return site_page_list
 
+    @property
+    def get_sites(self):
+        all_sites = origins_models.Site.objects.all()
+        origins_sites = all_sites.filter(origins=True)
+        return origins_sites
+
     def get_context(self, request):
         # Get site_list
         site_page_list = self.get_sites_pages
+        sites_list = self.get_sites
 
         # Filter by tag
         tag = request.GET.get('tag')
@@ -184,6 +202,7 @@ class SiteIndexPage(Page):
         # Update template context
         context = super(SiteIndexPage, self).get_context(request)
         context['site_pages'] = site_page_list
+        context['sites'] = sites_list
         return context
 
 
@@ -292,8 +311,46 @@ SitePage.promote_panels = Page.promote_panels + [
 ]
 
 
-
+# Prototype Fossil List Views
+# class FossilListViewRelatedLink(Orderable, RelatedLink):
+#     page = ParentalKey('FossilListView', related_name='fossil_related_links')
 #
+#
+# class FossilListView(Page):
+#     """
+#     Type Fossil List View Page
+#     """
+#     TEMPLATE_CHOICES = [
+#         ('origins/fossil_list_view.html', 'Default Template'),
+#     ]
+#
+#     subtitle = models.CharField(max_length=255, blank=True)
+#     intro = RichTextField(blank=True)
+#     body = StreamField([
+#         ('paragraph', blocks.RichTextBlock()),
+#         ('image', ImageChooserBlock()),
+#         ('html', blocks.RawHTMLBlock()),
+#     ])
+#
+#     template_string = models.CharField(max_length=255, choices=TEMPLATE_CHOICES, default='pages/standard_page.html')
+#
+#     search_fields = Page.search_fields + [
+#         index.SearchField('intro'),
+#         index.SearchField('body'),
+#     ]
+#
+#     def get_context(self, request):
+#         # Update template context
+#         qs = origins_models.Fossil.objects.all()
+#         count = qs.count()
+#         context = super(FossilListView, self).get_context(request)
+#         context['fossils'] = qs
+#         context['count'] = count
+#
+#         return context
+#
+
+#  Old Fossil List View -- Deprecated
 # class OriginsFossilIndexPageRelatedLink(Orderable, RelatedLink):
 #     page = ParentalKey('OriginsFossilIndexPage', related_name='fossil_related_links')
 #

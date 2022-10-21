@@ -9,7 +9,7 @@ from django.utils.text import slugify
 import pandas
 import re
 from wagtail.core.models import Page
-from origins.models.fossil import TurkanaFossil, TurkFossil
+from origins.models.fossil import TurkFossil
 # import shapefile
 
 # pbdb_file_path = "/Users/reedd/Documents/projects/ete/pbdb/pbdb_test_no_header.csv"
@@ -447,7 +447,7 @@ def import_turkana_fossils(file='origins/data/turkana_inventory.xlsx'):
     sheets = [xleast, xlwest, xlnorth]
     for sheet in sheets:
         for row in sheet.itertuples(index=False):
-            TurkanaFossil.objects.create(verbatim_catalog_number=row[0], verbatim_suffix=row[1], region=sheet.name)
+            TurkFossil.objects.create(verbatim_catalog_number=row[0], verbatim_suffix=row[1], region=sheet.name)
 
 
 def import_turk_fossils(file='origins/data/turkana_inventory_211207.xlsx'):
@@ -516,7 +516,7 @@ def get_marchal(origins_fossil_obj):
     """
     f = origins_fossil_obj
     catno = f.catalog_number.upper()
-    matched = TurkanaFossil.objects.filter(catalog_number__startswith=catno)
+    matched = TurkFossil.objects.filter(catalog_number__startswith=catno)
     return matched
 
 
@@ -552,7 +552,7 @@ def update_catalog_nubmers():
     Update all catalog_number entries for East Turkna
     :return:
     """
-    etfs = TurkanaFossil.objects.filter(region='east')
+    etfs = TurkFossil.objects.filter(region='east')
     for f in etfs:
         catalog_number_from_verbatim(f)
 
@@ -601,7 +601,7 @@ def marchal_in_origins(regions=['east']):
     matched = []
     unmatched = []
     for region in regions:
-        marchal_fossils = TurkanaFossil.objects.filter(region__in=regions).order_by('catalog_number')
+        marchal_fossils = TurkFossil.objects.filter(region__in=regions).order_by('catalog_number')
     for fossil_obj in marchal_fossils:
         m = get_origins(fossil_obj)
         if m:
@@ -622,6 +622,10 @@ def update_turkana_fossils_in_origins(regions=['east']):
 
 
 def update_in_origins():
+    """
+    Helper function to update the in_origins field in TurkFossil
+    :return:
+    """
     for f in TurkFossil.objects.all():
         m = get_origins(f)
         if len(m) == 2:
@@ -650,3 +654,9 @@ def update_nomen_genus_species():
             n.taxon_rank_group = 'family-group'
         n.save()
 
+
+def add_fossil():
+    turk2add = []
+    et = Site.objects.get(name='East Turkana')
+    for f in turk2add:
+        Fossil.objects.create(catalog_number=f.catalog_number, site=wt, country='KE', continent='Africa', origins=True)

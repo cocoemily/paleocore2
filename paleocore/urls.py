@@ -4,6 +4,7 @@ from django.urls import path
 from django.conf.urls.static import static
 from django.conf import settings
 from django.contrib import admin
+from django.apps import apps
 
 from wagtail.admin import urls as wagtailadmin_urls
 from wagtail.documents import urls as wagtaildocs_urls
@@ -18,6 +19,9 @@ from wagtail_feeds.feeds import (
 )
 
 admin.autodiscover()
+admin.site.site_header = 'Paleo Core Admin'  # Default is 'Django Administration'
+admin.site.index_title = 'Site Administration'  # Default is 'Site Administration'
+admin.site.site_title = 'Paleo Core'  # Default is 'Django site admin'
 
 
 urlpatterns = [
@@ -48,20 +52,33 @@ urlpatterns = [
 ]
 
 # Add urls for the following apps if they are installed
+# Publications app needs special attention because app name is changed.
 if 'publications' in settings.INSTALLED_APPS:
     urlpatterns += [
         path('references/', include(('publications.urls', 'publications'), namespace='publications')),
     ]
 
-if 'origins' in settings.INSTALLED_APPS:
-    urlpatterns += [
-        path('origins/', include(('origins.urls', 'origins'), namespace='origins')),
-    ]
+# DRY installation for remaining apps
+additional_apps = ['origins', 'sermar', 'paleosites', 'utcasts']
 
-if 'paleosites' in settings.INSTALLED_APPS:
-    urlpatterns += [
-        path('paleosites/', include(('paleosites.urls', 'paleosites'), namespace="paleosites")),
-    ]
+
+def add_installed_apps_urls(app_list, urlpatterns):
+    """
+    Append url patterns for project apps that may or may not be installed.
+    :param app_list: A list of strings for apps to be appended to urlpatterns if they appear in the App registry.
+    :param urlpatterns: The current urlpatterns list
+    :return: An updated urlpatterns list
+    """
+    for app_name in app_list:
+        if apps.is_installed(app_name):
+            urlpatterns += [
+                path(app_name+'/', include((app_name+'.urls', app_name), namespace=app_name)),
+            ]
+    return urlpatterns
+
+
+urlpatterns = add_installed_apps_urls(additional_apps, urlpatterns)
+
 
 # For anything not caught by a more specific rule above, hand over to
     # Wagtail's serving mechanism. This should be the last item in the urlpatterns list.

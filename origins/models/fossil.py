@@ -122,6 +122,19 @@ class Fossil(projects.models.PaleoCoreGeomBaseClass):
         else:
             return None
 
+    def get_subtype(self):
+        """
+        Determine if a Fossil instance has a subtype instance and if so what it is.
+        :return: Returns a list of the matching subtype class or classes. Should never be more than one.
+        """
+        result = []
+        try:
+            TurkFossil.objects.get(pk=self.id)
+            result.append(TurkFossil)
+        except TurkFossil.DoesNotExist:
+            pass
+        return result
+
     default_image.short_description = 'Fossil Thumbnail'
     default_image.allow_tags = True
     default_image.mark_safe = True
@@ -171,41 +184,28 @@ class FossilElement(models.Model):
         return unicode_string
 
 
-class TurkanaFossil(models.Model):
-    verbatim_catalog_number = models.CharField(max_length=256, null=True, blank=True)
-    verbatim_suffix = models.CharField(max_length=256, null=True, blank=True)
-    catalog_number = models.CharField(max_length=256, null=True, blank=True)
-    collection_code = models.CharField(max_length=256, null=True, blank=True)
-    specimen_number = models.IntegerField(null=True, blank=True)
-    specimen_suffix = models.CharField(max_length=256, null=True, blank=True)
-    region = models.CharField(max_length=256, null=True, blank=True)
-    suffix_assigned = models.BooleanField(null=True)
-    in_origins = models.BooleanField(null=True)
-    in_turkana = models.BooleanField(null=True)
-
-
 class TurkFossil(Fossil):
     """Fossil occurrences imported from the Turkana Catalog compiled by F. Marchal and S. Prat"""
-    verbatim_inventory_number = models.CharField(max_length=256, null=True, blank=True)
-    verbatim_suffix = models.CharField(max_length=256, null=True, blank=True)
-    verbatim_year_discovered = models.CharField(max_length=256, null=True, blank=True)
-    verbatim_year_mentioned = models.CharField(max_length=256, null=True, blank=True)
+    verbatim_inventory_number = models.CharField(max_length=256, null=True, blank=True)  # = catalog_number
+    verbatim_suffix = models.CharField(max_length=256, null=True, blank=True)  # add
+    verbatim_year_discovered = models.CharField(max_length=256, null=True, blank=True)  # = year_collected
+    verbatim_year_mentioned = models.CharField(max_length=256, null=True, blank=True)  # add
     verbatim_year_published = models.CharField(max_length=256, null=True, blank=True)
-    verbatim_country = models.CharField(max_length=256, null=True, blank=True)
-    verbatim_zone = models.CharField(max_length=256, null=True, blank=True)
-    verbatim_area = models.CharField(max_length=256, null=True, blank=True)
-    verbatim_locality = models.CharField(max_length=256, null=True, blank=True)
-    verbatim_formation = models.CharField(max_length=256, null=True, blank=True)
-    verbatim_member = models.CharField(max_length=256, null=True, blank=True)
-    verbatim_level = models.CharField(max_length=256, null=True, blank=True)
-    verbatim_age_g1 = models.CharField(max_length=256, null=True, blank=True)
-    verbatim_age_g2 = models.CharField(max_length=256, null=True, blank=True)
-    verbatim_anatomical_part = models.CharField(max_length=256, null=True, blank=True)
+    verbatim_country = models.CharField(max_length=256, null=True, blank=True)  # = country
+    verbatim_zone = models.CharField(max_length=256, null=True, blank=True)  # add
+    verbatim_area = models.CharField(max_length=256, null=True, blank=True)  # add
+    verbatim_locality = models.CharField(max_length=256, null=True, blank=True)  # = locality
+    verbatim_formation = models.CharField(max_length=256, null=True, blank=True)  # = formation
+    verbatim_member = models.CharField(max_length=256, null=True, blank=True)  # = member
+    verbatim_level = models.CharField(max_length=256, null=True, blank=True)  # = bed
+    verbatim_age_g1 = models.CharField(max_length=256, null=True, blank=True)  # = context__best_age
+    verbatim_age_g2 = models.CharField(max_length=256, null=True, blank=True)  #
+    verbatim_anatomical_part = models.CharField(max_length=256, null=True, blank=True)  # =
     verbatim_anatomical_description = models.CharField(max_length=256, null=True, blank=True)
     verbatim_taxonomy1 = models.CharField(max_length=256, null=True, blank=True)
     verbatim_taxonomy2 = models.CharField(max_length=256, null=True, blank=True)
     verbatim_robusticity = models.CharField(max_length=256, null=True, blank=True)
-    verbatim_finder = models.CharField(max_length=256, null=True, blank=True)
+    verbatim_finder = models.CharField(max_length=256, null=True, blank=True)  # = discovered_by
     verbatim_reference_first_mention = models.CharField(max_length=256, null=True, blank=True)
     verbatim_reference_description = models.CharField(max_length=256, null=True, blank=True)
     verbatim_reference_identification = models.CharField(max_length=256, null=True, blank=True)

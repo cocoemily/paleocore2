@@ -4,8 +4,8 @@ import uuid
 from django.contrib.gis.db import models
 from django.contrib.contenttypes.models import ContentType
 from django.core.paginator import Paginator, EmptyPage, PageNotAnInteger
-
 from django.utils.html import mark_safe, format_html
+from ckeditor.fields import RichTextField as CKRichTextField
 
 # Paleo Core imports
 import projects.models
@@ -13,11 +13,14 @@ import publications.models
 from mptt.models import MPTTModel, TreeForeignKey
 
 from origins.ontologies import NOMENCLATURAL_STATUS_CHOICES, BC_STATUS_CHOICES, NOMENCLATURAL_CODE_CHOICES, \
-    TAXON_RANK_GROUP_CHOICES, TYPE_CHOICES, CLASSIFICATION_STATUS_CHOICES, VERIFIER_CHOICES
+    STATUS_REMARK_CHOICES, TAXON_RANK_GROUP_CHOICES, TYPE_CHOICES, CLASSIFICATION_STATUS_CHOICES, VERIFIER_CHOICES
 
 from wagtail.admin.edit_handlers import FieldPanel, StreamFieldPanel, InlinePanel
 from .wagtail import NomenDetailRelatedLink
 
+# Variables
+INQUIRENDA_HELP = 'Nomina needing further investigation regarding their status' \
+                  ' are flagged as nomina inquirenda'
 
 # Taxonomy models inherited from projects.TaxonRank base project
 class TaxonRank(projects.models.TaxonRank):
@@ -92,9 +95,12 @@ class Nomen(projects.models.PaleoCoreBaseClass):
                                           choices=NOMENCLATURAL_CODE_CHOICES, default='ICZN')
     nomenclatural_status = models.CharField('Nom. Status', max_length=255, null=True, blank=True,
                                             choices=NOMENCLATURAL_STATUS_CHOICES)
+    status_remark = models.CharField(max_length=255, null=True, blank=True,
+                                            choices=STATUS_REMARK_CHOICES)
     type_specimen_label = models.CharField(max_length=255, null=True, blank=True, help_text=type_help)
     type_specimen = models.ForeignKey('Fossil', null=True, blank=True, on_delete=models.SET_NULL,
                                       help_text=type_object_help)
+    type_specimen_status = models.CharField(max_length=255, null=True, blank=True, choices=TYPE_CHOICES)
     paratypes = models.TextField(null=True, blank=True)
     type_taxon = models.CharField(max_length=255, null=True, blank=True)
 
@@ -105,7 +111,10 @@ class Nomen(projects.models.PaleoCoreBaseClass):
     is_objective_synonym = models.BooleanField('Objective Synonym', default=False)
     is_subjective_synonym = models.BooleanField('Subjective Synonym', default=False)
     is_established = models.BooleanField('Established', default=False)
+    is_inquirenda = models.BooleanField('Inquirenda', default=False, help_text=INQUIRENDA_HELP)
 
+    usage_remarks = CKRichTextField("Usage Remarks", null=True, blank=True,
+                                    help_text='Remarks about frequency of usage of the name in the literature.')
     references = models.ManyToManyField(publications.models.Publication, blank=True)
     assigned_to = models.CharField('Assigned', max_length=255, null=True, blank=True, choices=VERIFIER_CHOICES)
     verified_by = models.CharField('Verified', max_length=255, null=True, blank=True, choices=VERIFIER_CHOICES)
@@ -120,6 +129,7 @@ class Nomen(projects.models.PaleoCoreBaseClass):
         pub_obj = self.authorship_reference_obj  # publication object
         try:
             authors = pub_obj.authors
+            authors_last = ", ".join([a[-1]+', '+a[-2] for a in pub_obj.authors_list_split])
             year = pub_obj.year
             article_title = pub_obj.title
             journal_title = pub_obj.journal
@@ -128,17 +138,22 @@ class Nomen(projects.models.PaleoCoreBaseClass):
             book_title = pub_obj.book_title
             publisher = pub_obj.publisher
 
-            # Publication types are:
-            # ['Journal', 'Conference', 'Technical Report',
-            # 'Book', 'Book Chapter', 'Abstract', 'Thesis', 'Unpublished', 'Patent']
-            # Publication bibtex types are:
-            # ['article', 'inproceedings', 'techreport', 'book', 'inbook', 'abstract', 'phdthesis', 'unpublished', 'patent']
+            # Curretnly using JHE format.
+            # For edited volumes the editors need to be added to the title.
+            # There is no field in the publications model for editors
+
             if pub_obj.type.type in ['article', 'Journal']:
-                citation_text = f'{authors}. {pub_obj.year}. {article_title}. {journal_title}. {volume}: {pages}.'
+                citation_text = f'{authors_last} {pub_obj.year}. {article_title}. {journal_title}. {volume}, {pages}.'
             elif pub_obj.type.type in ['book', 'Book', 'Thesis']:
-                citation_text = f'{authors}. {year}. {book_title}. {publisher}.'
+                citation_text = f'{authors_last} {year}. {book_title}. {publisher}.'
             elif pub_obj.type.type in ['incollection', 'inproceedings', 'inbook', 'Book Chapter']:
-                citation_text = f'{authors}. {year}. {article_title} In: {book_title}. {publisher}. pp. {pages}.'
+                citation_text = f'{authors_last} {year}. {article_title} In: {book_title}. {publisher}. pp. {pages}.'
+
+            # Replace instances of 'None' with ''
+            citation_text = citation_text.replace('None', '')
+            # Remove any double periods from abbreviated titles etc.
+            citation_text = citation_text.replace('..', '.')
+
         except AttributeError:
             pass
         return citation_text
@@ -217,10 +232,10 @@ class Nomen(projects.models.PaleoCoreBaseClass):
         return self.year
 
     def taxon_rank_label(self):
-        label = ''
+        tr_label = ''
         if self.taxon_rank_obj:
-            label = self.taxon_rank_obj.name
-        return label
+            tr_label = self.taxon_rank_obj.name
+        return tr_label
 
     def type_status(self):
         type_status = None
@@ -253,7 +268,7 @@ class Nomen(projects.models.PaleoCoreBaseClass):
         return unicode_string
 
     class Meta:
-        ordering = ['name']
+        ordering = ['name', 'year']
         verbose_name = 'Nomen'
         verbose_name_plural = 'Nomina'
 
@@ -338,14 +353,14 @@ class TTaxon(MPTTModel, projects.models.Taxon):
         """
         scientific_name_html = ''
         name_string = "{otag}{name}{ctag} {auth}".format(otag='<i>' if self.rank.ordinal >= 60 else "",
-                                                        name=self.name,
-                                                        ctag='</i>' if self.rank.ordinal >= 60 else "",
-                                                        auth=self.authorship if self.authorship else "")
+                                                         name=self.name,
+                                                         ctag='</i>' if self.rank.ordinal >= 60 else "",
+                                                         auth=self.authorship if self.authorship else "")
         if self.authorship:
             scientific_name_html = '<i>' + self.name + '</i> ' + self.authorship
         else:
             scientific_name_html = '<i>' + self.name + '</i>'
-        #return format_html(scientific_name_html)
+        # return format_html(scientific_name_html)
         return format_html(name_string)
 
     class Meta:

@@ -1,0 +1,27 @@
+{% load wagtailcore_tags %}
+{% load paleocore_utils %}
+
+<!-- Nomina listing -->
+<div id="nomen">
+  {% for tfossil in type_fossils %}
+  <!-- Type Site-Fossil Card -->
+  <div class="card">
+    <div class="card-divider">
+      <h5>{{tfossil.continent}}-{{tfossil.site.name}}:
+        {% if tfossil.organism_id %}{{tfossil.organism_id}}
+        {% else %} {{tfossil.catalog_number}}
+        {% endif %}
+      </h5>
+    </div>
+    <!-- Nomen listings for Site-Fossil -->
+    <div class="card-section">
+      {% for nomen in tfossil.nomen_set.all|dictsort:"year" %}
+      <a href=" {% pageurl page %}detail/{{nomen.id}}"><em>{{ nomen.name}}</em> {{nomen.authorship}}</a>
+      &nbsp;|&nbsp;Status: {{nomen.nomenclatural_status|unslugify|capfirst}}<br/>
+      {% endfor %}
+    </div>
+    <!-- End Nomen listing -->
+  </div>
+  <!-- End Type Site-Fossil Card -->
+  {% endfor %}
+</div>

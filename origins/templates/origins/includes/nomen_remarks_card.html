@@ -1,0 +1,12 @@
+<!-- Remarks Card -->
+  <div class="card">
+    <div class="card-section">
+      <h6>Remarks</h6>
+      {% if nomen.remarks and nomen.verified_date %}
+        {{ nomen.remarks | safe}}
+      {% else %}
+        No remarks available. <br/>
+      {% endif %}
+    </div>
+  </div>
+<!-- End Remarks Card -->

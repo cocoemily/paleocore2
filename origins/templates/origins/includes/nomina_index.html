@@ -3,16 +3,18 @@
 
 <!-- Nomina listing -->
 <div>
-  <table>
+  <table id="data-table" class="display" style="width:100%" data-page-length="300">
     <!-- Table Headers -->
     <thead>
     <tr>
-      <!-- Five columns: Index, Scientific Name, Year, Type Specimen, Status -->
+      <!-- Six columns: Index, Scientific Name, Year, Taxon Rank, Type Specimen, Status -->
       <th scope="col"></th>
       <th scope="col">Scientific Name</th>
       <th scope="col">Year</th>
-      <th scope="col">Type Specimen</th>
+      <th scope="col">Taxonomic Rank</th>
+      <th scope="col">Type Specimen/Species</th>
       <th scope="col">Status</th>
+      <th scope="col">Remark</th>
     </tr>
     </thead>
 
@@ -21,12 +23,14 @@
     <!-- iterate over all names -->
     {% for nomen in nomina %}
     <tr>
-      <!-- Column 1 Indiex -->
-      <th scope="row">{{ forloop.counter }}</th>
+      <!-- Column 1 Index -->
+      <td scope="row">{{ forloop.counter }}</td>
+
       <!-- Column 2 Scientific Name -->
       <td>
-        <a href=" {% pageurl page  %}detail/{{nomen.id}}"><em>{{ nomen.name}}</em> {{nomen.authorship}}</a>
+        <a href=" {% pageurl page %}detail/{{nomen.id}}"><em>{{ nomen.name}}</em> {{nomen.authorship}}</a>
       </td>
+
       <!-- Column 3 Year -->
       <td>
         {% if nomen.year %}
@@ -35,24 +39,57 @@
           &nbsp;
         {% endif %}
       </td>
+
+      <!-- Column 4 Rank -->
+      <td>
+      {% if nomen.taxon_rank_group %}
+          {{ nomen.taxon_rank_label }}
+      {% endif %}
+      </td>
+
+
       <!-- Column 4 Type Specimen -->
-      <td>{% if nomen.type_specimen %}
-            {% if nomen.type_specimen.type_status %}
-            {{nomen.type_specimen.type_status | title}}:
+      {% comment %}
+      The code block below tests if the nomen has an associated type_specimen fk. If so, it uses the
+      type_specimen.organism_id  to populate the type specimen listing.
+      The type_specimen.organism_id is used instead of catalog_catalog number to avoid suffixes.
+
+      If there is no fk to a type specimen object then the text in nomen.type_label field is used instead.
+      {% endcomment %}
+
+      <td>
+      {% if nomen.taxon_rank_group == 'species-group' %}
+        {% if nomen.type_specimen %}
+            {% if nomen.type_specimen_status %}
+              {{nomen.type_specimen_status | title}}:
               {% if nomen.type_specimen.organism_id %}
                 {{ nomen.type_specimen.organism_id }}<br/>
               {% else %}
                 {{nomen.type_specimen.catalog_number}}<br/>
               {% endif %}
             {% else %}
-            {{ nomen.type_specimen.catalog_number }}<br/>
+              {{ nomen.type_specimen.catalog_number }}<br/>
             {% endif %}
-          {% endif %}
+        {% else %}
+          {{ nomen.type_specimen_label}}
+        {% endif %}
+      {% elif nomen.taxon_rank_group == 'genus-group' %}
+        <em>{{ nomen.type_taxon }}</em>
+      {% endif %}
       </td>
+
       <!-- Column 5 Nomenclatural Status -->
       <td>
         {% if nomen.nomenclatural_status %}
-          {{ nomen.nomenclatural_status|unslugify|capfirst }}
+        {{ nomen.nomenclatural_status|unslugify|capfirst }}
+        {% else %}
+          &nbsp;
+        {% endif %}
+      </td>
+      <!-- Column 6 Nomenclatural Status Remark-->
+      <td>
+        {% if nomen.status_remark %}
+        {{ nomen.status_remark|unslugify|capfirst }}
         {% else %}
           &nbsp;
         {% endif %}
@@ -72,8 +109,8 @@
 
         <div class="nomen-type">
           {% if nomen.type_specimen %}
-            {% if nomen.type_specimen.type_status %}
-            {{nomen.type_specimen.type_status | title}}:
+            {% if nomen.type_specimen_status %}
+            {{nomen.type_specimen_status | title}}:
               {% if nomen.type_specimen.organism_id %}
                 {{ nomen.type_specimen.organism_id }}<br/>
               {% else %}
@@ -155,3 +192,20 @@
 </div>
 {% endcomment %}
 
+{% comment %}
+The javascript block below is a template that can be called if the default data-table needs to be
+re-initialized and overwritten.
+{% endcomment %}
+
+{% comment %}
+{% block site_js %}
+<script>
+  $(document).foundation();
+
+  <!-- Initiate data tables. Visit datatables.net for documentation -->
+  $(document).ready(function() {
+    $('#data-table').DataTable();
+    });
+</script>
+{% endblock %}
+{% endcomment %}

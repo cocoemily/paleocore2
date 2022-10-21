@@ -1,0 +1,52 @@
+{% extends "base.html" %}
+{% load wagtailcore_tags navigation_tags wagtailimages_tags %}
+
+{% load paleocore_utils %}
+{% block content %}
+<div class="grid-container">
+  <div class="grid-x grid-margin-x">
+    <!-- medium-12 to use the full width and align with breadcrumbs -->
+    <div class="medium-12 cell">
+      {% if page.title %}
+      <h1> {{page.title}} </h1>
+      {% else %}
+      <h1>Hominin Nomenclature</h1>
+      {% endif %}
+
+      {% if page.body %}
+      <p> {{page.body}} </p>
+      {% endif %}
+
+      <hr/>
+      {% for nomen in nomina %}
+        {% include 'origins/includes/nomen_report.html' %}
+      {% endfor %}
+
+      {% comment %}
+      <!-- Tab List -->
+      <ul class="tabs" data-tabs id="example-tabs">
+        <li class="tabs-title is-active"><a href="#panel1" aria-selected="true">Alphabetical</a></li>
+        <li class="tabs-title"><a data-tabs-target="panel2" href="#panel2">By Site and Type</a></li>
+      </ul>
+      <!-- End Tab List -->
+
+      <!-- Tab Contents -->
+      <div class="tabs-content" data-tabs-content="example-tabs">
+          <!-- Tab Panel 1 -->
+          <div class="tabs-panel is-active" id="panel1">
+
+            {% for nomen in nomina %}
+              {% include 'origins/includes/nomen.html' %}
+            {% endfor %}
+          </div>
+          <!-- Tab Panel 2 -->
+          <div class="tabs-panel" id="panel2">
+            {% include 'origins/includes/nomina_list_by_type.html' %}
+          </div>
+      <!-- End Tab Contents -->
+
+    </div>
+      {% endcomment %}
+  </div>
+</div>
+{% endblock %}

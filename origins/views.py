@@ -13,6 +13,7 @@ from pyzotero import zotero
 from rest_framework import viewsets
 from rest_framework import permissions
 from origins.serialziers import TaxonRankSerializer, NomenSerializer
+from publications.models import Publication
 
 
 class UpdateSites(generic.FormView):
@@ -100,6 +101,32 @@ class TaxonDetailView(generic.DetailView):
     model = TTaxon
 
 
+class NominaReportView(generic.ListView):
+    """
+    Class based view to create a report with details from all nomina in one long page
+    """
+    model = Nomen
+    template_name = 'origins/nomina_report_view.html'
+    context_object_name = 'nomina'
+
+    def get_queryset(self):
+        return Nomen.objects.exclude(taxon_rank_group='family-group').select_related(
+            'authorship_reference_obj', 'type_specimen')
+
+
+class NominaReferencesView(generic.ListView):
+    """
+    Class based view to create a reference list of authorship references for all nomina
+    """
+    model = Nomen
+    template_name = 'origins/nomina_references_view.html'
+    context_object_name = 'nomina'
+
+    def get_queryset(self):
+        return Nomen.objects.exclude(taxon_rank_group='family-group').select_related(
+            'authorship_reference_obj', 'type_specimen')
+
+
 class ZoteroListView(generic.ListView):
     template_name = 'origins/zotero_list.html'
     context_object_name = 'zotero'
@@ -116,9 +143,10 @@ class NomenViewSet(viewsets.ReadOnlyModelViewSet):
     """
     API endpoint that allows Nomina to be viewed
     """
+    #queryset = Nomen.objects.exclude(taxon_rank_group='family-group')
     queryset = Nomen.objects.all()
     serializer_class = NomenSerializer
-    #permission_classes = [permissions.IsAuthenticated]
+    # permission_classes = [permissions.IsAuthenticated]
 
 
 class TaxonRankViewSet(viewsets.ReadOnlyModelViewSet):

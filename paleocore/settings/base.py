@@ -102,12 +102,15 @@ INSTALLED_APPS = (
     'eval',  # Evaluation
     'paleosites',  # paleosites
     'turkana',
-    'sermar.apps.SermarConfig',  # serengeti mara project
+    'sermar',  # serengeti mara project
+    'utcasts',  # UT lab cast management app
+    'wormil', # Woranso-Mille project
+    'inca',  # Inca Multiregional Database
+    'idit',  # taxonomic identification app
 
     'wagtail.contrib.routable_page',
     'wagtail.contrib.sitemaps',
     'wagtail.contrib.search_promotions',
-    'wagtail.contrib.postgres_search',
     'wagtail.contrib.settings',
     'wagtail.contrib.forms',
     'wagtail.contrib.redirects',
@@ -318,7 +321,7 @@ WAGTAIL_SITE_NAME = "paleocore"
 # Use Elasticsearch as the search backend for extra performance search results
 WAGTAILSEARCH_BACKENDS = {
     'default': {
-        'BACKEND': 'wagtail.contrib.postgres_search.backend',
+        'BACKEND': 'wagtail.search.backends.database',
     },
 }
 
@@ -333,6 +336,8 @@ CELERYD_LOG_COLOR = False
 
 # New setting for Django 3
 DEFAULT_AUTO_FIELD = 'django.db.models.AutoField'
+
+DATA_UPLOAD_MAX_NUMBER_FIELDS = None  # turn off checks for max number of fields in a form
 
 # Setting for Django REST framework
 # REST_FRAMEWORK = {

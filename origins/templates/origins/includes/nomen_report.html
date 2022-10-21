@@ -1,0 +1,127 @@
+{% load paleocore_utils %}
+
+<!-- Title -->
+<h2>
+  {{ forloop.counter }}.  <em>{{ nomen.name}}</em> {{nomen.authorship}}
+</h2>
+<!-- End Title -->
+
+<!-- Details Card -->
+<div>
+<h4>Details</h4>
+<!-- Year -->
+Year:
+{% if nomen.year %}
+  {{ nomen.year }}<br/>
+{% else %}
+  No year available.<br/>
+{% endif %}
+<!-- End Year -->
+
+<!-- Taxonomic Rank -->
+Taxonomic Rank:
+{% if nomen.taxon_rank_obj %}
+  {{ nomen.taxon_rank_obj.name|capfirst }}<br/>
+{% else %} No rank details available.<br/>
+{% endif %}
+<!-- End Taxonomic Rank -->
+
+<!-- Type Specimen_Species -->
+{% if nomen.taxon_rank_group == 'species-group' %}
+  {% if nomen.type_specimen %}
+    {% if nomen.type_specimen_status %}
+      {{nomen.type_specimen_status | title}}:  <!-- e.g. Holotype: --->
+        {% if nomen.type_specimen.organism_id %}
+          {{ nomen.type_specimen.organism_id }}<br/>
+        {% else %}
+          {{nomen.type_specimen.catalog_number}}<br/>
+        {% endif %}
+      {% else %}
+          Type specimen: {{ nomen.type_specimen.catalog_number }}<br/>
+      {% endif %}
+  {% else %}
+      {{ nomen.type_specimen_label}}<br/>
+  {% endif %}
+{% elif nomen.taxon_rank_group == 'genus-group' %}
+  Type species: <em>{{ nomen.type_taxon }}</em><br/>
+{% else %} No type information available.
+{% endif %}
+<!-- End Type Specimen_Species -->
+
+<!-- Nomenclatural Status -->
+Status:
+{% if nomen.nomenclatural_status %}
+  {{ nomen.nomenclatural_status|unslugify|capfirst }}<br/>
+{% else %} No status details available.<br/>
+{% endif %}
+<!-- End Nomenclatural Status -->
+
+<!-- Nomenclatural Status Remark -->
+Remark:
+{% if nomen.status_remark %}
+  {{ nomen.status_remark|unslugify|capfirst }}<br/>
+{% else %}
+&nbsp;<br/>
+{% endif %}
+<!-- End Nomenclatural Status Remark -->
+&nbsp;
+</div>
+<!-- End Details Card -->
+
+
+<!-- Authorship Reference -->
+<!-- Simple reference output. It is not dynamically formatted by reference type (book, article etc.) -->
+<div>
+{% if nomen.authorship_reference_obj %}
+      <h4>Authorship Reference</h4>
+      {% with publication=nomen.authorship_reference_obj %}
+      <div>
+      {% autoescape off %}
+      {{ publication.authors }}. {{ publication.year }}.
+        {{ publication.title }}{% if not publication.title_ends_with_punct %}.{% endif %}{% if publication.journal %} {{ publication.journal }}.{% endif %}
+        {% if publication.book_title %} {{ publication.book_title }},{% endif %}
+        {% if publication.publisher %} {{ publication.publisher }},{% endif %}
+        {% if publication.institution %} {{ publication.institution }},{% endif %}
+        {% if publication.volume %}{{ publication.volume }},{% endif %}
+        {% if publication.pages %} {{ publication.pages }}{% endif %}.
+      {% endautoescape %}
+      </div>
+      {% endwith %}
+    {% else %}
+    No authorship reference available.
+    {% endif %}
+&nbsp;
+</div>
+
+<!-- End Authorship Reference -->
+
+<!-- Remarks -->
+<h4>Remarks</h4>
+{% if nomen.remarks and nomen.verified_date %}
+  {{ nomen.remarks | safe}}
+{% else %}
+  No remarks available. <br/>
+{% endif %}
+<!-- End Remarks -->
+
+
+  {% comment Authorship reference %}
+  {% include 'origins/includes/authorship_reference_card.html' %}
+  {% endcomment %}
+
+  {% comment Additional references %}
+  <div>
+    <!-- Additional References -->
+    {% if nomen.references.all %}
+      <h6>Additional References</h6>
+      {% for publication in nomen.references.all|dictsort:"year" %}
+        <div class="card">
+          <div class="card-section">
+          {% include 'publications/publication.html' %}
+          </div>
+        </div>
+      {% endfor %}
+    {% endif %}
+  </div>
+  {% endcomment %}
+

@@ -16,6 +16,9 @@
 			<link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.4.1/css/all.css" />
 			<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/lightbox2/2.10.0/css/lightbox.min.css" />
 			<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/motion-ui/2.0.3/motion-ui.min.css" />
+      <!-- datatables for Foundation css -->
+      <link rel="stylesheet" href="https://cdn.datatables.net/1.11.4/css/dataTables.foundation.min.css" />
+
 		{% endblock %}
 
 		{% compress css %}
@@ -103,9 +106,12 @@
 
     <!-- java script blocks -->
     {% block cdn_js %}
-      <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>
+      <script src="https://code.jquery.com/jquery-3.5.1.js"></script>
       <script src="https://cdnjs.cloudflare.com/ajax/libs/lightbox2/2.10.0/js/lightbox.min.js"></script>
       <script src="https://cdnjs.cloudflare.com/ajax/libs/what-input/5.1.0/what-input.min.js"></script>
+      <!-- data tables js sources  and Foundation integration -->
+      <script src="https://cdn.datatables.net/1.11.4/js/jquery.dataTables.min.js"></script>
+	    <script src="https://cdn.datatables.net/1.11.4/js/dataTables.foundation.min.js"></script>
     {% endblock %}
 
     {% compress js %}
@@ -117,7 +123,16 @@
     {% block site_js %}
       <script>
         $(document).foundation();
+
+        <!-- Initiate data tables. Visit datatables.net for documentation -->
+        $(document).ready(function() {
+          $('#data-table').DataTable({
+            "lengthMenu":[[25,50,100,200,-1], [25,50,100,200, "All"]]
+            }
+          );
+          });
       </script>
+
     {% endblock %}
 
     {% block extra_js %}{% endblock %}

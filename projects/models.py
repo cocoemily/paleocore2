@@ -9,7 +9,7 @@ from django.core.paginator import Paginator, EmptyPage, PageNotAnInteger
 from django.apps import apps
 from django.apps.config import AppConfig
 from django.utils import timezone
-from django.contrib.gis.geos import Point
+from django.contrib.gis.geos import Point, Polygon
 from django_countries.fields import CountryField
 from django.utils.html import format_html
 # Wagtail imports
@@ -29,6 +29,7 @@ from taggit.models import TaggedItemBase
 from utils.models import RelatedLink, CarouselItem
 from ckeditor.fields import RichTextField as CKRichTextField
 from projects.ontologies import PERIOD_CHOICES, EPOCH_CHOICES, AGE_CHOICES
+from users.models import User
 
 
 # MODELS
@@ -566,7 +567,7 @@ class ProjectsIndexPage(Page):
 
         # Pagination
         page = request.GET.get('page')
-        paginator = Paginator(projects, 10)  # Show 10 projects per page
+        paginator = Paginator(projects, 20)  # Show 20 projects per page
         try:
             projects = paginator.page(page)
         except PageNotAnInteger:
@@ -619,6 +620,11 @@ APP_CHOICES = app_choices()
 
 
 class ProjectPage(Page):
+    """
+    Paleo Core projects page. Summary details about each project
+    Inherits from Page:
+    Title
+    """
     intro = RichTextField()
     body = StreamField([
         ('heading', blocks.CharBlock(classname="full title")),
@@ -635,6 +641,7 @@ class ProjectPage(Page):
         related_name='+'
     )
     location = models.PointField(srid=4326, null=True, blank=True)
+    extent = models.PolygonField(srid=4326, null=True, blank=True)
 
     search_fields = Page.search_fields + [
         index.SearchField('body'),
@@ -727,6 +734,8 @@ class ProjectPage(Page):
                 content_type = ContentType.objects.get(app_label=self.slug, model='context')
             elif self.slug == 'eppe':  # eppe uses find as basic record
                 content_type = ContentType.objects.get(app_label=self.slug, model='find')
+            elif self.slug == 'wormil':  # wormil uses specimen
+                content_type = ContentType.objects.get(app_label=self.slug, model='specimen')
             else:  # all others use occurrence
                 try:
                     content_type = ContentType.objects.get(app_label=self.slug, model='occurrence')
@@ -772,7 +781,7 @@ class ProjectPage(Page):
             if self.app_label in ('cc', 'fc'):
                 content_type = None  # cc and fc have no fossil occurrences
             # use the Fossil model for eppe
-            elif self.app_label == 'eppe':
+            elif self.app_label in ('eppe', 'wormil'):
                 content_type = ContentType.objects.get(app_label=self.app_label, model='fossil')
             # all others use Biology model
             else:
@@ -841,7 +850,8 @@ ProjectPage.content_panels = [
     StreamFieldPanel('body'),
     InlinePanel('carousel_items', label="Carousel items"),
     InlinePanel('related_links', label="Related links"),
-    GeoPanel('location')
+    GeoPanel('location'),
+    FieldPanel('extent')
 ]
 
 ProjectPage.promote_panels = Page.promote_panels + [

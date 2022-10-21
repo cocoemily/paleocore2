@@ -1,11 +1,10 @@
 {% load wagtailcore_tags wagtailimages_tags %}
 <!--
 <div class="small-12 columns">-->
-{% for site in site_pages %}
 
-<div class="row">
-
-
+{% if site_pages %}
+  {% for site in site_pages %}
+    <div class="row">
     <div class="column">
         <div class="card">
             <div class="card-section" style="padding: 12px;">
@@ -49,8 +48,28 @@
     </div>
 
 </div>
-
 {% empty %}
     No sites found
 {% endfor %}
+{% endif %}
+
+{% if sites %}
+<table id="data-table" class="display" style="width:100%">
+  <thead>
+    <tr>
+      <th>Name</th>
+      <th>Country</th>
+    </tr>
+  </thead>
+  <tbody>
+  {% for site in sites %}
+  <tr>
+    <td>{{site.name}}</td>
+    <td>{{site.country}}</td>
+  </tr>
+  {% endfor %}
+  </tbody>
+</table>
+{% endif %}
+
 <!--</div>-->

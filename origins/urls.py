@@ -15,12 +15,12 @@ urlpatterns = [
     # ex. /origins/origins.geojson  Note no trailing slash!
 
     # Uncomment to share origins geospatial data
-    # re_path(r'^origins.geojson$',
-    #         views.MyGeoJSONLayerView.as_view(model=Site,
-    #                                          crs=False,
-    #                                          properties=['name', 'min_ma', 'max_ma', 'formation'],
-    #                                          geometry_field='geom'),
-    #         name='sites_geojson'),
+    re_path(r'^origins.geojson$',
+            views.MyGeoJSONLayerView.as_view(model=Site,
+                                             crs=False,
+                                             properties=['name', 'min_ma', 'max_ma', 'formation'],
+                                             geometry_field='geom'),
+            name='sites_geojson'),
 
     # Uncomment to expose countries geospatial dataset
     re_path(r'^countries.geojson$',
@@ -35,6 +35,8 @@ urlpatterns = [
     path('api-auth/', include('rest_framework.urls', namespace='rest_framework')),
     path('taxon/', views.TaxonListView.as_view(), name='taxon_list_view'),
     path('taxon/<int:pk>/', views.TaxonDetailView.as_view(), name='taxon_detail_view'),
+    path('nomina/report/', views.NominaReportView.as_view(), name='nomina_report_view'),
+    path('nomina/references/', views.NominaReferencesView.as_view(), name='nomina_references_view'),
     # path('/nomina/<int:pk>/', views.NomenDetailView.as_view(), name='nomen_detail_view'),
     # path('nomina/', views.NominaListView.as_view(), name='nomina_list_view'),
     # path('zotero/', views.ZoteroListView.as_view(), name='zotero_list_view')

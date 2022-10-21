@@ -21,8 +21,30 @@
         and full reference.  Species entries include the fossil catalog numbers for the type specimen and
         associate paratypes as listed in the nominal publication. </p>
       {% endif %}
-      <hr/>
-      {% include 'origins/includes/nomina_list.html' %}
+      <!-- Tab List -->
+      <ul class="tabs" data-tabs id="example-tabs">
+        <li class="tabs-title is-active"><a href="#panel1" aria-selected="true">Searchable Index</a></li>
+        <li class="tabs-title"><a data-tabs-target="panel2" href="#panel3">Alphabetical</a></li>
+        <li class="tabs-title"><a data-tabs-target="panel3" href="#panel2">By Site and Type</a></li>
+
+      </ul>
+      <!-- End Tab List -->
+
+      <!-- Tab Contents -->
+      <div class="tabs-content" data-tabs-content="example-tabs">
+          <!-- Tab Panel 1 -->
+          <div class="tabs-panel is-active" id="panel1">
+            {% include 'origins/includes/nomina_index.html' %}
+          </div>
+          <!-- Tab Panel 2 -->
+          <div class="tabs-panel" id="panel2">
+            {% include 'origins/includes/nomina_list_alphabetical.html' %}
+          </div>
+          <!-- Tab Panel 3 --->
+            <div class="tabs-panel" id="panel3">
+            {% include 'origins/includes/nomina_list_by_type.html' %}
+          </div>
+      <!-- End Tab Contents -->
     </div>
   </div>
 </div>
