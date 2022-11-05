@@ -3,6 +3,7 @@ import projects.models
 import publications.models
 #from origins.models import Fossil, Reference
 import origins.models
+from origins.ontologies import VERIFIER_CHOICES
 
 
 class Site(projects.models.PaleoCoreSiteBaseClass):
@@ -45,6 +46,11 @@ class Site(projects.models.PaleoCoreSiteBaseClass):
 
     # References
     references = models.ManyToManyField(publications.models.Publication, blank=True)
+
+    # Fields to manage data entry
+    assigned_to = models.CharField('Assigned', max_length=255, null=True, blank=True, choices=VERIFIER_CHOICES)
+    verified_by = models.CharField('Verified', max_length=255, null=True, blank=True, choices=VERIFIER_CHOICES)
+    verified_date = models.DateField(null=True, blank=True)  # used to control visibility on nomen detail page
 
     @staticmethod
     def update_fossil_count():

@@ -276,11 +276,7 @@ class FossilAdmin(admin.ModelAdmin):
                        ('is_type_specimen', 'type_status'),
                        ('origins', 'vif')],
         }),
-        ('Remarks', {
-            'fields': [('remarks',),
-                       ('problem',),
-                       ('problem_comment',)]
-        }),
+
         ('Events', {
             'fields': [('date_discovered', 'discovered_by'),
                        ('year_collected', 'collected_by')]
@@ -308,9 +304,17 @@ class FossilAdmin(admin.ModelAdmin):
                 ('context')
             ]
         }),
-        # ('References', {
-        #     'fields': [('references',)]
-        # })
+        ('Remarks', {
+            'fields': [('remarks',), ]
+        }),
+        ('Validation', {
+            'fields': [
+                ('assigned_to', 'verified_by', 'verified_date',),
+                ('date_created', 'date_last_modified',),
+                ('problem',),
+                ('problem_comment',),
+            ],
+        }),
     ]
 
     actions = ['toggle_origins', 'update_sites']

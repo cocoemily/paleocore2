@@ -158,6 +158,9 @@ jyhreh = 'Jyhreh Johnson'
 harper = 'Harper Jackson'
 nida = 'Nida Virabalin'
 kennedy = 'Kennedy Knowlton'
+ashlynn = 'Ashlynn Arzola'
+nick = 'Nicholas Hartman'
+jorge = 'Jorge Ramirez Salinas'
 
 VERIFIER_CHOICES = (
     (denne, 'DR'),
@@ -165,7 +168,10 @@ VERIFIER_CHOICES = (
     (jyhreh, 'JJ'),
     (harper, 'HJ'),
     (kennedy, 'KK'),
-    (nida, 'NV')
+    (nida, 'NV'),
+    (ashlynn, 'AA'),
+    (nick, 'NH'),
+    (jorge, 'JRS')
 )
 
 

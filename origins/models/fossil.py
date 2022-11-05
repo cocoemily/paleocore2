@@ -1,6 +1,6 @@
 from django.contrib.gis.db import models
 import uuid
-from origins.ontologies import CONTINENT_CHOICES, TYPE_CHOICES
+from origins.ontologies import CONTINENT_CHOICES, TYPE_CHOICES, VERIFIER_CHOICES
 from django_countries.fields import CountryField
 import publications
 import projects.models
@@ -87,6 +87,11 @@ class Fossil(projects.models.PaleoCoreGeomBaseClass):
 
     # References
     references = models.ManyToManyField(publications.models.Publication, blank=True)
+
+    # Fields to manage data entry
+    assigned_to = models.CharField('Assigned', max_length=255, null=True, blank=True, choices=VERIFIER_CHOICES)
+    verified_by = models.CharField('Verified', max_length=255, null=True, blank=True, choices=VERIFIER_CHOICES)
+    verified_date = models.DateField(null=True, blank=True)  # used to control visibility on nomen detail page
 
     # Helper field for managing Turkana imports
     to_split = models.BooleanField(null=True)
