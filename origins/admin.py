@@ -247,7 +247,7 @@ class FossilAdmin(admin.ModelAdmin):
                     # 'element_description',
                     ]
     list_editable = ['vif']
-    list_filter = ['origins', 'vif', 'is_type_specimen', 'type_status', 'source', 'site__name', 'country']
+    list_filter = ['origins', 'vif', 'is_type_specimen', 'type_status', 'assigned_to', 'source', 'site__name', 'country']
     list_display_links = ['id', 'catalog_number']
     list_select_related = ['site', 'context', 'taxon']
     search_fields = ['catalog_number', 'other_catalog_numbers', 'place_name', 'country', 'locality',
