@@ -437,6 +437,11 @@ def clean_catno(catno):
 
 
 def import_turkana_fossils(file='origins/data/turkana_inventory.xlsx'):
+    """
+    Preliminary helper function to quickly read in basic turkana homiinin fossil data from spreadsheets
+    :param file:
+    :return:
+    """
     pd = pandas
     xleast = pd.read_excel(file, sheet_name='East')
     xleast.name = 'east'
@@ -450,7 +455,12 @@ def import_turkana_fossils(file='origins/data/turkana_inventory.xlsx'):
             TurkFossil.objects.create(verbatim_catalog_number=row[0], verbatim_suffix=row[1], region=sheet.name)
 
 
-def import_turk_fossils(file='origins/data/turkana_inventory_211207.xlsx'):
+def import_turk_fossils(file='origins/data/turkana_inventory.xlsx'):
+    """
+    Import hominin fossil data from an xl spreadsheet.
+    :param file:
+    :return:
+    """
     pd = pandas
     data = pd.read_excel(file)
     for index, row in data.iterrows():
