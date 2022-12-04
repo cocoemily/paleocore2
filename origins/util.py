@@ -517,6 +517,9 @@ def get_marchal(origins_fossil_obj):
     f = origins_fossil_obj
     catno = f.catalog_number.upper()
     matched = TurkFossil.objects.filter(catalog_number__startswith=catno)
+    if not matched:
+        catno = f.catalog_number
+        matched = TurkFossil.objects.filter(catalog_number__startswith=catno)
     return matched
 
 
