@@ -35,6 +35,14 @@ from users.models import User
 # MODELS
 # Abstract Models - Not managed by migrations, not in DB
 class PaleoCoreBaseClass(models.Model):
+    """
+    A foundational, abstract class  for other Paleo Core classes. This is an abstract class so it is not implemented
+    in the database. It is meant to be inherited by classes in individual project apps and in the Origins app.
+
+    Summary:
+    attributes: name, date_created, date_last_modified, problem, problem_comment, remarks, last_import
+    methods: get_app_label, get_concrete_field_names, get_all_field_names, get_foreign_key_field_names, photo, thumbnail
+    """
     name = models.CharField(max_length=255, null=True, blank=True)
     date_created = models.DateTimeField('Created',
                                         default=timezone.now,
@@ -118,7 +126,15 @@ class PaleoCoreBaseClass(models.Model):
 
 class TaxonRank(PaleoCoreBaseClass):
     """
-    The rank of a taxon in the standard Linaean hierarchy, e.g. Kingdom, Phylum, Class, Order etc.
+    An abstract class to track the rank of a taxon in the standard Linaean hierarchy,
+    e.g. Kingdom, Phylum, Class, Order etc.
+
+    Inherits from projects.models.PaleoCoreBaseClass:
+    attributes: name, date_created, date_last_modified, problem, problem_comment, remarks, last_import
+    methods: get_app_label, get_concrete_field_names, get_all_field_names, get_foreign_key_field_names, photo, thumbnail
+
+    Summary:
+    attributes: name, plural, ordinal
     """
     name = models.CharField(null=False, blank=False, max_length=50, unique=True)
     plural = models.CharField(null=False, blank=False, max_length=50, unique=True)
@@ -141,29 +157,20 @@ class TaxonRank(PaleoCoreBaseClass):
 
 class Taxon(PaleoCoreBaseClass):
     """
-    Taxon <- PaleoCoreBaseClass
-    A biological taxon at any rank, e.g. Mammalia, Homo, Homo sapiens idaltu
+    An abstract class for tracking biological taxa at any rank,  e.g. Mammalia, Homo, Homo sapiens idaltu
 
-    Attributes of Taxon:
+    Inherits from projects.models.PaleoCoreBaseClass:
+    attributes: name, date_created, date_last_modified, problem, problem_comment, remarks, last_import
+    methods: get_app_label, get_concrete_field_names, get_all_field_names, get_foreign_key_field_names, photo, thumbnail
 
-    Attributes "name" through "last_import" are inherited from PaleoCoreBaseClass
+    Summary:
+    attributes: *parent, *rank, label
+    methods: update_label, parent_rank, rank_ordinal, parent_name, full_name, full_lineage, biology_usages,
+    get_higher_taxon, get_children.
 
-    The attributes "parent" and "rank" are assumed to be defined in each inheriting class.
+    The attributes "parent" and "rank" must be separately defined in each inheriting class.
     They cannot be defined here because they are foreign keys and fks cannot be included in Abstract Classes.
     The methods included in this abstract class assume that the fields rank and parent are defined.
-
-    name
-    date_created
-    date_last_modified
-    problem, problem_comment
-    remarks,
-    last_import
-    ------
-    parent
-    rank
-    ------
-    label
-
     """
     # For a species, the name field contains the specific epithet and
     # the label field contains the full scientific name.
@@ -273,7 +280,14 @@ class Taxon(PaleoCoreBaseClass):
 
 class IdentificationQualifier(PaleoCoreBaseClass):
     """
-    A modifier to a taxonomic designation, e.g. cf., aff.
+    An abstract class for modifiers to a taxonomic designation, e.g. cf., aff.
+
+    Inherits from projects.models.PaleoCoreBaseClass:
+    attributes: name, date_created, date_last_modified, problem, problem_comment, remarks, last_import
+    methods: get_app_label, get_concrete_field_names, get_all_field_names, get_foreign_key_field_names, photo, thumbnail
+
+    Summary:
+    attributes: name, qualified
     """
     name = models.CharField(null=False, blank=True, max_length=15, unique=True)
     qualified = models.BooleanField(default=False)
@@ -300,6 +314,18 @@ class Person(PaleoCoreBaseClass):
 
 
 class PaleoCoreGeomBaseClass(PaleoCoreBaseClass):
+    """
+    An abstract class for geospatial data objects. This is an abstract class so it is not implemented in the database.
+    The class is meant to be inherited by classes in individual project apps and in the Origins app.
+
+    From projects.models.PaleoCoreBaseClass inherits:
+    attributes: name, date_created, date_last_modified, problem, problem_comment, remarks, last_import
+    methods: get_app_label, get_concrete_field_names, get_all_field_names, get_foreign_key_field_names, photo, thumbnail
+
+    Summary:
+    attributes: georeference_remarks, geom, objects
+    methods: gcs_coordinates, utm_coordinates, point_x, point_y, longitude, latitude, easting, northing
+    """
     # Location
     georeference_remarks = models.TextField(max_length=500, null=True, blank=True)
     geom = models.PointField(srid=4326, null=True, blank=True)
