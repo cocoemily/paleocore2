@@ -8,6 +8,15 @@ from ckeditor.fields import RichTextField as CKRichTextField
 
 
 class Fossil(projects.models.PaleoCoreGeomBaseClass):
+    """
+    From projects.models.PaleoCoreBaseClass inherits:
+    attributes: name, date_created, date_last_modified, problem, problem_comment, remarks, last_import
+    methods: get_app_label, get_concrete_field_names, get_all_field_names, get_foreign_key_field_names, photo, thumbnail
+
+    From projects.models.PaleoCoreGeomBaseClass inherits:
+    attributes: georeference_remarks, geom, objects
+    methods: gcs_coordinates, utm_coordinates, point_x, point_y, longitude, latitude, easting, northing
+    """
     # Foreign keys
     context = models.ForeignKey(to='Context', on_delete=models.CASCADE, null=True, blank=True)
 
