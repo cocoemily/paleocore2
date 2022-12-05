@@ -612,12 +612,14 @@ class ActiveNomenAdmin(NomenAdmin):
 
 class TurkFossilAdmin(admin.ModelAdmin):
     list_display = ['catalog_number', 'verbatim_suffix', 'region',
-                    'suffix_assigned', 'in_origins', 'to_add', 'to_divide', 'origins_fossil']
-    list_editable = ['to_add', 'to_divide']
-    list_filter = ['region', 'suffix_assigned', 'in_origins']
+                    'suffix_assigned', 'in_origins', 'verbatim_zone', 'verbatim_area', 'verbatim_locality',
+                    'verbatim_age_g1', 'verbatim_age_g2', 'origins_fossil']
+    list_filter = ['region','verbatim_zone', 'suffix_assigned', 'in_origins']
     search_fields = ['verbatim_inventory_number', 'verbatim_suffix', 'catalog_number']
     readonly_fields = ['origins_fossil']
     change_list_template = "admin/top_pagination_change_list.html"
+    list_per_page = 100
+
 
     def origins_fossil(self, obj):
         """

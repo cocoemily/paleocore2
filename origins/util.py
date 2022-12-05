@@ -673,3 +673,4 @@ def add_fossil():
     et = Site.objects.get(name='East Turkana')
     for f in turk2add:
         Fossil.objects.create(catalog_number=f.catalog_number, site=wt, country='KE', continent='Africa', origins=True)
+
