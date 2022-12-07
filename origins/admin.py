@@ -4,11 +4,10 @@ import origins.util
 import origins.ontologies
 from projects.admin import PaleoCoreLocalityAdminGoogle, TaxonomyAdmin
 from django.utils.html import format_html
-from django.contrib.gis.measure import Distance
 from django.contrib.contenttypes.models import ContentType
 from django.contrib.auth.decorators import permission_required
 from django.conf.urls import url
-from django.http import HttpResponse, HttpResponseRedirect
+from django.http import HttpResponseRedirect
 from django.urls import reverse
 import origins.views
 from django.contrib import messages
@@ -122,7 +121,7 @@ class ActiveSiteAdmin(SiteAdmin, ImportExportActionModelAdmin):
 class ContextAdmin(PaleoCoreLocalityAdminGoogle):
     save_as = True
     list_display = ['id', 'name', 'site_link', 'geological_formation', 'geological_member',
-                    'max_stage', 'min_stage', 'max_age', 'min_age', 'best_age',]
+                    'max_stage', 'min_stage', 'max_age', 'min_age', 'best_age']
     search_fields = ['id', 'name', 'geological_formation', 'geological_member',
                      'max_stage', 'min_stage', 'max_epoch', 'min_epoch', 'max_period', 'min_period',
                      'older_interval', 'younger_interval', 'max_age', 'min_age', 'best_age']
@@ -190,8 +189,8 @@ class ContextAdmin(PaleoCoreLocalityAdminGoogle):
 
         obj_count = 0
         for obj in queryset:
-            new_site=create_site(obj)  # create a new site based on the data in the context
-            obj.site = new_site  # assign the newly created site to the context
+            new_site_obj = create_site(obj)  # create a new site based on the data in the context
+            obj.site = new_site_obj  # assign the newly created site to the context
             obj_count += 1
         if obj_count == 1:
             count_string = '1 record'
@@ -488,7 +487,8 @@ class TTaxonAdmin(MPTTModelAdmin, TaxonomyAdmin):
     readonly_fields = ['id', 'biology_usages', 'fossil_usages', 'scientific_name', '_synonyms']
     list_display = ['name', 'scientific_name', 'rank', 'classification_status', 'bc_status',
                     'fossil_usages', '_synonyms']
-    fields = ['id', 'zoobank_id', 'epithet', 'name', 'verbatim_name', 'abbreviation', 'authorship', 'year', 'name_reference',
+    fields = ['id', 'zoobank_id', 'epithet', 'name', 'verbatim_name', 'abbreviation', 'authorship', 'year',
+              'name_reference',
               'type_specimen', 'type_status', 'parent', 'classification_status', 'junior_to', 'rank',
               'nomenclatural_code', 'bc_status', 'remarks']
     inlines = [TTaxonPublicationsInline]
@@ -512,22 +512,12 @@ class NomenAdmin(admin.ModelAdmin):
                     'bc_status', 'problem',
                     'assigned_to', 'verified_by', 'verified_date']
     list_editable = ['status_remark']
-    list_filter = ['nomenclatural_status', 'status_remark', 'taxon_rank_obj', 'assigned_to', 'verified_by', 'verified_date',
+    list_filter = ['nomenclatural_status', 'status_remark', 'taxon_rank_obj', 'assigned_to', 'verified_by',
+                   'verified_date',
                    'is_available', 'is_potentially_valid', 'is_established',
                    'is_objective_synonym', 'is_subjective_synonym', 'bc_status', 'problem']
     inlines = [NomenPublicationsInline]
     search_fields = ['name', 'authorship', 'year', 'remarks', 'usage_remarks', 'problem_comment']
-    # fields = ['name', 'scientific_name_id', 'generic_name', 'specific_epithet',
-    #           'authorship', 'year', 'authorship_reference_obj', 'authorship_reference', 'authorship_reference_id',
-    #           'taxon_rank_obj', 'taxon_rank_label', 'taxon_rank_group',
-    #           'type_specimen_label', 'type_specimen', 'type_specimen_status', 'paratypes', 'type_taxon',
-    #           'nomenclatural_code', 'nomenclatural_status', 'status_remark',
-    #           'is_available', 'is_potentially_valid', 'is_established',
-    #           'bc_status', 'remarks', 'usage_remarks',
-    #           'is_objective_synonym', 'is_subjective_synonym',
-    #           'assigned_to', 'verified_by', 'verified_date',
-    #           'date_created', 'date_last_modified', 'problem', 'problem_comment']
-
     fieldsets = [
         ('Nomen Details', {
             'fields': [
@@ -555,7 +545,7 @@ class NomenAdmin(admin.ModelAdmin):
                        ('type_specimen', 'type_specimen_status'),
                        ('paratypes',),
                        ('type_taxon',),
-            ],
+                       ],
         }),
         ('Nomenclatural Status', {
             'fields': [
@@ -614,12 +604,11 @@ class TurkFossilAdmin(admin.ModelAdmin):
     list_display = ['catalog_number', 'verbatim_suffix', 'region',
                     'suffix_assigned', 'in_origins', 'verbatim_zone', 'verbatim_area', 'verbatim_locality',
                     'verbatim_age_g1', 'verbatim_age_g2', 'origins_fossil']
-    list_filter = ['region','verbatim_zone', 'suffix_assigned', 'in_origins']
+    list_filter = ['region', 'verbatim_zone', 'suffix_assigned', 'in_origins']
     search_fields = ['verbatim_inventory_number', 'verbatim_suffix', 'catalog_number']
     readonly_fields = ['origins_fossil']
     change_list_template = "admin/top_pagination_change_list.html"
     list_per_page = 100
-
 
     def origins_fossil(self, obj):
         """
@@ -646,7 +635,6 @@ admin.site.register(origins.models.Context, ContextAdmin)
 admin.site.register(origins.models.Reference, ReferenceAdmin)
 admin.site.register(origins.models.Fossil, FossilAdmin)
 admin.site.register(origins.models.Site, ActiveSiteAdmin)
-#admin.site.register(Taxon, TaxonAdmin)
 admin.site.register(origins.models.TTaxon, TTaxonAdmin)
 admin.site.register(origins.models.TaxonRank)
 admin.site.register(origins.models.Nomen, NomenAdmin)
