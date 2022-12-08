@@ -242,16 +242,23 @@ class FossilAdmin(admin.ModelAdmin):
     list_display = ['id', 'catalog_number', 'is_type_specimen', 'site_link', 'context_link', 'taxon_link',
                     'country', 'context__best_age',
                     'short_description', 'vif',
-                    'default_image', 'problem', 'to_split'
+                    'default_image', 'problem'
                     # 'element_description',
                     ]
     list_editable = ['vif']
-    list_filter = ['origins', 'vif', 'is_type_specimen', 'type_status', 'assigned_to', 'source', 'site__name', 'country']
+    list_filter = ['origins',
+                   'vif',
+                   'is_type_specimen',
+                   # 'type_status',
+                   'assigned_to',
+                   'source',
+                   'site__name',
+                   'country']
     list_display_links = ['id', 'catalog_number']
     list_select_related = ['site', 'context', 'taxon']
     search_fields = ['catalog_number', 'other_catalog_numbers', 'place_name', 'country', 'locality',
                      'fossil_element__skeletal_element']
-    readonly_fields = ['element_count', 'id', 'default_image', 'element_description', 'taxon_link']
+    readonly_fields = ['element_count', 'id', 'default_image', 'element_description', 'taxon_link', 'type_status']
     save_as = True
 
     list_per_page = 200
@@ -272,7 +279,8 @@ class FossilAdmin(admin.ModelAdmin):
                        ('short_description',),
                        ('nickname', 'other_catalog_numbers'),
                        ('lifestage', 'sex'),
-                       ('is_type_specimen', 'type_status'),
+                       ('is_type_specimen',),
+                       ('type_status',),
                        ('origins', 'vif')],
         }),
 
