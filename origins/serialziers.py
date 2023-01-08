@@ -33,7 +33,7 @@ class NomenSerializer(serializers.ModelSerializer):
                   'authorship', 'authorship_year', 'authorship_reference', 'authorship_reference_id',
                   'scientific_name_id',
                   'taxon_rank', 'taxon_rank_group', 'nomenclatural_code', 'nomenclatural_status', 'status_remark',
-                  'type_specimen', 'paratypes', 'type_taxon', 'type_status',
+                  'type_specimen', 'type_specimen_status', 'paratypes', 'type_taxon',
                   'is_available',
                   'verified_date', 'date_last_modified'
                   ]
