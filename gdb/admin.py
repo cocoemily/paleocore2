@@ -90,14 +90,10 @@ locality_fieldsets = (('Record', {
     ('Verbatim Location', {
         'fields': [
                    ('quad_sheet',),
-                   ('region',),
-                   ('blm_district',),
                    ('county',),
-                   ('resource_area',),
                    ('gps_date',),
                    ('verbatim_gps_coordinates',),
                    ('verbatim_longitude', 'verbatim_latitude'),
-                   ('verbatim_utm',),
                    ('verbatim_elevation',),
                    ('georeference_remarks',)]
     }),
