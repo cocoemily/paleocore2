@@ -161,6 +161,7 @@ kennedy = 'Kennedy Knowlton'
 ashlynn = 'Ashlynn Arzola'
 nick = 'Nicholas Hartman'
 jorge = 'Jorge Ramirez Salinas'
+hayden = 'Hayden Post'
 
 VERIFIER_CHOICES = (
     (denne, 'DR'),
@@ -171,7 +172,8 @@ VERIFIER_CHOICES = (
     (nida, 'NV'),
     (ashlynn, 'AA'),
     (nick, 'NH'),
-    (jorge, 'JRS')
+    (jorge, 'JRS'),
+    (hayden, 'HP')
 )
 
 
