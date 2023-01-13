@@ -241,7 +241,7 @@ class FossilPublicationsInline(admin.TabularInline):
 class FossilAdmin(admin.ModelAdmin):
     list_display = ['id', 'catalog_number', 'is_type_specimen', 'site_link', 'context_link', 'taxon_link',
                     'country', 'context__best_age',
-                    'short_description', 'vif',
+                    'short_description', 'vif', 'assigned_to',
                     'default_image', 'problem'
                     # 'element_description',
                     ]
