@@ -100,6 +100,9 @@ class Fossil(projects.models.PaleoCoreGeomBaseClass):
     verbatim_Country = models.CharField(max_length=20, null=True, blank=True)
     verbatim_provenience = models.TextField(null=True, blank=True)
 
+    # Original data from Turkana Fossils Project - Marchal_Pratt
+    verbatim_turkana_fossil = models.TextField(null=True, blank=True)
+
     # References
     references = models.ManyToManyField(publications.models.Publication, blank=True)
 
