@@ -26,6 +26,12 @@ class Fossil(projects.models.PaleoCoreGeomBaseClass):
     uuid = models.UUIDField(default=uuid.uuid4)  # The universally unique identifier for a fossil speicmen
     # catalog_number provides the full catalog number as formatted in the first publication, including suffixes
     catalog_number = models.CharField(max_length=40, null=True, blank=True)
+    # The lettered suffix for multipart specimens
+    item_part = models.CharField(max_length=255, null=True, blank=True)
+    # suffix_added tracks whether a suffix was added by Paleo Core / Origins team
+    # A value of False indicates item_part/suffix was assigned by original team and appears in publication
+    # A value of True indicates the item_part/suffix was assigned by Paleo Core / Origins team
+    suffix_added = models.BooleanField(null=True)
     # other_catalog_number lists alternative typographic versions of the catalog number
     # e.g. OH 7 | O.H. 7 | OH-7 etc,
     other_catalog_numbers = models.CharField(max_length=255, null=True, blank=True)
@@ -64,8 +70,9 @@ class Fossil(projects.models.PaleoCoreGeomBaseClass):
     collected_by = models.CharField(max_length=255, null=True, blank=True)  # The person or agent that collected the
 
     # Location Fields
-    place_name = models.CharField(max_length=100, null=True, blank=True)
-    locality = models.CharField(max_length=40, null=True, blank=True)
+    place_name = models.CharField(max_length=255, null=True, blank=True)
+    locality = models.CharField(max_length=255, null=True, blank=True)
+    area = models.CharField(max_length=255, null=True, blank=True)
     site = models.ForeignKey('Site', on_delete=models.SET_NULL, null=True, blank=True)
     country = CountryField('Country', blank=True, null=True)
     continent = models.CharField(max_length=20, null=True, blank=True, choices=CONTINENT_CHOICES)
