@@ -299,7 +299,8 @@ class FossilAdmin(admin.ModelAdmin):
                        ('verbatim_SkeletalElementSide',
                         'verbatim_SkeletalElementPosition', 'verbatim_SkeletalElementComplete',
                         'verbatim_SkeletalElementClass'),
-                       ('verbatim_Locality', 'verbatim_Country')
+                       ('verbatim_Locality', 'verbatim_Country'),
+                       ('verbatim_turkana_fossil',),
                        ],
             'classes': ['collapse'],
         }),
