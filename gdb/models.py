@@ -147,6 +147,8 @@ class Locality(projects.models.PaleoCoreLocalityBaseClass):
                                choices=gdb.ontologies.NALMA_SUB_AGE_CHOICES)
     survey = models.CharField(null=True, blank=True, max_length=50)
     quad_sheet = models.CharField(null=True, blank=True, max_length=50)
+    map_24 = models.CharField(null=True, blank=True, max_length=100, choices = gdb.ontologies.MAP_VOCABULARY_24)
+    map_100 = models.CharField(null=True, blank=True, max_length=100, choices=gdb.ontologies.MAP_VOCABULARY_100)
     verbatim_latitude = models.CharField(null=True, blank=True, max_length=50)  # Latitude
     verbatim_longitude = models.CharField(null=True, blank=True, max_length=50)  # Longitude
     verbatim_utm = models.CharField(null=True, blank=True, max_length=50)  # UTM

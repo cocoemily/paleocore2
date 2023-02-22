@@ -1,5 +1,57 @@
 import projects.ontologies as ontologies
 
+# 1:100k map sheet vocabulary
+red_desert = "Red Desert"
+south_pass = "South Pass"
+MAP_VOCABULARY_100 = (
+    (red_desert, "Red Desert"),
+    (south_pass, "South Pass")
+)
+
+# 1:24k map sheet vocabulary
+antelope_flats = "Antelope Flats"
+bitter_creak = "Bitter Creek"
+bitter_creak_ne = "Bitter Creek NE"
+bitter_creak_nw = "Bitter Creek NW"
+black_rock_flat_w = "Black Rock Flat West"
+black_rock_n = "Black Rock North"
+desert_springs = "Desert Springs"
+freighter_gap = "Freighter Gap"
+jo_dugway = "JO Dugway"
+joe_hay_rim = "Joe Hay Rim"
+luman_rim = "Luman Rim"
+red_desert_nw = "Red Desert NW"
+red_desert_sw = "Red Desert SW"
+red_lake_sw = "Red Lake SW"
+sand_butte_nw = "Sand Butte NW"
+steamboat_mountain = "Steamboat Mountain"
+table_rock = "Table Rock"
+the_pinnacles = "The Pinnacles"
+tipton = "Tipton"
+twelve_mile_well = "Twelve Mile Well"
+MAP_VOCABULARY_24 = (
+    (antelope_flats, "Antelope Flats"),
+	(bitter_creak, "Bitter Creek"),
+	(bitter_creak_ne, "Bitter Creek NE"),
+	(bitter_creak_nw, "Bitter Creek NW"),
+	(black_rock_flat_w, "Black Rock Flat West"),
+	(black_rock_n, "Black Rock North"),
+	(desert_springs, "Desert Springs"),
+	(freighter_gap, "Freighter Gap"),
+	(jo_dugway, "JO Dugway"),
+	(joe_hay_rim, "Joe Hay Rim"),
+	(luman_rim, "Luman Rim"),
+	(red_desert_nw, "Red Desert NW"),
+	(red_desert_sw, "Red Desert SW"),
+	(red_lake_sw, "Red Lake SW"),
+	(sand_butte_nw, "Sand Butte NW"),
+	(steamboat_mountain, "Steamboat Mountain"),
+	(table_rock, "Table Rock"),
+	(the_pinnacles, "The Pinnacles"),
+	(tipton, "Tipton"),
+	(twelve_mile_well, "Twelve Mile Well")
+)
+
 # Basis of Record Vocabulary
 fossil = ontologies.fossil_specimen
 observation = ontologies.human_observation
