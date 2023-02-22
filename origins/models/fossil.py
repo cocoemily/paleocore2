@@ -1,7 +1,9 @@
 from django.contrib.gis.db import models
 from django.utils.html import format_html
 import uuid
-from origins.ontologies import CONTINENT_CHOICES, TYPE_CHOICES, VERIFIER_CHOICES
+from origins.ontologies import CONTINENT_CHOICES, TYPE_CHOICES, \
+    VERIFIER_CHOICES, ANATOMICAL_REGION_CHOICES, ANATOMICAL_PRESERVATION_CHOICES
+
 from django_countries.fields import CountryField
 import publications
 import projects.models
@@ -217,7 +219,12 @@ class FossilElement(models.Model):
     continent = models.CharField(max_length=20, null=True, blank=True)
 
     # Uberon fields
+    uberon_id = models.CharField(max_length=100, null=True, blank=True)
+    anatomical_region = models.CharField(max_length=100, null=True, blank=True, choices=ANATOMICAL_REGION_CHOICES)
     side = models.CharField(max_length=100, null=True, blank=True)
+    dental = models.BooleanField(null=True, blank=True)
+    completeness = models.CharField(max_length=100, null=True, blank=True, choices=ANATOMICAL_PRESERVATION_CHOICES)
+    preserved_part = models.CharField(max_length=255, null=True, blank=True)
 
     # foreign keys
     fossil = models.ForeignKey(Fossil, on_delete=models.CASCADE, null=True, blank=False, related_name='fossil_element')

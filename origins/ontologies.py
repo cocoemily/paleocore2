@@ -11,6 +11,27 @@
 # in what is written to database.
 
 
+# Anatomical Element Region Choices
+cranial = "cranial"
+appendicular = "appendicular"
+axial = "axial"
+ANATOMICAL_REGION_CHOICES =(
+    (cranial, "cranial"),
+    (appendicular, "appendicular"),
+    (axial, "axial")
+)
+
+
+# Anatomical Preservation Choices
+complete = "complete" # > 95%
+nearly_complete = "nearly complete" # > 75%
+fragment = "fragment"
+ANATOMICAL_PRESERVATION_CHOICES = (
+    (complete, "complete"),
+    (nearly_complete, "nearly complete"),
+    (fragment, "fragment")
+)
+
 # Continents of the World
 africa = 'Africa'
 antarctica = 'Antarctica'
