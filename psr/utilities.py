@@ -17,7 +17,8 @@ import psr.ontologies
 import shapefile
 from django.contrib.gis.geos import GEOSGeometry
 from decimal import Decimal
-from mdb_parser import MDBTable
+#from mdb_parser import MDBTable
+from access_parser import AccessParser
 import unicodecsv
 import json
 
@@ -950,6 +951,11 @@ def parse_mdb(file_path, site_name, locality_names=locality_names):
         else:
             print("Need to import Geological Context first!")
             return
+
+    #db = MDBParser(file_path)
+    # context = db.parse_table("Context")
+    # xyz = db.parse_table("xyz")
+    # units = db.parse_table("EDM_Units")
 
     context = MDBTable(file_path, "Context")
     xyz = MDBTable(file_path, "xyz")

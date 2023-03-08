@@ -175,6 +175,15 @@ class ImportAccessDatabase(generic.FormView):
 
     def import_excavated_instances(self):
         file = self.get_import_file()
+        # tempmdb, tempmdbname = tempfile.mkstemp()
+        # try:
+        #     for chunk in file.chunks():
+        #         os.write(tempmdb, chunk)
+        # except:
+        #     raise Exception("Problem with input file %s" % mdb.name)
+        # finally:
+        #     os.close(tempmdb)
+
         fsplit = file.name.split(".")
         name = fsplit[0].split("_")
 
@@ -187,6 +196,7 @@ class ImportAccessDatabase(generic.FormView):
                 lname = name[0].capitalize() + " " + name[1].capitalize()
 
         ExcavationOccurrence.objects.all().update(last_import=False)
+        #parse_mdb(tempmdbname, lname)
         parse_mdb(file.temporary_file_path(), lname)
         subtype_finds(survey = False)
         subtype_archaeology(survey = False)
