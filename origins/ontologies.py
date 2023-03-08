@@ -11,6 +11,27 @@
 # in what is written to database.
 
 
+# Anatomical Element Region Choices
+cranial = "cranial"
+appendicular = "appendicular"
+axial = "axial"
+ANATOMICAL_REGION_CHOICES =(
+    (cranial, "cranial"),
+    (appendicular, "appendicular"),
+    (axial, "axial")
+)
+
+
+# Anatomical Preservation Choices
+complete = "complete" # > 95%
+nearly_complete = "nearly complete" # > 75%
+fragment = "fragment"
+ANATOMICAL_PRESERVATION_CHOICES = (
+    (complete, "complete"),
+    (nearly_complete, "nearly complete"),
+    (fragment, "fragment")
+)
+
 # Continents of the World
 africa = 'Africa'
 antarctica = 'Antarctica'
@@ -158,6 +179,10 @@ jyhreh = 'Jyhreh Johnson'
 harper = 'Harper Jackson'
 nida = 'Nida Virabalin'
 kennedy = 'Kennedy Knowlton'
+ashlynn = 'Ashlynn Arzola'
+nick = 'Nicholas Hartman'
+jorge = 'Jorge Ramirez Salinas'
+hayden = 'Hayden Post'
 
 VERIFIER_CHOICES = (
     (denne, 'DR'),
@@ -165,7 +190,11 @@ VERIFIER_CHOICES = (
     (jyhreh, 'JJ'),
     (harper, 'HJ'),
     (kennedy, 'KK'),
-    (nida, 'NV')
+    (nida, 'NV'),
+    (ashlynn, 'AA'),
+    (nick, 'NH'),
+    (jorge, 'JRS'),
+    (hayden, 'HP')
 )
 
 

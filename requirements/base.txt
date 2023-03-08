@@ -31,5 +31,4 @@ Pyzotero==1.4.21
 pyshp==2.1.3
 mdb-parser==0.0.2
 six==1.16.0
-django-cookie-law==2.0.5
 djangorestframework==3.12.4

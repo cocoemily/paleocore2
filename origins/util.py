@@ -437,6 +437,11 @@ def clean_catno(catno):
 
 
 def import_turkana_fossils(file='origins/data/turkana_inventory.xlsx'):
+    """
+    Preliminary helper function to quickly read in basic turkana homiinin fossil data from spreadsheets
+    :param file:
+    :return:
+    """
     pd = pandas
     xleast = pd.read_excel(file, sheet_name='East')
     xleast.name = 'east'
@@ -450,7 +455,12 @@ def import_turkana_fossils(file='origins/data/turkana_inventory.xlsx'):
             TurkFossil.objects.create(verbatim_catalog_number=row[0], verbatim_suffix=row[1], region=sheet.name)
 
 
-def import_turk_fossils(file='origins/data/turkana_inventory_211207.xlsx'):
+def import_turk_fossils(file='origins/data/turkana_inventory.xlsx'):
+    """
+    Import hominin fossil data from an xl spreadsheet.
+    :param file:
+    :return:
+    """
     pd = pandas
     data = pd.read_excel(file)
     for index, row in data.iterrows():
@@ -517,6 +527,9 @@ def get_marchal(origins_fossil_obj):
     f = origins_fossil_obj
     catno = f.catalog_number.upper()
     matched = TurkFossil.objects.filter(catalog_number__startswith=catno)
+    if not matched:
+        catno = f.catalog_number
+        matched = TurkFossil.objects.filter(catalog_number__startswith=catno)
     return matched
 
 
@@ -660,3 +673,4 @@ def add_fossil():
     et = Site.objects.get(name='East Turkana')
     for f in turk2add:
         Fossil.objects.create(catalog_number=f.catalog_number, site=wt, country='KE', continent='Africa', origins=True)
+

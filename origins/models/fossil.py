@@ -1,6 +1,9 @@
 from django.contrib.gis.db import models
+from django.utils.html import format_html
 import uuid
-from origins.ontologies import CONTINENT_CHOICES, TYPE_CHOICES
+from origins.ontologies import CONTINENT_CHOICES, TYPE_CHOICES, \
+    VERIFIER_CHOICES, ANATOMICAL_REGION_CHOICES, ANATOMICAL_PRESERVATION_CHOICES
+
 from django_countries.fields import CountryField
 import publications
 import projects.models
@@ -8,35 +11,56 @@ from ckeditor.fields import RichTextField as CKRichTextField
 
 
 class Fossil(projects.models.PaleoCoreGeomBaseClass):
+    """
+    From projects.models.PaleoCoreBaseClass inherits:
+    attributes: name, date_created, date_last_modified, problem, problem_comment, remarks, last_import
+    methods: get_app_label, get_concrete_field_names, get_all_field_names, get_foreign_key_field_names, photo, thumbnail
+
+    From projects.models.PaleoCoreGeomBaseClass inherits:
+    attributes: georeference_remarks, geom, objects
+    methods: gcs_coordinates, utm_coordinates, point_x, point_y, longitude, latitude, easting, northing
+    """
     # Foreign keys
     context = models.ForeignKey(to='Context', on_delete=models.CASCADE, null=True, blank=True)
 
-    # Fossil(Find)
-    guid = models.URLField(null=True, blank=True)
-    uuid = models.UUIDField(default=uuid.uuid4)
+    # Fossil(Find) Fields
+    guid = models.URLField(null=True, blank=True)  # The globally unique identifier for a fossil specimen
+    uuid = models.UUIDField(default=uuid.uuid4)  # The universally unique identifier for a fossil speicmen
     # catalog_number provides the full catalog number as formatted in the first publication, including suffixes
     catalog_number = models.CharField(max_length=40, null=True, blank=True)
+    # The lettered suffix for multipart specimens
+    item_part = models.CharField(max_length=255, null=True, blank=True)
+    # suffix_added tracks whether a suffix was added by Paleo Core / Origins team
+    # A value of False indicates item_part/suffix was assigned by original team and appears in publication
+    # A value of True indicates the item_part/suffix was assigned by Paleo Core / Origins team
+    suffix_added = models.BooleanField(null=True)
     # other_catalog_number lists alternative typographic versions of the catalog number
     # e.g. OH 7 | O.H. 7 | OH-7 etc,
     other_catalog_numbers = models.CharField(max_length=255, null=True, blank=True)
+    # The full date of discovery, where known
     date_discovered = models.DateField(null=True, blank=True)
     # TODO change year_collected to year_discovered or just migrate to date_discovered
+    # The year the fossil was discovered or collected. Not distinction made.
     year_collected = models.IntegerField('Year', blank=True, null=True,
                                          help_text='The year, event or field campaign during which the item was found.')
+    # The identifier for the organism the fossil is a part of. Portions of a skeleton will have separate catalog numbers
+    # and share a common organism id. For example fossil A.L. 288-1a has organism_id A.L. 288-1
     organism_id = models.CharField(max_length=40, null=True, blank=True)
+    # The nickname or popular name of the fossils, e.g. 'Selam', 'Tumai', 'Twiggy'
     nickname = models.CharField(max_length=40, null=True, blank=True)
-    is_type_specimen = models.BooleanField('Type Specimen', default=False)
-    type_status = models.CharField(max_length=255, null=True, blank=True, choices=TYPE_CHOICES)
+    # Boolean field indicating if a fossil is a type specimen for any nomen.
+    # The related nomina and their type statuses are given by the type_status() method.
+    is_type_specimen = models.BooleanField('Type specimen', default=False)
     lifestage = models.CharField(max_length=20, null=True, blank=True)
     sex = models.CharField(max_length=10, null=True, blank=True)
     short_description = CKRichTextField(null=True, blank=True)
     description = CKRichTextField(null=True, blank=True)
 
-    # Taxon
+    # Taxon Fields
     taxon = models.ForeignKey('Taxon', null=True, blank=True, on_delete=models.SET_NULL)
     ttaxon = models.ForeignKey('TTaxon', null=True, blank=True, on_delete=models.SET_NULL)
 
-    # Project
+    # Project Fields
     project_name = models.CharField(max_length=100, null=True, blank=True)
     project_abbreviation = models.CharField(max_length=10, null=True, blank=True)
     collection_code = models.CharField(max_length=10, null=True, blank=True)
@@ -47,19 +71,19 @@ class Fossil(projects.models.PaleoCoreGeomBaseClass):
     # collected by refers to the person or agent that collected the fossil and is responsible for its sci. documtn.
     collected_by = models.CharField(max_length=255, null=True, blank=True)  # The person or agent that collected the
 
-    # Location
-    place_name = models.CharField(max_length=100, null=True, blank=True)
-    locality = models.CharField(max_length=40, null=True, blank=True)
+    # Location Fields
+    place_name = models.CharField(max_length=255, null=True, blank=True)
+    locality = models.CharField(max_length=255, null=True, blank=True)
+    area = models.CharField(max_length=255, null=True, blank=True)
     site = models.ForeignKey('Site', on_delete=models.SET_NULL, null=True, blank=True)
-    # country = models.CharField(max_length=10, null=True, blank=True)
     country = CountryField('Country', blank=True, null=True)
     continent = models.CharField(max_length=20, null=True, blank=True, choices=CONTINENT_CHOICES)
     geom = models.PointField(null=True, blank=True)
 
-    # Media
+    # Media Fields
     image = models.ImageField(max_length=255, blank=True, upload_to="uploads/images/origins", null=True)
 
-    # Record
+    # Record Fields
     source = models.CharField(max_length=100, null=True, blank=True)
     created_by = models.CharField(max_length=100, null=True, blank=True)
     created = models.DateTimeField('Modified', auto_now_add=True)
@@ -68,7 +92,7 @@ class Fossil(projects.models.PaleoCoreGeomBaseClass):
 
     # Search and Filter Fields
     origins = models.BooleanField(default=False)  # in scope for origins project
-    vif = models.BooleanField(default=False)  # in scope for origins project
+    vif = models.BooleanField(default=False)  # very important fossil
 
     # Original Fields from Human Origins Program DB
     verbatim_PlaceName = models.CharField(max_length=100, null=True, blank=True)
@@ -85,8 +109,16 @@ class Fossil(projects.models.PaleoCoreGeomBaseClass):
     verbatim_Country = models.CharField(max_length=20, null=True, blank=True)
     verbatim_provenience = models.TextField(null=True, blank=True)
 
+    # Original data from Turkana Fossils Project - Marchal_Pratt
+    verbatim_turkana_fossil = models.TextField(null=True, blank=True)
+
     # References
     references = models.ManyToManyField(publications.models.Publication, blank=True)
+
+    # Fields to manage data entry
+    assigned_to = models.CharField('Assigned', max_length=255, null=True, blank=True, choices=VERIFIER_CHOICES)
+    verified_by = models.CharField('Verified', max_length=255, null=True, blank=True, choices=VERIFIER_CHOICES)
+    verified_date = models.DateField(null=True, blank=True)  # used to control visibility on nomen detail page
 
     # Helper field for managing Turkana imports
     to_split = models.BooleanField(null=True)
@@ -135,6 +167,23 @@ class Fossil(projects.models.PaleoCoreGeomBaseClass):
             pass
         return result
 
+    def type_status(self, result_format='html'):
+        """
+        Get the type status (e.g. holotype, lectotype etc.) for every nomen that the fossil is a type of, or if not
+        a type specimen return None
+        :return:
+        """
+        result_string = ""
+        # get all species-group nomina associated with this fossil, i.e. for which the fossil is a type specimen
+        species_nomina_qs = self.nomen_set.filter(taxon_rank_group='species-group')
+        if species_nomina_qs:
+            if result_format == 'html':
+                result_string = '<br/> '.join([f'<i>{n.name}</i>: {n.type_specimen_status}' for n in species_nomina_qs])
+                result_string = format_html(result_string)
+            elif result_format == 'txt':
+                result_string = '; '.join(f'{n.name}: {n.type_specimen_status}' for n in species_nomina_qs)
+        return result_string
+
     default_image.short_description = 'Fossil Thumbnail'
     default_image.allow_tags = True
     default_image.mark_safe = True
@@ -170,7 +219,12 @@ class FossilElement(models.Model):
     continent = models.CharField(max_length=20, null=True, blank=True)
 
     # Uberon fields
+    uberon_id = models.CharField(max_length=100, null=True, blank=True)
+    anatomical_region = models.CharField(max_length=100, null=True, blank=True, choices=ANATOMICAL_REGION_CHOICES)
     side = models.CharField(max_length=100, null=True, blank=True)
+    dental = models.BooleanField(null=True, blank=True)
+    completeness = models.CharField(max_length=100, null=True, blank=True, choices=ANATOMICAL_PRESERVATION_CHOICES)
+    preserved_part = models.CharField(max_length=255, null=True, blank=True)
 
     # foreign keys
     fossil = models.ForeignKey(Fossil, on_delete=models.CASCADE, null=True, blank=False, related_name='fossil_element')

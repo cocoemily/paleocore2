@@ -22,6 +22,7 @@ from .wagtail import NomenDetailRelatedLink
 INQUIRENDA_HELP = 'Nomina needing further investigation regarding their status' \
                   ' are flagged as nomina inquirenda'
 
+
 # Taxonomy models inherited from projects.TaxonRank base project
 class TaxonRank(projects.models.TaxonRank):
     """
@@ -79,8 +80,6 @@ class Nomen(projects.models.PaleoCoreBaseClass):
     type_object_help = 'The type specimen fossil, select from choice list'
     paratypes_help = 'A comma delimited list of catalog number for paratype specimens as given in the source text'
 
-    # scientific_name = self.scientific_name()  self.scientific_name_html()
-    # name = models.Charfield ... inherited from parent class. The scientific name without authorship, e.g. Homo sapiens
     scientific_name_id = models.CharField(max_length=255, null=True, blank=True)
     generic_name = models.CharField(max_length=255, null=True, blank=True, help_text=generic_name_help)
     specific_epithet = models.CharField(max_length=255, null=True, blank=True, help_text=specific_epithet_help)
@@ -96,7 +95,7 @@ class Nomen(projects.models.PaleoCoreBaseClass):
     nomenclatural_status = models.CharField('Nom. Status', max_length=255, null=True, blank=True,
                                             choices=NOMENCLATURAL_STATUS_CHOICES)
     status_remark = models.CharField(max_length=255, null=True, blank=True,
-                                            choices=STATUS_REMARK_CHOICES)
+                                     choices=STATUS_REMARK_CHOICES)
     type_specimen_label = models.CharField(max_length=255, null=True, blank=True, help_text=type_help)
     type_specimen = models.ForeignKey('Fossil', null=True, blank=True, on_delete=models.SET_NULL,
                                       help_text=type_object_help)
@@ -128,7 +127,6 @@ class Nomen(projects.models.PaleoCoreBaseClass):
         citation_text = ""
         pub_obj = self.authorship_reference_obj  # publication object
         try:
-            authors = pub_obj.authors
             authors_last = ", ".join([a[-1]+', '+a[-2] for a in pub_obj.authors_list_split])
             year = pub_obj.year
             article_title = pub_obj.title
@@ -138,7 +136,7 @@ class Nomen(projects.models.PaleoCoreBaseClass):
             book_title = pub_obj.book_title
             publisher = pub_obj.publisher
 
-            # Curretnly using JHE format.
+            # Currently using JHE format.
             # For edited volumes the editors need to be added to the title.
             # There is no field in the publications model for editors
 
@@ -274,11 +272,11 @@ class Nomen(projects.models.PaleoCoreBaseClass):
 
     # Wagtail
     panels = [FieldPanel('title', classname="full title"),
-    FieldPanel('subtitle', classname="full title"),
-    FieldPanel('intro', classname="full"),
-    StreamFieldPanel('body'),
-    FieldPanel('template_string'),
-    InlinePanel('related_links', label="Related links"),]
+              FieldPanel('subtitle', classname="full title"),
+              FieldPanel('intro', classname="full"),
+              StreamFieldPanel('body'),
+              FieldPanel('template_string'),
+              InlinePanel('related_links', label="Related links"), ]
 
 
 class ActiveNomen(Nomen):
@@ -306,10 +304,10 @@ class TTaxon(MPTTModel, projects.models.Taxon):
     nomenclatural_code = models.CharField(max_length=255, null=True, blank=True, default='ICZN',
                                           choices=NOMENCLATURAL_CODE_CHOICES)
     bc_status = models.CharField('Nom. Status', max_length=255, null=True, blank=True,
-                                            choices=BC_STATUS_CHOICES)
+                                 choices=BC_STATUS_CHOICES)
     parent = TreeForeignKey('self', null=True, blank=True, on_delete=models.CASCADE, related_name='children')
     classification_status = models.CharField('Classif. Status', max_length=255, null=True, blank=True, default='ICZN',
-                                          choices=CLASSIFICATION_STATUS_CHOICES)
+                                             choices=CLASSIFICATION_STATUS_CHOICES)
     junior_to = TreeForeignKey('self', null=True, blank=True, on_delete=models.CASCADE, related_name='synonyms')
     rank = models.ForeignKey('TaxonRank', null=True, blank=True, on_delete=models.SET_NULL)
     name_reference = models.ForeignKey(publications.models.Publication, null=True, blank=True,
@@ -351,16 +349,11 @@ class TTaxon(MPTTModel, projects.models.Taxon):
         Generate pretty format html with full scientific name
         :return:
         """
-        scientific_name_html = ''
+
         name_string = "{otag}{name}{ctag} {auth}".format(otag='<i>' if self.rank.ordinal >= 60 else "",
                                                          name=self.name,
                                                          ctag='</i>' if self.rank.ordinal >= 60 else "",
                                                          auth=self.authorship if self.authorship else "")
-        if self.authorship:
-            scientific_name_html = '<i>' + self.name + '</i> ' + self.authorship
-        else:
-            scientific_name_html = '<i>' + self.name + '</i>'
-        # return format_html(scientific_name_html)
         return format_html(name_string)
 
     class Meta:

@@ -1,6 +1,5 @@
 {% load compress static wagtailuserbar wagtailsettings_tags navigation_tags settings_tags paleocore_utils %}
 {% get_settings %}
-{% load cookielaw_tags %}
 <!DOCTYPE html>
 <html lang="en">
   <head>
@@ -92,7 +91,6 @@
               </div>
             </div>
         </div>
-        <!-- <div id="cookiebanner"> {%comment %}{% cookielaw_banner %} {% endcomment %} </div> -->
         <div id="copyright">
             <div class="grid-x grid-padding-x align-center">
               <p>Copyright © 2020 Onami LLC. All rights reserved</p>
@@ -117,7 +115,6 @@
     {% compress js %}
       <script src="{% static 'node_modules/foundation-sites/dist/js/foundation.min.js' %}"></script>
       <script type="text/javascript" src="{% static 'js/app.js' %}"></script>
-      <script type="text/javascript" src="{% static 'cookielaw/js/cookielaw.js' %}"></script>
     {% endcompress %}
 
     {% block site_js %}
