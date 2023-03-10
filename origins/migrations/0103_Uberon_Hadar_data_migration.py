@@ -3,8 +3,10 @@
 from django.db import migrations
 import pandas as pd
 from origins.ontologies import axial, appendicular, complete, nearly_complete, fragment
+from django.conf import settings
+import os
 
-source_path = "/Users/dreed/Documents/pycharm/paleocore/origins/data/hadar_element_data.xlsx"
+source_path = os.path.join(settings.PROJECT_ROOT, 'origins','data','hadar_element_data.xlsx')
 def import_data(source=source_path):
     xls = pd.ExcelFile(source)
     df = xls.parse(xls.sheet_names[0])
