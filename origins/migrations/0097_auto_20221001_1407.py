@@ -21,5 +21,5 @@ class Migration(migrations.Migration):
     ]
 
     operations = [
-        migrations.RunPython(copy_type_status_data)
+        migrations.RunPython(copy_type_status_data, reverse_code=migrations.RunPython.noop)
     ]

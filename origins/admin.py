@@ -221,6 +221,10 @@ class FossilElementInline(admin.TabularInline):
               'skeletal_element_class']
     extra = 0
 
+class UberonElementInline(admin.TabularInline):
+    model = origins.models.FossilElement
+    fields = ['uberon_id', 'anatomical_region', 'side', 'dental', 'completeness', 'preserved_part']
+    extra = 0
 
 class PhotosInline(admin.StackedInline):
     model = origins.models.Photo
@@ -266,6 +270,7 @@ class FossilAdmin(admin.ModelAdmin):
         # ReferenceInline, # the number of references significantly slows page loads
         FossilPublicationsInline,
         FossilElementInline,
+        UberonElementInline,
         PhotosInline,
     ]
     filter_horizontal = ('references', )
