@@ -1,4 +1,4 @@
-Django==3.2.15
+Django==3.2.18
 wagtail==2.15.2
 celery==5.2.3
 django-compressor==2.4.1
@@ -6,8 +6,8 @@ django-environ==0.4.5
 django-foundation-formtags==0.1.0
 django-wagtail-feeds==0.1.0
 django-libsass==0.9
-django-redis==5.0.0
-libsass==0.21.0
+django-redis==5.2.0
+libsass==0.22.0
 psycopg2-binary==2.9.1
 Wand==0.6.6
 bleach==3.3.0
@@ -24,7 +24,7 @@ django-ckeditor==6.1.0
 django-map-widgets==0.3.2
 unicodecsv==0.14.1
 wagtailgeowidget==5.0.2
-lxml==4.6.3
+lxml==4.9.2
 pygeoif==0.7
 dateutils==0.6.7
 Pyzotero==1.4.21
