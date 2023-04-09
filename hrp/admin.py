@@ -315,6 +315,24 @@ class ArchaeologyAdmin(OccurrenceAdmin):
 class GeologyAdmin(OccurrenceAdmin):
     pass
 
+from import_export.fields import Field
+
+
+class TaxonomyResource(resources.ModelResource):
+    taxon_path = Field(attribute='full_name', column_name='taxon_path')
+    family_name = Field()
+
+    def dehydrate_family_name(self, taxon):
+        family = TaxonRank.objects.get(name='Family')
+
+
+    class Meta:
+        model = Taxon
+        fields = ['id', 'label', 'taxon_path']
+
+
+class TaxonAdmin(TaxonomyAdmin):
+    resource_class = TaxonomyResource
 
 ##########################
 # Register Admin Classes #
@@ -326,5 +344,5 @@ admin.site.register(Geology, GeologyAdmin)
 admin.site.register(Hydrology, HydrologyAdmin)
 admin.site.register(Locality, LocalityAdmin)
 admin.site.register(Occurrence, OccurrenceAdmin)
-admin.site.register(Taxon, TaxonomyAdmin)
+admin.site.register(Taxon, TaxonAdmin)
 admin.site.register(TaxonRank, TaxonRankAdmin)

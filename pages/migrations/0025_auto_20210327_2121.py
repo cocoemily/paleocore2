@@ -14,7 +14,7 @@ class Migration(migrations.Migration):
 
     dependencies = [
         ('taggit', '0003_taggeditem_add_unique_index'),
-        ('origins', '0023_auto_20210327_2104'),
+        #('origins', '0023_auto_20210327_2104'),
         ('wagtaildocs', '0010_document_file_hash'),
         ('wagtailcore', '0041_group_collection_permissions_verbose_name_plural'),
         ('wagtailimages', '0001_squashed_0021'),

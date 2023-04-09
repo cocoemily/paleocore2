@@ -1,18 +1,18 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <project version="4">
-  <component name="PublishConfigData" serverName="paleocore_prod">
+  <component name="PublishConfigData" serverName="paleocore.net">
     <serverData>
-      <paths name="dreed@pcnet_prod">
+      <paths name="paleocore-qa.tacc.utexas.edu">
         <serverdata>
           <mappings>
-            <mapping deploy="/srv/paleocore" local="$PROJECT_DIR$" web="/" />
+            <mapping deploy="/usr/local/sites/paleocore" local="$PROJECT_DIR$" web="/" />
           </mappings>
         </serverdata>
       </paths>
-      <paths name="paleocore_prod">
+      <paths name="paleocore.net">
         <serverdata>
           <mappings>
-            <mapping deploy="/usr/local/paleocore" local="$PROJECT_DIR$" web="/" />
+            <mapping deploy="/usr/local/sites/paleocore" local="$PROJECT_DIR$" web="/" />
           </mappings>
         </serverdata>
       </paths>

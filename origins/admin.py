@@ -245,7 +245,7 @@ class FossilPublicationsInline(admin.TabularInline):
 class FossilAdmin(admin.ModelAdmin):
     list_display = ['id', 'catalog_number', 'is_type_specimen', 'site_link', 'context_link', 'taxon_link',
                     'country', 'context__best_age',
-                    'short_description', 'vif', 'assigned_to',
+                    'short_description', 'vif', 'assigned_to', 'verified_by', 'verified_date',
                     'default_image', 'problem'
                     # 'element_description',
                     ]
@@ -255,6 +255,8 @@ class FossilAdmin(admin.ModelAdmin):
                    'is_type_specimen',
                    # 'type_status',
                    'assigned_to',
+                   'verified_by',
+                   'verified_date',
                    'source',
                    'site__name',
                    'country']

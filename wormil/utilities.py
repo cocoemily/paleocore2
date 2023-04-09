@@ -13,11 +13,11 @@ fossils_file_path = '/Users/dreed/Desktop/wormil_fossils_cleaned.xlsx'
 
 def write_row_to_verbatim(df, app_label, model, field_name):
     """
-
-    :param df:
-    :param app_label:
-    :param model:
-    :param field_name:
+    Read a panda datafram and write each row of data into the verbatim field of a new object.
+    :param df: The input pandas dataframe
+    :param app_label: The app
+    :param model: The app model
+    :param field_name: The field in which to write the verbatim data
     :return:
     """
     # Get the model class for the app

@@ -7,12 +7,17 @@
       <jdbc-driver>org.postgresql.Driver</jdbc-driver>
       <jdbc-url>jdbc:postgresql://localhost:5432/paleocore</jdbc-url>
     </data-source>
-    <data-source source="LOCAL" name="dreed@167.172.118.173" uuid="939ee7ba-4f0a-4df5-8a80-5808105ef94f">
+    <data-source source="LOCAL" name="django@paleocore.net" uuid="474614f8-e401-4670-adaf-0166efca4b25">
       <driver-ref>postgresql</driver-ref>
       <synchronize>true</synchronize>
-      <remarks>digital ocean production</remarks>
       <jdbc-driver>org.postgresql.Driver</jdbc-driver>
       <jdbc-url>jdbc:postgresql://localhost:5432/paleocore</jdbc-url>
+    </data-source>
+    <data-source source="LOCAL" name="django@staging.paleocore.net" uuid="e6857cf5-2cf3-418d-b216-a707f1dab939">
+      <driver-ref>postgresql</driver-ref>
+      <synchronize>true</synchronize>
+      <jdbc-driver>org.postgresql.Driver</jdbc-driver>
+      <jdbc-url>jdbc:postgresql://localhost:5432/staging_paleocore</jdbc-url>
     </data-source>
   </component>
 </project>
