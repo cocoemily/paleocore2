@@ -1,3 +1,5 @@
+import datetime
+
 import unicodecsv
 from origins.models import *
 from difflib import SequenceMatcher
@@ -6,10 +8,12 @@ from django.db.models import Q
 from django.core.exceptions import ObjectDoesNotExist
 from django.contrib.gis.geos import Point
 from django.utils.text import slugify
+from django.utils import timezone
 import pandas
 import re
 from wagtail.core.models import Page
 from origins.models.fossil import TurkFossil
+from collections import Counter
 # import shapefile
 
 # pbdb_file_path = "/Users/reedd/Documents/projects/ete/pbdb/pbdb_test_no_header.csv"
@@ -674,3 +678,87 @@ def add_fossil():
     for f in turk2add:
         Fossil.objects.create(catalog_number=f.catalog_number, site=wt, country='KE', continent='Africa', origins=True)
 
+
+def merge_turk_fossils(turkfossil):
+    """
+    A helper procedure to merge data from duplicate records then delete one of the duplicates.
+    TurkFossil is a subclass of Fossil. When the Marchal-Pratt Turkana hominid data were imported a new
+    TurkFossil was created and the Marchal-Pratt data were written to new fields in the TurkFossil model, while the
+    original Fossil fields were unpopulated. Most of the important TurkFossils duplicated existing Fossils. As a
+    result for each fossil there is a Fossil instance containing original Origins data and another Fossil instance
+    that is mostly empty but connected to a TurkFossil table with verbatim data from Marchal-Pratt.
+    This procedure combines the Marchal-Pratt data with the existing Origins data by redirecting the
+    Turkfossil.fossil_ptr_id to the original Origins Fossil then deletes the empty Fossil instance associated with the
+    TurkFossil import, effectively merging their data with the Origins data. The trick to accomplishing this is using
+    the update method to revise the table pointer.
+
+    The procedure, iterates through all the TurkFossil instances,
+    fetch the matching Fossil instances, there should be two, one for the Origins instance and another that is the
+    parent instance for the TurkFossil instance.
+    Merge data from the two records by copying data from the Origins Fossil instance to TurkFossil instance
+    then delete the original Origins Fossil instance to remove duplicate catalog numbers
+    :return:
+    """
+    # Find the matching Fossil objects, then exclude the one currently associated with the TurkFossil object.
+    alter_ego_qs = Fossil.objects.filter(catalog_number=turkfossil.catalog_number).exclude(id=turkfossil.id)
+    # Normally, there should be only a single result in the alter_ego_qs. If the record has already been
+    if alter_ego_qs:
+        # Get a handle on the associated Fossil object that we want the TurkFossil to point to.
+        alter_ego = alter_ego_qs[0]
+    else:
+        # If for some reason there is no matching fossil object then we just skip any changes.
+        alter_ego = None
+    if alter_ego:
+        # clearly designate the Fossil object we want to delete. This is the one currently linked to the TurkFossil object.
+        old_id = turkfossil.id
+        # designate the id for the Fossil object we want to connect the TurkFossil to.
+        new_id = alter_ego.id
+        # Update the pointer. Assign the fossil_ptr_id the value of new_id
+        # We first get the queryset with only the TurkFossil to be updated. We need the queryset as opposed to the
+        # object because in order to use the update method. Using the save method on the object cause a SQL INSERT,
+        # whereas using the update method on the queryset forces an SQL UPDATE, which preserves the existing data in
+        # the Fossil object.
+        update_qs = TurkFossil.objects.filter(id=old_id)
+        if update_qs.count() > 1:  # If the queryset as more than 1 result, bail!
+            pass
+        else:
+            # update
+            update_qs.update(fossil_ptr_id=new_id)
+            try:  # If we run procedure on a TurkFossil that is already fixed then old_id is already deleted.
+                Fossil.objects.get(id=old_id).delete() # delete the Fossil object originally assigned to the TurkFossil
+            except Fossil.DoesNotExist:
+                pass
+            updated_fossil = TurkFossil.objects.get(id=new_id) # fetch the updated Fossil object
+            updated_fossil.date_last_modified = timezone.now() # update date_last_modified
+            updated_fossil.save() # save
+
+
+def find_duplicate_turkana_catalog_numbers():
+    """
+    Get a list of turkana fossils (TurkFossil instances) with duplicate catalog_numbers
+     :return:list of catalog duplicate catalog numbers
+    """
+    duplicates = []
+    catalog_numbers = TurkFossil.objects.values_list('catalog_number', flat=True)
+    count = Counter(catalog_numbers)
+
+    for number, occurrences in count.items():
+        if occurrences > 1:
+            duplicates.append(number)
+
+    return duplicates
+
+def find_duplicate_fossil_catalog_numbers():
+    """
+    Get a list of fossils with duplicate catalog_numbers
+     :return:list of catalog duplicate catalog numbers
+    """
+    duplicates = []
+    catalog_numbers = Fossil.objects.values_list('catalog_number', flat=True)
+    count = Counter(catalog_numbers)
+
+    for number, occurrences in count.items():
+        if occurrences > 1:
+            duplicates.append(number)
+
+    return duplicates
