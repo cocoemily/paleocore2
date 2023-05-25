@@ -240,6 +240,7 @@ class FossilPublicationsInline(admin.TabularInline):
     extra = 1
     verbose_name = "Publication"
     verbose_name_plural = "Publications"
+    ordering = ["publication__year"]
 
 
 class FossilAdmin(admin.ModelAdmin):
@@ -279,12 +280,12 @@ class FossilAdmin(admin.ModelAdmin):
 
     fieldsets = [
         ('Fossil Details', {
-            'fields': [('id', 'catalog_number', 'organism_id'),
-                       ('naan', 'guid', ),
-                       ('source', ),
+            'fields': [('id',),
+                       ('catalog_number', 'organism_id'),
+                       ('guid', ),
+                       ('other_catalog_numbers', 'nickname'),
                        ('description',),
                        ('short_description',),
-                       ('nickname', 'other_catalog_numbers'),
                        ('lifestage', 'sex'),
                        ('is_type_specimen',),
                        ('type_status',),
@@ -298,24 +299,12 @@ class FossilAdmin(admin.ModelAdmin):
         ('Taxon', {
             'fields': [('ttaxon',)]
         }),
-        ('Verbatim', {
-            'fields': [('verbatim_PlaceName', 'verbatim_HomininElement'),
-                       ('verbatim_HomininElementNotes',),
-                       ('verbatim_SkeletalElement', 'verbatim_SkeletalElementSubUnit',
-                        'verbatim_SkeletalElementSubUnitDescriptor'),
-                       ('verbatim_SkeletalElementSide',
-                        'verbatim_SkeletalElementPosition', 'verbatim_SkeletalElementComplete',
-                        'verbatim_SkeletalElementClass'),
-                       ('verbatim_Locality', 'verbatim_Country'),
-                       ],
-            'classes': ['collapse'],
-        }),
         ('Location', {
             'fields': [
                 ('continent', ),
                 ('country', ),
                 ('site', 'locality'),
-                ('context')
+                ('context',)
             ]
         }),
         ('Remarks', {
@@ -328,6 +317,18 @@ class FossilAdmin(admin.ModelAdmin):
                 ('problem',),
                 ('problem_comment',),
             ],
+        }),
+        ('Verbatim', {
+            'fields': [('verbatim_PlaceName', 'verbatim_HomininElement'),
+                       ('verbatim_HomininElementNotes',),
+                       ('verbatim_SkeletalElement', 'verbatim_SkeletalElementSubUnit',
+                        'verbatim_SkeletalElementSubUnitDescriptor'),
+                       ('verbatim_SkeletalElementSide',
+                        'verbatim_SkeletalElementPosition', 'verbatim_SkeletalElementComplete',
+                        'verbatim_SkeletalElementClass'),
+                       ('verbatim_Locality', 'verbatim_Country'),
+                       ],
+            'classes': ['collapse'],
         }),
     ]
 
@@ -615,34 +616,47 @@ class ActiveNomenAdmin(NomenAdmin):
         return qs
 
 
-class TurkFossilAdmin(admin.ModelAdmin):
-    list_display = ['catalog_number', 'verbatim_suffix', 'region',
-                    'suffix_assigned', 'in_origins', 'verbatim_zone', 'verbatim_area', 'verbatim_locality',
-                    'verbatim_age_g1', 'verbatim_age_g2', 'origins_fossil']
-    list_filter = ['region', 'verbatim_zone', 'suffix_assigned', 'in_origins']
-    search_fields = ['verbatim_inventory_number', 'verbatim_suffix', 'catalog_number']
-    readonly_fields = ['origins_fossil']
+class TurkFossilAdmin(FossilAdmin):
+    def get_fieldsets(self, request, obj=None):
+        """
+        Dynamically revise verbatim section of admin form for Turkana Fossils.
+        :param request:
+        :param obj:
+        :return: updated list of field sets
+        """
+        # Define a new verbatim fieldset for Turkana Fossils
+        turkana_verbatim_fieldset = ['Verbatim', {
+            'fields': [('verbatim_inventory_number', 'verbatim_suffix'),
+                       ('verbatim_year_discovered', 'verbatim_year_mentioned', 'verbatim_year_published'),
+                       ('verbatim_country',),
+                       ('verbatim_zone', 'verbatim_area', 'verbatim_locality'),
+                       ('verbatim_formation', 'verbatim_member', 'verbatim_level'),
+                       ('verbatim_age_g1', 'verbatim_age_g2'),
+                       ('verbatim_anatomical_part',),
+                       ('verbatim_anatomical_description',),
+                       ('verbatim_taxonomy1', 'verbatim_taxonomy2'),
+                       ('verbatim_robusticity',),
+                       ('verbatim_finder',),
+                       ('verbatim_reference_first_mention',),
+                       ('verbatim_reference_description',),
+                       ('verbatim_reference_identification',),
+                       ('verbatim_reference_dating',),
+                       ('region',),
+                       ('suffix_assigned',),
+                       ('in_origins',),
+                       ('to_add',),
+                       ('to_divide',),
+                       ],
+            'classes': ['collapse'],
+        }],
+        fieldsets = super(TurkFossilAdmin, self).get_fieldsets(request, obj)
+        # Check that the final fieldset is called Verbatim and if so replace it.
+        if fieldsets[-1][0]=='Verbatim':
+            fieldsets = list(fieldsets[:-1])+list(turkana_verbatim_fieldset)
+        return fieldsets
+
     change_list_template = "admin/top_pagination_change_list.html"
     list_per_page = 100
-
-    def origins_fossil(self, obj):
-        """
-        Function to search fossil information in origins. Returns a link to the origins fossil list page.
-        :param obj:
-        :return:
-        """
-        if obj.catalog_number:
-            site_url = reverse('admin:origins_fossil_changelist')
-            if obj.collection_code and obj.specimen_number:
-                query_string = f"{obj.collection_code}+{obj.specimen_number}"
-            else:
-                if obj.catalog_number[-1].isalpha():
-                    query_string = f"{obj.catalog_number[:-2].replace(' ','+')}"
-                else:
-                    query_string = f"{obj.catalog_number.replace(' ','+')}"
-            return format_html(f'<a href={site_url}?q={query_string}>{site_url}?q={query_string}</a>')
-        else:
-            return None
 
 
 # Register your models here.
