@@ -157,7 +157,7 @@ class Locality(projects.models.PaleoCoreLocalityBaseClass):
     gps_date = models.DateField(null=True, blank=True, editable=True)
     resource_area = models.CharField(null=True, blank=True, max_length=50)
     notes = CKRichTextField(null=True, blank=True)
-    cm_locality_number = models.IntegerField(null=True, blank=True)  # CM Loc #
+    cm_locality_number = models.IntegerField(null=True, blank=True, unique=True)  # CM Loc #
     region = models.CharField(null=True, blank=True, max_length=50)
     blm_district = models.CharField(null=True, blank=True, max_length=50)
     county = models.CharField(null=True, blank=True, max_length=50)
