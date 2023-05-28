@@ -10,7 +10,7 @@ class Occurrence(projects.models.PaleoCoreOccurrenceBaseClass):
     Occurrence <- PaleoCoreOccurrenceBaseClass <- PaleoCoreGeomBaseClass <- PaleoCoreBaseClass
     """
     catalog_number = models.AutoField(primary_key=True)  # NOT NULL
-    cm_catalog_number = models.IntegerField(null=True, blank=True)  # CM SPec #
+    cm_catalog_number = models.IntegerField(null=True, blank=True, unique=True)  # CM SPec #
     locality = models.ForeignKey("Locality", to_field="locality_number", null=True, blank=True,
                                  on_delete=models.SET_NULL)
     date_time_collected = models.DateTimeField(null=True, blank=True)
