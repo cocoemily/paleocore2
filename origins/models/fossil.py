@@ -78,17 +78,17 @@ class Fossil(projects.models.PaleoCoreGeomBaseClass):
     site = models.ForeignKey('Site', on_delete=models.SET_NULL, null=True, blank=True)
     country = CountryField('Country', blank=True, null=True)
     continent = models.CharField(max_length=20, null=True, blank=True, choices=CONTINENT_CHOICES)
-    geom = models.PointField(null=True, blank=True)
+    # geom inherited from PC_Geom_Base class
 
     # Media Fields
     image = models.ImageField(max_length=255, blank=True, upload_to="uploads/images/origins", null=True)
 
     # Record Fields
     source = models.CharField(max_length=100, null=True, blank=True)
-    created_by = models.CharField(max_length=100, null=True, blank=True)
-    created = models.DateTimeField('Modified', auto_now_add=True)
-    modified = models.DateTimeField('Modified', auto_now=True,
-                                    help_text='The date and time this resource was last altered.')
+    #created_by = models.CharField(max_length=100, null=True, blank=True)
+    #created = models.DateTimeField('Modified', auto_now_add=True)
+    #modified = models.DateTimeField('Modified', auto_now=True,
+    #                               help_text='The date and time this resource was last altered.')
 
     # Search and Filter Fields
     origins = models.BooleanField(default=False)  # in scope for origins project
