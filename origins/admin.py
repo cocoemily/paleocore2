@@ -654,7 +654,11 @@ class TurkFossilAdmin(FossilAdmin):
         if fieldsets[-1][0]=='Verbatim':
             fieldsets = list(fieldsets[:-1])+list(turkana_verbatim_fieldset)
         return fieldsets
-
+    list_display = ['id', 'catalog_number', 'is_type_specimen', 'site_link', 'context_link', 'taxon_link',
+                    'country', 'context__best_age','verbatim_age_g1', 'verbatim_age_g2', 'region',
+                    'verbatim_zone', 'verbatim_area', 'verbatim_locality', 'vif',
+                    ]
+    list_filter = ['problem','region', 'verbatim_zone', 'suffix_assigned', 'in_origins']
     change_list_template = "admin/top_pagination_change_list.html"
     list_per_page = 100
 
