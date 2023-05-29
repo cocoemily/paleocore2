@@ -656,7 +656,7 @@ class TurkFossilAdmin(FossilAdmin):
         return fieldsets
     list_display = ['id', 'catalog_number', 'is_type_specimen', 'site_link', 'context_link', 'taxon_link',
                     'country', 'context__best_age','verbatim_age_g1', 'verbatim_age_g2', 'region',
-                    'verbatim_zone', 'verbatim_area', 'verbatim_locality', 'vif',
+                    'verbatim_zone', 'verbatim_area', 'verbatim_locality','default_image', 'vif', 'problem'
                     ]
     list_filter = ['problem','region', 'verbatim_zone', 'suffix_assigned', 'in_origins']
     change_list_template = "admin/top_pagination_change_list.html"
