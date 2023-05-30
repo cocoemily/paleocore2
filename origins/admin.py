@@ -658,7 +658,7 @@ class TurkFossilAdmin(FossilAdmin):
                     'country', 'context__best_age','verbatim_age_g1', 'verbatim_age_g2', 'region',
                     'verbatim_zone', 'verbatim_area', 'verbatim_locality','default_image', 'vif', 'problem'
                     ]
-    list_filter = ['problem','region', 'verbatim_zone', 'suffix_assigned', 'in_origins']
+    list_filter = ['problem','vif', 'is_type_specimen','region', 'verbatim_zone', 'suffix_assigned', 'in_origins']
     change_list_template = "admin/top_pagination_change_list.html"
     list_per_page = 100
 
