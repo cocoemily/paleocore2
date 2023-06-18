@@ -9,6 +9,7 @@ from rest_framework import routers
 router = routers.DefaultRouter()
 router.register(r'nomina', views.NomenViewSet)  # /paleocore.org/origins/api/nomina/
 router.register(r'taxonranks', views.TaxonRankViewSet)
+router.register(r'turkfossils', views.TurkFossilViewSet)  # /paleocore.org/origins/api/turkfossils/
 
 urlpatterns = [
     # url to get a geojson representation of all Origins sites

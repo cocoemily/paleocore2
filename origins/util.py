@@ -12,7 +12,7 @@ from django.utils import timezone
 import pandas
 import re
 from wagtail.core.models import Page
-from origins.models.fossil import TurkFossil
+from origins.models.fossil import TurkFossil, Fossil
 from collections import Counter
 # import shapefile
 
@@ -861,3 +861,25 @@ citekey_lookup = {
         'Alemseged et al., 2002': 'Alemseged2002',
         'Kramer, 1986': 'Kramer1986'
     }
+
+
+def get_turkana_deciduous():
+    """
+    Get a queryset of Turkana fossils that preserve deciduous teeth
+    :return:
+    """
+    deciduous_fossil_ids = [f.fossil.id for f in FossilElement.objects.filter(skeletal_element_class='deciduous')]
+    turkana_fossil_ids = [f.id for f in TurkFossil.objects.all()]
+    turkana_deciduous_ids = set(turkana_fossil_ids).intersection(deciduous_fossil_ids)
+    return TurkFossil.objects.filter(id__in=turkana_deciduous_ids)
+
+def get_turkana_no_fossil_element():
+    """
+    Get Turkana Fossils that lack fossil elements
+    :return:
+    """
+    fossil_object_list = []
+    for f in TurkFossil.objects.all():
+        if not f.fossil_element.all():
+            fossil_object_list.append(f)
+    return fossil_object_list

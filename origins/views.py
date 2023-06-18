@@ -1,7 +1,7 @@
 from django.shortcuts import render
 from django.views import generic
 from .forms import UpdateSitesForm, UpdateSitesModelForm
-from .models import Fossil, TTaxon, TaxonRank, Nomen
+from .models import Fossil, TTaxon, TaxonRank, Nomen, TurkFossil
 from django.contrib import messages
 from djgeojson.views import GeoJSONLayerView, GeoJSONResponseMixin
 from djgeojson.serializers import Serializer as GeoJSONSerializer
@@ -12,7 +12,7 @@ from pyzotero import zotero
 
 from rest_framework import viewsets
 from rest_framework import permissions
-from origins.serialziers import TaxonRankSerializer, NomenSerializer
+from origins.serialziers import TaxonRankSerializer, NomenSerializer, TurkFossilSerializer
 from publications.models import Publication
 
 
@@ -157,3 +157,11 @@ class TaxonRankViewSet(viewsets.ReadOnlyModelViewSet):
     serializer_class = TaxonRankSerializer
     #permission_classes = [permissions.IsAuthenticated]
 
+class TurkFossilViewSet(viewsets.ReadOnlyModelViewSet):
+    """
+    API endpoint that allows Turkana Fossils to be viewed
+    """
+    #queryset = Nomen.objects.exclude(taxon_rank_group='family-group')
+    queryset = TurkFossil.objects.all()
+    serializer_class = TurkFossilSerializer
+    permission_classes = [permissions.IsAuthenticated]
