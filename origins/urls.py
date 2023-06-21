@@ -10,6 +10,8 @@ router = routers.DefaultRouter()
 router.register(r'nomina', views.NomenViewSet)  # /paleocore.org/origins/api/nomina/
 router.register(r'taxonranks', views.TaxonRankViewSet)
 router.register(r'turkfossils', views.TurkFossilViewSet)  # /paleocore.org/origins/api/turkfossils/
+router.register(r'hadarfossils', views.HadarFossilViewSet)  #/paleocore.org/origins/api/hadarfossils/
+router.register(r'hadarfossilelements', views.HadarFossilElementViewSet)  #/paleocore.org/origins/api/hadarfossilelements/
 
 urlpatterns = [
     # url to get a geojson representation of all Origins sites
