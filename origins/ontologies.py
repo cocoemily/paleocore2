@@ -183,6 +183,7 @@ ashlynn = 'Ashlynn Arzola'
 nick = 'Nicholas Hartman'
 jorge = 'Jorge Ramirez Salinas'
 hayden = 'Hayden Post'
+mackenzie = 'Mackenzie Murray'
 
 VERIFIER_CHOICES = (
     (denne, 'DR'),
@@ -194,7 +195,8 @@ VERIFIER_CHOICES = (
     (ashlynn, 'AA'),
     (nick, 'NH'),
     (jorge, 'JRS'),
-    (hayden, 'HP')
+    (hayden, 'HP'),
+    (mackenzie, 'MM')
 )
 
 
