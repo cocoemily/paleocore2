@@ -1,14 +1,9 @@
-import os
-from django.db.models import Manager as GeoManager
 from django.contrib.gis.db import models
-
-from hrp.ontologies import *
-# from hrp.ontologies import ITEM_TYPE_VOCABULARY, HRP_COLLECTOR_CHOICES, \
-#     HRP_COLLECTING_METHOD_VOCABULARY, HRP_BASIS_OF_RECORD_VOCABULARY, HRP_COLLECTION_CODES
-
-from django.contrib.gis.geos import Point
+from django.db.models import Manager as GeoManager
 import projects.models
-
+from hrp.ontologies import *
+import os
+from django.utils.html import mark_safe
 
 class TaxonRank(projects.models.TaxonRank):
     class Meta:
@@ -376,6 +371,13 @@ class Image(models.Model):
     image = models.ImageField(upload_to="uploads/images", null=True, blank=True)
     description = models.TextField(null=True, blank=True)
 
+    def thumbnail(self):
+        try:
+            return mark_safe('<a href="%s"><img src="%s" style="width:100px" /></a>' \
+                   % (os.path.join(self.image.url), os.path.join(self.image.url)))
+        except:
+            return None
+    thumbnail.short_description = 'Thumb'
 
 class File(models.Model):
     occurrence = models.ForeignKey("Occurrence", on_delete=models.CASCADE)
