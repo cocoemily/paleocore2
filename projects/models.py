@@ -195,6 +195,7 @@ class Taxon(PaleoCoreBaseClass):
             self.label = self.parent.name + ' ' + self.name
         else:
             self.label = self.name
+        self.save()
 
     def parent_rank(self):
         return self.parent.rank.name

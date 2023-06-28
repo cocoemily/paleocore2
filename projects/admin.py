@@ -219,8 +219,8 @@ class PaleoCoreLocalityAdminGoogle(admin.ModelAdmin):
 
 class TaxonomyAdmin(ImportExportActionModelAdmin):
     list_display = ('label', 'rank', 'name', 'full_name', 'biology_usages')
-    readonly_fields = ['id', 'biology_usages']
-    fields = ['id', 'name', 'parent', 'label', 'rank']
+    readonly_fields = ['id', 'biology_usages', 'full_name']
+    fields = ['id', 'name', 'parent', 'label', 'rank', 'full_name']
     search_fields = ['name', 'label']
     list_filter = ['rank']
     list_select_related = ['rank', 'parent']
