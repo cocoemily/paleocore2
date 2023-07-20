@@ -43,6 +43,7 @@ class FilesInline(admin.TabularInline):
 
 lgrp_default_list_display = ('coll_code',
                              'barcode',
+                             'old_cat_number',
                              'basis_of_record',
                              'item_type',
                              'collecting_method',
@@ -175,6 +176,7 @@ biology_fieldsets = (
 
 lgrp_biology_list_display = ('coll_code',
                              'barcode',
+                             'old_cat_number',
                              'basis_of_record',
                              'item_type',
                              'collecting_method',
