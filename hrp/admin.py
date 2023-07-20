@@ -86,13 +86,12 @@ hrp_list_display = ('catalog_number',
                     'collecting_method',
                     'collector',
                     'year_collected',
-                    'in_situ',
                     'thumbnail')
 
 default_list_display = ('barcode', 'field_number', 'catalog_number', 'basis_of_record', 'item_type',
                         'collecting_method', 'collector', 'item_scientific_name', 'item_description',
                         'year_collected',
-                        'in_situ', 'problem', 'disposition', 'easting', 'northing')
+                        'problem', 'disposition', 'easting', 'northing')
 
 hrp_default_list_select_related = ['recorded_by', 'found_by', 'locality']
 hrp_occurrence_list_select_related = hrp_default_list_select_related + ['archaeology', 'biology', 'geology']
@@ -208,7 +207,6 @@ hrp_biology_list_display = ('catalog_number',
                              'taxon',
                              'element',
                              'year_collected',
-                             'in_situ',
                              'thumbnail')
 
 biology_inline_fieldsets = (

@@ -48,7 +48,6 @@ lgrp_default_list_display = ('coll_code',
                              'collecting_method',
                              'collector_person',
                              'year_collected',
-                             'in_situ',
                              'thumbnail')
 
 lgrp_default_list_select_related = ('coll_code',
@@ -101,7 +100,7 @@ lgrp_occurrence_fieldsets = (
         'fields': [('id', 'date_created', 'date_last_modified',),
                    ('basis_of_record',),
                    ('remarks',)]
-    }),  # lgrp_occurrence_fieldsets[0]
+    }),  # lgrp_occurrence_fieldsets[1]
     ('Find Details', {
         'fields': [('date_recorded', 'year_collected',),
                    ('barcode', 'catalog_number', 'old_cat_number', 'field_number',),
@@ -113,25 +112,25 @@ lgrp_occurrence_fieldsets = (
                    ('collection_remarks',),
                    ('verbatim_kml_data',),
                    ]
-    }),  # lgrp_occurrence_fieldsets[1]
+    }),  # lgrp_occurrence_fieldsets[2]
     ('Photos', {
         'fields': [('photo', 'image')],
         # 'classes': ['collapse'],
-    }),  # lgrp_occurrence_fieldsets[2]
+    }),  # lgrp_occurrence_fieldsets[3]
     ('Geological Context', {
         'fields': [('unit_found', 'unit_likely', 'unit_simplified'),
                    ('analytical_unit_1', 'analytical_unit_2', 'analytical_unit_3'),
                    ('stratigraphic_formation', 'stratigraphic_member',),
                    ('in_situ', 'ranked'),
                    ('geology_remarks',)]
-    }),  # lgrp_occurrence_fieldsets[3]
+    }),  # lgrp_occurrence_fieldsets[4]
     ('Location', {
         'fields': [('coll_code',),
                    ('georeference_remarks',),
                    ('longitude', 'latitude'),
                    ('easting', 'northing',),
                    ('geom',)]
-    }),  # lgrp_occurrence_fieldsets[4]
+    }),  # lgrp_occurrence_fieldsets[5]
     ('Problems', {
         'fields': [('problem', 'problem_comment'),
                    ],
@@ -183,7 +182,6 @@ lgrp_biology_list_display = ('coll_code',
                              'taxon',
                              'element',
                              'year_collected',
-                             'in_situ',
                              'thumbnail')
 
 
@@ -198,7 +196,7 @@ class OccurrenceAdmin(projects.admin.PaleoCoreOccurrenceAdmin):
     OccurrenceAdmin <- PaleoCoreOccurrenceAdmin <- BingGeoAdmin <- OSMGeoAdmin <- GeoModelAdmin
     """
     resource_class = OccurrenceResource
-    list_display = lgrp_default_list_display  # use list() to clone rather than modify in place
+    list_display = lgrp_default_list_display
     list_select_related = lgrp_default_list_select_related + ('archaeology', 'biology', 'geology')
     list_display_links = ['coll_code', 'barcode', 'basis_of_record']
     list_filter = lgrp_default_list_filter + ('analytical_unit_found', 'drainage_region')
