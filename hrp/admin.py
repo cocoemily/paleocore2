@@ -86,7 +86,8 @@ hrp_list_display = ('catalog_number',
                     'collecting_method',
                     'collector',
                     'year_collected',
-                    'thumbnail')
+                    #'thumbnail'
+                    )
 
 default_list_display = ('barcode', 'field_number', 'catalog_number', 'basis_of_record', 'item_type',
                         'collecting_method', 'collector', 'item_scientific_name', 'item_description',
@@ -109,7 +110,8 @@ hrp_search_fields = ('id',
                       'basis_of_record',
                       'item_type',
                       'barcode',
-                     'locality__name', 'locality__collection_code', 'locality__number',
+                      'locality__name', 'locality__collection_code',
+                     'locality__locality_number',
                       'item_scientific_name',
                       'item_description',
                       'analytical_unit_found',
@@ -119,9 +121,10 @@ hrp_search_fields = ('id',
                      'found_by__name',
                      'recorded_by__name',
                       'cat_number',
-                      'unit_found__name',
-                      'unit_likely__name',
-                      'unit_simplified__name')
+                      'analytical_unit_found',
+                      'analytical_unit_likely',
+                      'analytical_unit_simplified'
+                     )
 
 hrp_occurrence_fieldsets = (
     ('Record Details', {  # occurrence_details[0]
