@@ -1,7 +1,28 @@
 {% extends "base.html" %}
-{% load wagtailcore_tags navigation_tags %}
-{% load paleocore_utils %}
+{% load wagtailcore_tags navigation_tags wagtailimages_tags paleocore_utils %}
 
+{% block content %}
+<div id="content" class="grid-container">
+  <div class="grid-x grid-margin-x">
+    <div id="standard_page" class="cell large-9 medium-6">
+      <h4><strong>{{ self.title }}</strong></h4>
+      <h5 class="subheader">{{ self.subtitle }}</h5>
+      <hr>
+      {% include "pages/includes/intro.html" with intro=self.intro only %}
+      {% include "pages/includes/orbit_carousel.html" with image_items=self.image_items.all only %}
+      {% include "pages/includes/body.html" with body=self.body only %}
+    </div>
+    <div id="sidebar" class="hide-for-small-only medium-3 cells">
+      {% secondary_menu calling_page=self %}
+      {#{% news_feed %}#}
+      {#{% upcoming_events %}#}
+    </div>
+  </div>
+</div>
+{% endblock %}
+
+
+{% comment %}
 {% block content %}
 <div id="content" class="grid-x">
   <div class="medium-9 cells">
@@ -19,3 +40,4 @@
   </div>
 </div>
 {% endblock %}
+{% endcomment %}
