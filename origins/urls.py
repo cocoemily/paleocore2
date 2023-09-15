@@ -12,6 +12,7 @@ router.register(r'taxonranks', views.TaxonRankViewSet)
 router.register(r'turkfossils', views.TurkFossilViewSet)  # /paleocore.org/origins/api/turkfossils/
 router.register(r'hadarfossils', views.HadarFossilViewSet)  #/paleocore.org/origins/api/hadarfossils/
 router.register(r'hadarfossilelements', views.HadarFossilElementViewSet)  #/paleocore.org/origins/api/hadarfossilelements/
+router.register(r'skeletalelements', views.SkeletalElementViewSet) # /paleocore.org/origins/api/skeletalelements
 
 urlpatterns = [
     # url to get a geojson representation of all Origins sites

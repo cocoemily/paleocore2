@@ -267,3 +267,26 @@ class TurkFossil(Fossil):
     to_add = models.BooleanField(null=True)
     to_divide = models.BooleanField(null=True)
 
+
+class SkeletalElement(projects.models.PaleoCoreBaseClass):
+    """
+    From projects.models.PaleoCoreBaseClass inherits:
+    attributes: name, date_created, date_last_modified, problem, problem_comment, remarks, last_import
+    methods: get_app_label, get_concrete_field_names, get_all_field_names, get_foreign_key_field_names, photo, thumbnail
+    """
+    # name = anatomical name of each skeletal item
+    entire = "Entire"
+    dental = "Dental"
+    cranial = "Cranial"
+    axial = "Axial"
+    appendicular = "Appendicular"
+    REGION_CHOICES = (
+        (entire, entire),
+        (dental, dental),
+        (cranial, cranial),
+        (axial, axial),
+        (appendicular, appendicular),
+    )
+
+    uberon_id = models.CharField(max_length=100, null=True, blank=True)
+    anatomical_region =  models.CharField(max_length=100, null=True, blank=True, choices=REGION_CHOICES)

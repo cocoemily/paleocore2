@@ -1,7 +1,7 @@
 from django.shortcuts import render
 from django.views import generic
 from .forms import UpdateSitesForm, UpdateSitesModelForm
-from .models import Fossil, FossilElement, TTaxon, TaxonRank, Nomen, TurkFossil, Site
+from .models import Fossil, FossilElement, TTaxon, TaxonRank, Nomen, TurkFossil, Site, SkeletalElement
 from django.contrib import messages
 from djgeojson.views import GeoJSONLayerView, GeoJSONResponseMixin
 from djgeojson.serializers import Serializer as GeoJSONSerializer
@@ -12,7 +12,8 @@ from pyzotero import zotero
 
 from rest_framework import viewsets
 from rest_framework import permissions
-from origins.serialziers import TaxonRankSerializer, NomenSerializer, TurkFossilSerializer, FossilSerializer, FossilElementSerializer
+from origins.serialziers import TaxonRankSerializer, NomenSerializer, TurkFossilSerializer, \
+    FossilSerializer, FossilElementSerializer, SkeletalElementSerializer
 from publications.models import Publication
 
 
@@ -167,16 +168,6 @@ class TurkFossilViewSet(viewsets.ReadOnlyModelViewSet):
     permission_classes = [permissions.IsAuthenticated]
 
 
-class TurkFossilViewSet(viewsets.ReadOnlyModelViewSet):
-    """
-    API endpoint that allows Turkana Fossils to be viewed
-    """
-    #queryset = Nomen.objects.exclude(taxon_rank_group='family-group')
-    hadar_site = Site.objects.get(name='Hadar')
-    queryset = Fossil.objects.filter(site=hadar_site)
-    serializer_class = FossilSerializer
-    #permission_classes = [permissions.IsAuthenticated]
-
 class HadarFossilViewSet(viewsets.ReadOnlyModelViewSet):
     """
     API endpoint that allows Hadar Fossils to be viewed
@@ -195,3 +186,11 @@ class HadarFossilElementViewSet(viewsets.ReadOnlyModelViewSet):
     queryset = FossilElement.objects.filter(fossil__in=hadar_fossils)
     serializer_class = FossilElementSerializer
     #permission_classes = [permissions.IsAuthenticated]
+
+
+class SkeletalElementViewSet(viewsets.ReadOnlyModelViewSet):
+    """
+    API endpoint that allows SkeletalElements to be viewed
+    """
+    queryset = SkeletalElement.objects.all()
+    serializer_class = SkeletalElementSerializer

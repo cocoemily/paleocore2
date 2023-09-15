@@ -663,6 +663,12 @@ class TurkFossilAdmin(FossilAdmin):
     list_per_page = 100
 
 
+class SkeletalElementAdmin(admin.ModelAdmin):
+    list_display = ['id', 'name', 'uberon_id', 'anatomical_region']
+    list_filter = ['anatomical_region',]
+    search_fields = ['name', 'uberon_id', 'anatomical_region']
+    list_per_page = 300
+
 # Register your models here.
 admin.site.register(origins.models.Context, ContextAdmin)
 admin.site.register(origins.models.Reference, ReferenceAdmin)
@@ -673,3 +679,4 @@ admin.site.register(origins.models.TaxonRank)
 admin.site.register(origins.models.Nomen, NomenAdmin)
 admin.site.register(origins.models.ActiveNomen, ActiveNomenAdmin)
 admin.site.register(origins.models.TurkFossil, TurkFossilAdmin)
+admin.site.register(origins.models.SkeletalElement, SkeletalElementAdmin)
