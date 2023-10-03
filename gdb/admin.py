@@ -162,7 +162,7 @@ class BiologyAdmin(admin.ModelAdmin):
                     'locality', 'date_collected', 'year_collected', 'nalma', 'on_loan', 'problem']
     list_per_page = 1000
     list_filter = ['problem', 'on_loan', 'year_collected', 'taxon', 'locality', 'locality__NALMA']
-    search_fields = default_search_fields + biology_search_fields
+    search_fields = default_search_fields # + biology_search_fields
     actions = ['create_data_csv', 'generate_specimen_labels']
     list_select_related = ['locality', 'taxon', 'occurrence_ptr']
 
