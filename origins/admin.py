@@ -531,7 +531,8 @@ class NomenAdmin(admin.ModelAdmin):
     list_filter = ['nomenclatural_status', 'status_remark', 'taxon_rank_obj', 'assigned_to', 'verified_by',
                    'verified_date',
                    'is_available', 'is_potentially_valid', 'is_established',
-                   'is_objective_synonym', 'is_subjective_synonym', 'bc_status', 'problem', 'is_inquirenda']
+                   'is_objective_synonym', 'is_subjective_synonym', 'bc_status', 'problem', 'is_inquirenda',
+                   'is_chibanian']
     inlines = [NomenPublicationsInline]
     search_fields = ['name', 'authorship', 'year', 'remarks', 'usage_remarks', 'problem_comment']
     fieldsets = [
@@ -572,6 +573,7 @@ class NomenAdmin(admin.ModelAdmin):
                 ('is_objective_synonym',),
                 ('is_subjective_synonym',),
                 ('is_inquirenda',),
+                ('is_chibanian',),
                 ('status_remark',),
             ]
         }),

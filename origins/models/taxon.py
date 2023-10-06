@@ -111,6 +111,7 @@ class Nomen(projects.models.PaleoCoreBaseClass):
     is_subjective_synonym = models.BooleanField('Subjective Synonym', default=False)
     is_established = models.BooleanField('Established', default=False)
     is_inquirenda = models.BooleanField('Inquirenda', default=False, help_text=INQUIRENDA_HELP)
+    is_chibanian = models.BooleanField('Chibanian', default=False)
 
     usage_remarks = CKRichTextField("Usage Remarks", null=True, blank=True,
                                     help_text='Remarks about frequency of usage of the name in the literature.')
