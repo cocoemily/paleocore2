@@ -87,7 +87,7 @@ class BiologyResource(resources.ModelResource):
 class BiologyAdmin(ImportExportModelAdmin):
     list_display = ['barcode', 'collection', 'morphotype', 'element_id',  'loan', 'disposition', 'default_image']
     list_filter = ['collection_code', 'loan', 'verbatim_morphotype_id']
-    search_fields = ['barcode', 'item_number',  'catalog_number']
+    search_fields = ['barcode', 'item_number']
     readonly_fields = ['default_image']
     fieldsets = [
         ('Record Details', {
