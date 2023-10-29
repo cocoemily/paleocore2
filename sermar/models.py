@@ -130,7 +130,6 @@ class Occurrence(PaleoCoreOccurrenceBaseClass):
     collection_code = models.CharField("Collection Code", max_length=20, blank=True, null=True) # populated with numerical collection codes
     item_number = models.IntegerField("Item #", null=True, blank=True) # unique specimen number by collection
     item_part = models.CharField("Item Part", max_length=10, null=True, blank=True) # empty, delete field
-    catalog_number = models.CharField("Catalog #", max_length=255, blank=True, null=True) # empty, delete field
     item_scientific_name = models.CharField("Sci Name", max_length=255, null=True, blank=True) # Scientific names
     item_description = models.CharField("Description", max_length=255, blank=True, null=True) # Anatomical description
     collecting_method = models.CharField("Collecting Method", max_length=50, # surface standard
@@ -145,7 +144,6 @@ class Occurrence(PaleoCoreOccurrenceBaseClass):
     individual_count = models.IntegerField(blank=True, null=True, default=1) # number of individual represented by specimen
     preparation_status = models.CharField(max_length=50, blank=True, null=True) #
     in_situ = models.BooleanField(default=False)
-    ranked = models.BooleanField(default=False) # False for all, delete
     image = models.FileField(max_length=255, blank=True, upload_to="uploads/images/drp", null=True)
     weathering = models.SmallIntegerField(blank=True, null=True)
     surface_modification = models.CharField(max_length=255, blank=True, null=True)
