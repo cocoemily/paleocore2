@@ -253,7 +253,7 @@ class Biology(Occurrence):
         verbose_name_plural = "Biology Occurrences"
 
     def __str__(self):
-        return str(self.catalog_number)
+        return str(self.barcode)
 
     def default_image(self):
         """
