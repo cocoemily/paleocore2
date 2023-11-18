@@ -5,7 +5,7 @@ from origins.models import *
 from difflib import SequenceMatcher
 from lxml import etree
 from django.db.models import Q
-from django.core.exceptions import ObjectDoesNotExist
+from django.core.exceptions import ObjectDoesNotExist, FieldError
 from django.contrib.gis.geos import Point
 from django.utils.text import slugify
 from django.utils import timezone
@@ -676,7 +676,7 @@ def add_fossil():
     turk2add = []
     et = Site.objects.get(name='East Turkana')
     for f in turk2add:
-        Fossil.objects.create(catalog_number=f.catalog_number, site=wt, country='KE', continent='Africa', origins=True)
+        Fossil.objects.create(catalog_number=f.catalog_number, site=et, country='KE', continent='Africa', origins=True)
 
 
 def merge_turk_fossils(turkfossil):
@@ -934,3 +934,32 @@ def validate_catalog_number_formatting():
         print("\nFormat Errors\n---------------------")
         for f in re_errors_list:
             print("Format error in catalog number {}".format(f))
+
+def summarize_turkfossil_field(field_name, report=True):
+    """
+    Get the unique values for a field in the Fossil table
+    :return:
+    """
+    res_list = []
+    try:
+        dl = TurkFossil.objects.distinct(field_name)
+        for f in dl:
+            n = getattr(f, field_name)
+            kwargs = {
+                '{0}__{1}'.format(field_name, 'exact'): n
+            }
+            c = TurkFossil.objects.filter(**kwargs).count()
+            if field_name == 'tspecies':
+                g = getattr(f, 'tgenus')
+                if g:
+                    n = g + ' ' + n
+            t = (n, c)
+            res_list.append(t)
+        if report:
+            for i in res_list:
+                print("{} {}".format(*i))  # use * to unpack tuple
+    except FieldError:  # because field_name is a method not an attribute
+        res_list = list(set([getattr(f, field_name)() for f in TurkFossil.objects.all()]))
+        res_list = sorted(res_list)
+
+    return res_list

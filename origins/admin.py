@@ -500,17 +500,26 @@ class TTaxonPublicationsInline(admin.TabularInline):
 
 
 class TTaxonAdmin(MPTTModelAdmin, TaxonomyAdmin):
-    readonly_fields = ['id', 'biology_usages', 'fossil_usages', 'scientific_name', '_synonyms']
-    list_display = ['name', 'scientific_name', 'rank', 'classification_status', 'bc_status',
+    readonly_fields = ['id', 'scientific_name', '_synonyms',
+                       'nomenclatural_status', 'nomenclatural_code', 'taxon_epithet',
+                       'biology_usages', 'fossil_usages', 'year', 'nomen_link' ]
+    list_display = ['name','nomen_link', 'scientific_name', 'rank', 'classification_status', 'nomenclatural_status',
                     'fossil_usages', '_synonyms']
-    fields = ['id', 'zoobank_id', 'epithet', 'name', 'verbatim_name', 'abbreviation', 'authorship', 'year',
-              'name_reference',
-              'type_specimen', 'type_status', 'parent', 'classification_status', 'junior_to', 'rank',
-              'nomenclatural_code', 'bc_status', 'remarks']
+    fields = ['id', 'name','nomen', 'abbreviation', 'rank', 'parent', 'classification_status', 'junior_to',
+              'nomenclatural_status', 'nomenclatural_code',
+              'biology_usages','fossil_usages',
+              'scientific_name', '_synonyms', 'year',
+              'remarks',]
     inlines = [TTaxonPublicationsInline]
-    list_filter = ['bc_status', 'classification_status', 'rank']
+    list_filter = ['classification_status', 'rank']
     save_as = True
 
+    def nomen_link(self, obj):
+        if obj.nomen:
+            nomen_url = reverse('admin:origins_nomen_change', args=(obj.nomen.id,))
+            return format_html('<a href={}>{}</a>'.format(nomen_url, obj.nomen))
+        else:
+            return None
 
 class NomenPublicationsInline(admin.TabularInline):
     model = origins.models.Nomen.references.through
