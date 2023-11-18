@@ -898,12 +898,14 @@ def validate_catalog_number_formatting():
     knm_re = re.compile(r'KNM-[A-Z]{2} [0-9]{1,5}(-[a-zA-Z]{1,2})*$')
     omo_re = re.compile(r'OMO [0-9]{2,3}-[0-9]{4}-[0-9]{1,5}(-[a-zA-Z]{1,2})*$')
     omo2_re = re.compile(r'[A-Z] [0-9]{1,3}-[0-9]{1,4}(-[a-zA-Z]{1,2})*$')
+    fj_re = re.compile(r'FJ[1-9]-[SBHd]{2}[0-9](-[a-zA-Z]{1,2})*$')
     # Matches KNM-ER 1470, KNM-WT 15000, KNM-WT 15000-A
     # but not KNM-WTT 1470, KNM-WT 15000-
 
     # list of catalog_number column in db. The values_list function is built into django
     catalog_list = list(TurkFossil.objects.values_list('catalog_number', flat=True))
     # Test catalog numbers against re
+
     re_errors_list = []
     for item in catalog_list:
         if knm_re.match(item):
@@ -913,6 +915,9 @@ def validate_catalog_number_formatting():
             pass
             # print(f'{item}...check')
         elif omo2_re.match(item):
+            pass
+            # print(f'{item}...check')
+        elif fj_re.match(item):
             pass
             # print(f'{item}...check')
         else:
