@@ -883,3 +883,49 @@ def get_turkana_no_fossil_element():
         if not f.fossil_element.all():
             fossil_object_list.append(f)
     return fossil_object_list
+
+def validate_catalog_number_formatting():
+    """
+    Validate the formatting of all catalog numbers.
+    KNM-CC-Number-A Where CC is the collection code, e.g. ER, WT, KP and Number is the numeric specimen number
+    OMO NN/N-YEAR-Number
+    B N-Number-A
+    FJN-
+    :return:
+    """
+    print("Validating catalog_number")
+    # regular expression to test proper format of catalog numbers
+    knm_re = re.compile(r'KNM-[A-Z]{2} [0-9]{1,5}(-[a-zA-Z]{1,2})*$')
+    omo_re = re.compile(r'OMO [0-9]{2,3}-[0-9]{4}-[0-9]{1,5}(-[a-zA-Z]{1,2})*$')
+    omo2_re = re.compile(r'[A-Z] [0-9]{1,3}-[0-9]{1,4}(-[a-zA-Z]{1,2})*$')
+    # Matches KNM-ER 1470, KNM-WT 15000, KNM-WT 15000-A
+    # but not KNM-WTT 1470, KNM-WT 15000-
+
+    # list of catalog_number column in db. The values_list function is built into django
+    catalog_list = list(TurkFossil.objects.values_list('catalog_number', flat=True))
+    # Test catalog numbers against re
+    re_errors_list = []
+    for item in catalog_list:
+        if knm_re.match(item):
+            pass
+            # print(f'{item}...check')
+        elif omo_re.match(item):
+            pass
+            # print(f'{item}...check')
+        elif omo2_re.match(item):
+            pass
+            # print(f'{item}...check')
+        else:
+            re_errors_list.append(item)
+            # print(f'{item}...ERROR')
+
+    #re_errors_list = [item for item in catalog_list if knm_re.match(item)]
+
+    duplicate_list = [item for item, count in Counter(catalog_list).items() if count > 1]
+
+    # Pretty print format errors
+
+    if re_errors_list:
+        print("\nFormat Errors\n---------------------")
+        for f in re_errors_list:
+            print("Format error in catalog number {}".format(f))
