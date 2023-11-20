@@ -957,7 +957,7 @@ def summarize_turkfossil_field(field_name, report=True):
             res_list.append(t)
         if report:
             for i in res_list:
-                print("{} {}".format(*i))  # use * to unpack tuple
+                print("{}\t{}".format(*i))  # use * to unpack tuple
     except FieldError:  # because field_name is a method not an attribute
         res_list = list(set([getattr(f, field_name)() for f in TurkFossil.objects.all()]))
         res_list = sorted(res_list)
