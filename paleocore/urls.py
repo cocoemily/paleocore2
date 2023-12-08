@@ -32,9 +32,6 @@ urlpatterns = [
     path('search/', search_views.search, name='search'),
     path('documents/', include(wagtaildocs_urls)),
 
-    # Paleo Core Projects
-    path('projects/', include(('projects.urls', 'projects'), namespace='projects')),
-
     # Feeds
     url('^sitemap.xml$', sitemap),
     url(r'^blog/feed/basic$', BasicFeed(), name='basic_feed'),
@@ -59,7 +56,7 @@ if 'publications' in settings.INSTALLED_APPS:
     ]
 
 # DRY installation for remaining apps
-additional_apps = ['origins', 'sermar', 'paleosites', 'utcasts']
+additional_apps = ['projects', 'origins', 'sermar', 'paleosites', 'utcasts']
 
 
 def add_installed_apps_urls(app_list, urlpatterns):
