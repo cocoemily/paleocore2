@@ -85,7 +85,7 @@ class DownloadKMLView(generic.FormView):
 
 
 class ImportKMZ(generic.FormView):
-    template_name = 'admin/lgrp/occurrence/import_kmz.html'
+    template_name = 'admin/projects/import_kmz.html'
     form_class = UploadKMLForm
     context_object_name = 'upload'
     success_url = '../?last_import__exact=1'

@@ -5,7 +5,7 @@ from django.http import HttpResponse, HttpResponseRedirect, StreamingHttpRespons
 from django.urls import reverse, path
 
 from .models import *
-import lgrp.views
+import lgrp.views as views
 import csv
 import projects.admin
 from import_export import resources
@@ -207,6 +207,7 @@ class OccurrenceAdmin(projects.admin.PaleoCoreOccurrenceAdmin):
     search_fields = lgrp_search_fields
     inlines = (ImagesInline, FilesInline)
     # change_list_template = 'admin/lgrp/occurrence/change_list.html'
+    change_list_template = 'admin/projects/projects_change_list.html'
     list_per_page = 500
     # actions = ['change_xy', 'export']
 
@@ -218,14 +219,13 @@ class OccurrenceAdmin(projects.admin.PaleoCoreOccurrenceAdmin):
 
     # Add to the admin urls
     def get_urls(self):
-        return [path(r'import_kmz/',
-                     permission_required('lgrp.add_occurrence', login_url='login/')(lgrp.views.ImportKMZ.as_view()),
-                     name="import_kmz"),
-                path(r'change_xy/',
-                     permission_required('lgrp.change_occurrence', login_url='login/')(
-                         lgrp.views.ChangeCoordinates.as_view()),
-                     name="change_xy"),
-                ] + super(OccurrenceAdmin, self).get_urls()
+        tool_item_urls = [
+            path(r'import_kmz/', views.ImportKMZ.as_view()),
+            # path(r'^summary/$',permission_required('mlp.change_occurrence',
+            #                         login_url='login/')(self.views.Summary.as_view()),
+            #     name="summary"),
+        ]
+        return tool_item_urls + super(OccurrenceAdmin, self).get_urls()
 
 
 class ArchaeologyAdmin(OccurrenceAdmin):

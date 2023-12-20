@@ -7,8 +7,7 @@ from django.urls import reverse, path
 
 from .models import *
 import projects.admin
-# TODO Why does the line below raise an error!
-import mlp.views  # This line raises exception!
+import mlp.views
 import unicodecsv
 
 
