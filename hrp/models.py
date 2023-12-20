@@ -127,6 +127,43 @@ class Occurrence(projects.models.PaleoCoreOccurrenceBaseClass):
     # Media
     image = models.FileField(max_length=255, blank=True, upload_to="uploads/images/hrp", null=True)
 
+    def locality_geom(self):
+        """
+        Get the spatial geometry object for the fossil from its locality.
+        :return: geom object or None
+        In the HRP design pattern, occurrences such as fossils do not have individual coordinates. The best spatial
+        location is based on the location of the locality from which the fossil was collected. This method provides
+        an easy way to access the location from the locality. It is useful for providing the spatial data to the
+        occurrence, and biology, API interfaces.
+        """
+        geom = None
+        if self.locality:
+            geom = self.locality.geom
+        return geom
+
+    def latitude(self):
+        """
+        Get the geographic coordinates for the fossil from its locality.
+        :return:
+        """
+        gcs = None
+        if self.locality:
+            if self.locality.geom:
+                gcs = self.locality.latitude()
+        return gcs
+
+    def longitude(self):
+        """
+        Get the geographic coordinates for the fossil from its locality.
+        :return:
+        """
+        gcs = None
+        if self.locality:
+            if self.locality.geom:
+                gcs = self.locality.longitude()
+        return gcs
+
+
     class Meta:
         verbose_name = "HRP Occurrence"
         verbose_name_plural = "HRP Occurrences"
