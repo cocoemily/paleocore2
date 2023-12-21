@@ -168,7 +168,7 @@ hrp_occurrence_fieldsets = (
                    ('easting', 'northing',),
                    ('geom',)]
     }),
-    ('Problems', {  # lgrp_occurrence_fieldsets[5]
+    ('Problems', {  # occurrence_fieldsets[5]
         'fields': [('problem', 'problem_comment'),
                    ],
         'classes': ['collapse']

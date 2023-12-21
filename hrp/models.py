@@ -149,29 +149,6 @@ class Occurrence(projects.models.PaleoCoreOccurrenceBaseClass):
             geom = self.locality.geom
         return geom
 
-    def latitude(self):
-        """
-        Get the geographic coordinates for the fossil from its locality.
-        :return:
-        """
-        gcs = None
-        if self.locality:
-            if self.locality.geom:
-                gcs = self.locality.latitude()
-        return gcs
-
-    def longitude(self):
-        """
-        Get the geographic coordinates for the fossil from its locality.
-        :return:
-        """
-        gcs = None
-        if self.locality:
-            if self.locality.geom:
-                gcs = self.locality.longitude()
-        return gcs
-
-
     class Meta:
         verbose_name = "HRP Occurrence"
         verbose_name_plural = "HRP Occurrences"
