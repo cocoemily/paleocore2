@@ -62,18 +62,22 @@ class Person(projects.models.Person):
         ordering = ["last_name", "first_name"]
 
     def __str__(self):
-        if self.last_name and self.first_name:
+        if self.name:
+            name = self.name
+        elif self.last_name and self.first_name:
             name = self.last_name+', '+self.first_name
-        else:
+        elif self.last_name:
             name = self.last_name
-        return name
+        else:
+            name = ""
+        return name.replace("None", "")
 
 
 # Occurrence Class and Subclasses
 class Occurrence(projects.models.PaleoCoreOccurrenceBaseClass):
     """
         Occurrence == Specimen, a general class for things discovered in the field.
-        Find's have three subtypes: Archaeology, Biology, Geology
+        Specimens have three subtypes: Archaeology, Biology, Geology
         Fields are grouped by comments into logical sets (i.e. ontological classes)
         """
     basis_of_record = models.CharField("Basis of Record", max_length=50, blank=True, null=False,
@@ -355,8 +359,13 @@ class Biology(Occurrence):
     preparations = models.CharField(null=True, blank=True, max_length=50)
     morphobank_number = models.IntegerField(null=True, blank=True)  # empty, ok to delete
 
+    # def __str__(self):
+    #     return str(self.id)
+    #     return str(self.taxon.__str__())
     def __str__(self):
-        return str(self.taxon.__str__())
+        nice_name = str(self.catalog_number()) + ' ' + '[' + str(self.item_scientific_name) + ' ' \
+                    + str(self.item_description) + "]"
+        return nice_name.replace("None", "").replace("--", "")
 
     class Meta:
         verbose_name = "HRP Biology"
@@ -415,6 +424,7 @@ class Image(models.Model):
         except:
             return None
     thumbnail.short_description = 'Thumb'
+
 
 class File(models.Model):
     occurrence = models.ForeignKey("Occurrence", on_delete=models.CASCADE)
