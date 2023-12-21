@@ -131,6 +131,10 @@ class Occurrence(projects.models.PaleoCoreOccurrenceBaseClass):
     # Media
     image = models.FileField(max_length=255, blank=True, upload_to="uploads/images/hrp", null=True)
 
+    # Verbatim
+    verbatim_kml_data = models.TextField(null=True, blank=True)
+    related_catalog_items = models.CharField("Related Catalog Items", max_length=50, null=True, blank=True)
+
     def locality_geom(self):
         """
         Get the spatial geometry object for the fossil from its locality.

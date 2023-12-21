@@ -146,7 +146,7 @@ hrp_occurrence_fieldsets = (
                    ('disposition', 'preparation_status'),
                    ('item_description', 'item_scientific_name'),
                    ('collection_remarks',),
-
+                   ('verbatim_kml_data',),
                    ]
     }),
     ('Photos', {  # occurrence_fieldsets[2]
