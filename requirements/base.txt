@@ -33,3 +33,4 @@ mdb-parser==0.0.2
 six==1.16.0
 djangorestframework==3.12.4
 pandas==1.4
+dateutils==0.6.12
