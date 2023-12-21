@@ -5,7 +5,7 @@ from django.http import HttpResponse, HttpResponseRedirect, StreamingHttpRespons
 from django.urls import reverse, path
 
 from .models import *
-import lgrp.views as views
+from .views import ImportKMZ
 import csv
 import projects.admin
 from import_export import resources
@@ -220,7 +220,7 @@ class OccurrenceAdmin(projects.admin.PaleoCoreOccurrenceAdmin):
     # Add to the admin urls
     def get_urls(self):
         tool_item_urls = [
-            path(r'import_kmz/', views.ImportKMZ.as_view()),
+            path(r'import_kmz/', ImportKMZ.as_view()),
             # path(r'^summary/$',permission_required('mlp.change_occurrence',
             #                         login_url='login/')(self.views.Summary.as_view()),
             #     name="summary"),
