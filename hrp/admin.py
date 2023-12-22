@@ -98,7 +98,7 @@ default_list_display = ('barcode', 'field_number', 'catalog_number', 'basis_of_r
                         'year_collected',
                         'problem', 'disposition', 'easting', 'northing')
 
-hrp_default_list_select_related = ['collector_person', 'found_by', 'locality']
+hrp_default_list_select_related = ['collector_person', 'finder_person', 'locality']
 hrp_occurrence_list_select_related = hrp_default_list_select_related + ['archaeology', 'biology', 'geology']
 hrp_biology_list_select_related = hrp_default_list_select_related + ['taxon']
 
@@ -122,7 +122,7 @@ hrp_search_fields = ('id',
                      'analytical_unit_likely',
                      'finder_person',
                      'collector',
-                     'found_by__name',
+                     'finder_person__name',
                      'collector_person__name',
                      'cat_number',
                      'analytical_unit_found',
@@ -140,8 +140,8 @@ hrp_occurrence_fieldsets = (
         'fields': [('date_recorded', 'year_collected',),
                    ('barcode', 'catalog_number', 'cat_number', 'field_number'),
                    ('item_type', 'item_count'),
-                   # ('collector', 'finder_person', 'collecting_method'), # deprecated fixed choices for people
-                   ('collector_person', 'found_by', 'collecting_method'), # use lookup table choice for people
+                   # ('collector', 'finder', 'collecting_method'), # deprecated fixed choices for people
+                   ('collector_person', 'finder_person', 'collecting_method'), # use lookup table choice for people
                    ("locality", "item_number", "item_part"),
                    ('disposition', 'preparation_status'),
                    ('item_description', 'item_scientific_name'),
