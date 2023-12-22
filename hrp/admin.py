@@ -98,13 +98,13 @@ default_list_display = ('barcode', 'field_number', 'catalog_number', 'basis_of_r
                         'year_collected',
                         'problem', 'disposition', 'easting', 'northing')
 
-hrp_default_list_select_related = ['recorded_by', 'found_by', 'locality']
+hrp_default_list_select_related = ['collector_person', 'found_by', 'locality']
 hrp_occurrence_list_select_related = hrp_default_list_select_related + ['archaeology', 'biology', 'geology']
 hrp_biology_list_select_related = hrp_default_list_select_related + ['taxon']
 
 hrp_list_filter = ['basis_of_record', 'item_type', 'collecting_method', 'collector',
                    'analytical_unit_found', 'drainage_region',
-                   'finder', 'year_collected', 'field_number', 'problem', 'disposition',
+                   'finder_person', 'year_collected', 'field_number', 'problem', 'disposition',
                    'date_created', 'date_last_modified']
 
 hrp_readonly_fields = ['id', 'catalog_number', 'date_created', 'date_last_modified',
@@ -120,10 +120,10 @@ hrp_search_fields = ('id',
                      'item_description',
                      'analytical_unit_found',
                      'analytical_unit_likely',
-                     'finder',
+                     'finder_person',
                      'collector',
                      'found_by__name',
-                     'recorded_by__name',
+                     'collector_person__name',
                      'cat_number',
                      'analytical_unit_found',
                      'analytical_unit_likely',
@@ -140,8 +140,8 @@ hrp_occurrence_fieldsets = (
         'fields': [('date_recorded', 'year_collected',),
                    ('barcode', 'catalog_number', 'cat_number', 'field_number'),
                    ('item_type', 'item_count'),
-                   # ('collector', 'finder', 'collecting_method'), # deprecated fixed choices for people
-                   ('recorded_by', 'found_by', 'collecting_method'), # use lookup table choice for people
+                   # ('collector', 'finder_person', 'collecting_method'), # deprecated fixed choices for people
+                   ('collector_person', 'found_by', 'collecting_method'), # use lookup table choice for people
                    ("locality", "item_number", "item_part"),
                    ('disposition', 'preparation_status'),
                    ('item_description', 'item_scientific_name'),

@@ -91,11 +91,15 @@ class Occurrence(projects.models.PaleoCoreOccurrenceBaseClass):
     # TODO merge with element
     item_description = models.CharField("Description", max_length=255, blank=True, null=True)
     item_count = models.IntegerField("Item Count", blank=True, null=True, default=1)
+    # collector records a string value with the name of the person collecting and recording the specimen.
     collector = models.CharField("Collector", max_length=50, blank=True, null=True, choices=HRP_COLLECTOR_CHOICES)
-    recorded_by = models.ForeignKey("Person", null=True, blank=True, related_name="occurrence_recorded_by",
+    # collector_person links to a Person instance. The KMZ import script uses the collector string to match to a Person.
+    collector_person = models.ForeignKey("Person", null=True, blank=True, related_name="occurrence_recorded_by",
                                     on_delete=models.SET_NULL)
+    # finder records a string value with the name of the person who found or first discovered the specimen.
     finder = models.CharField("Finder", null=True, blank=True, max_length=50, choices=HRP_COLLECTOR_CHOICES)
-    found_by = models.ForeignKey("Person", null=True, blank=True, related_name="occurrence_found_by",
+    # finder_person links to a Person instance. The KMZ import script uses the finder string to match to a Person.
+    finder_person = models.ForeignKey("Person", null=True, blank=True, related_name="occurrence_found_by",
                                  on_delete=models.SET_NULL)
     collecting_method = models.CharField("Collecting Method", max_length=50,
                                          choices=HRP_COLLECTING_METHOD_VOCABULARY,
