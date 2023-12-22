@@ -291,7 +291,10 @@ class Biology(Occurrence):
     lm_3_width = models.DecimalField(max_digits=38, decimal_places=8, null=True, blank=True)
 
     def __str__(self):
-        return str(self.id)
+        # return str(self.id)
+        nice_name = str(self.barcode) + ' ' + '[' + str(self.taxon) + ' ' \
+                    + str(self.element) + "]"
+        return nice_name.replace("None", "").replace("--", "")
 
     class Meta:
         verbose_name = "03-LGRP Biology"

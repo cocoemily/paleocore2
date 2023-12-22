@@ -158,8 +158,10 @@ hrp_occurrence_fieldsets = (
             ('analytical_unit_1', 'analytical_unit_2', 'analytical_unit_3'),
             ('analytical_unit_found', 'analytical_unit_likely', 'analytical_unit_simplified'),
             ('in_situ', 'ranked'),
-            ('stratigraphic_member',),
-            ('drainage_region',)]
+            ('stratigraphic_formation', 'stratigraphic_member',),
+            ('drainage_region',),
+            ('geology_remarks',),
+        ]
     }),
     ('Location Details', {  # occurrence_fieldsets[4]
         'fields': [('collection_code',),
