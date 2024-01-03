@@ -1,5 +1,5 @@
-Django==3.2.18
-wagtail==2.15.2
+Django==3.2.23
+wagtail==2.16.1
 celery==5.2.3
 django-compressor==2.4.1
 django-environ==0.4.5
