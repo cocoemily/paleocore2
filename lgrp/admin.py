@@ -5,7 +5,7 @@ from django.http import HttpResponse, HttpResponseRedirect, StreamingHttpRespons
 from django.urls import reverse, path
 
 from .models import *
-import lgrp.views
+from .views import ImportKMZ
 import csv
 import projects.admin
 from import_export import resources
@@ -43,12 +43,12 @@ class FilesInline(admin.TabularInline):
 
 lgrp_default_list_display = ('coll_code',
                              'barcode',
+                             'old_cat_number',
                              'basis_of_record',
                              'item_type',
                              'collecting_method',
                              'collector_person',
                              'year_collected',
-                             'in_situ',
                              'thumbnail')
 
 lgrp_default_list_select_related = ('coll_code',
@@ -101,7 +101,7 @@ lgrp_occurrence_fieldsets = (
         'fields': [('id', 'date_created', 'date_last_modified',),
                    ('basis_of_record',),
                    ('remarks',)]
-    }),  # lgrp_occurrence_fieldsets[0]
+    }),  # lgrp_occurrence_fieldsets[1]
     ('Find Details', {
         'fields': [('date_recorded', 'year_collected',),
                    ('barcode', 'catalog_number', 'old_cat_number', 'field_number',),
@@ -113,25 +113,25 @@ lgrp_occurrence_fieldsets = (
                    ('collection_remarks',),
                    ('verbatim_kml_data',),
                    ]
-    }),  # lgrp_occurrence_fieldsets[1]
+    }),  # lgrp_occurrence_fieldsets[2]
     ('Photos', {
         'fields': [('photo', 'image')],
         # 'classes': ['collapse'],
-    }),  # lgrp_occurrence_fieldsets[2]
+    }),  # lgrp_occurrence_fieldsets[3]
     ('Geological Context', {
         'fields': [('unit_found', 'unit_likely', 'unit_simplified'),
                    ('analytical_unit_1', 'analytical_unit_2', 'analytical_unit_3'),
                    ('stratigraphic_formation', 'stratigraphic_member',),
                    ('in_situ', 'ranked'),
                    ('geology_remarks',)]
-    }),  # lgrp_occurrence_fieldsets[3]
+    }),  # lgrp_occurrence_fieldsets[4]
     ('Location', {
         'fields': [('coll_code',),
                    ('georeference_remarks',),
                    ('longitude', 'latitude'),
                    ('easting', 'northing',),
                    ('geom',)]
-    }),  # lgrp_occurrence_fieldsets[4]
+    }),  # lgrp_occurrence_fieldsets[5]
     ('Problems', {
         'fields': [('problem', 'problem_comment'),
                    ],
@@ -176,6 +176,7 @@ biology_fieldsets = (
 
 lgrp_biology_list_display = ('coll_code',
                              'barcode',
+                             'old_cat_number',
                              'basis_of_record',
                              'item_type',
                              'collecting_method',
@@ -183,7 +184,6 @@ lgrp_biology_list_display = ('coll_code',
                              'taxon',
                              'element',
                              'year_collected',
-                             'in_situ',
                              'thumbnail')
 
 
@@ -198,7 +198,7 @@ class OccurrenceAdmin(projects.admin.PaleoCoreOccurrenceAdmin):
     OccurrenceAdmin <- PaleoCoreOccurrenceAdmin <- BingGeoAdmin <- OSMGeoAdmin <- GeoModelAdmin
     """
     resource_class = OccurrenceResource
-    list_display = lgrp_default_list_display  # use list() to clone rather than modify in place
+    list_display = lgrp_default_list_display
     list_select_related = lgrp_default_list_select_related + ('archaeology', 'biology', 'geology')
     list_display_links = ['coll_code', 'barcode', 'basis_of_record']
     list_filter = lgrp_default_list_filter + ('analytical_unit_found', 'drainage_region')
@@ -207,6 +207,7 @@ class OccurrenceAdmin(projects.admin.PaleoCoreOccurrenceAdmin):
     search_fields = lgrp_search_fields
     inlines = (ImagesInline, FilesInline)
     # change_list_template = 'admin/lgrp/occurrence/change_list.html'
+    change_list_template = 'admin/projects/projects_change_list.html'
     list_per_page = 500
     # actions = ['change_xy', 'export']
 
@@ -218,14 +219,13 @@ class OccurrenceAdmin(projects.admin.PaleoCoreOccurrenceAdmin):
 
     # Add to the admin urls
     def get_urls(self):
-        return [path(r'import_kmz/',
-                     permission_required('lgrp.add_occurrence', login_url='login/')(lgrp.views.ImportKMZ.as_view()),
-                     name="import_kmz"),
-                path(r'change_xy/',
-                     permission_required('lgrp.change_occurrence', login_url='login/')(
-                         lgrp.views.ChangeCoordinates.as_view()),
-                     name="change_xy"),
-                ] + super(OccurrenceAdmin, self).get_urls()
+        tool_item_urls = [
+            path(r'import_kmz/', ImportKMZ.as_view()),
+            # path(r'^summary/$',permission_required('mlp.change_occurrence',
+            #                         login_url='login/')(self.views.Summary.as_view()),
+            #     name="summary"),
+        ]
+        return tool_item_urls + super(OccurrenceAdmin, self).get_urls()
 
 
 class ArchaeologyAdmin(OccurrenceAdmin):

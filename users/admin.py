@@ -41,4 +41,4 @@ class MyUserAdmin(AuthUserAdmin):
                     'country_of_nationality')}),
     ) + AuthUserAdmin.fieldsets
     list_display = ('username', 'name', 'is_superuser')
-    search_fields = ['name']
+    search_fields = ['name', 'username']

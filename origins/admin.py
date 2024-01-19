@@ -240,12 +240,13 @@ class FossilPublicationsInline(admin.TabularInline):
     extra = 1
     verbose_name = "Publication"
     verbose_name_plural = "Publications"
+    ordering = ["publication__year"]
 
 
 class FossilAdmin(admin.ModelAdmin):
     list_display = ['id', 'catalog_number', 'is_type_specimen', 'site_link', 'context_link', 'taxon_link',
                     'country', 'context__best_age',
-                    'short_description', 'vif', 'assigned_to',
+                    'short_description', 'vif', 'assigned_to', 'verified_by', 'verified_date',
                     'default_image', 'problem'
                     # 'element_description',
                     ]
@@ -255,6 +256,8 @@ class FossilAdmin(admin.ModelAdmin):
                    'is_type_specimen',
                    # 'type_status',
                    'assigned_to',
+                   'verified_by',
+                   'verified_date',
                    'source',
                    'site__name',
                    'country']
@@ -277,12 +280,12 @@ class FossilAdmin(admin.ModelAdmin):
 
     fieldsets = [
         ('Fossil Details', {
-            'fields': [('id', 'catalog_number', 'organism_id'),
-                       ('naan', 'guid', ),
-                       ('source', ),
+            'fields': [('id',),
+                       ('catalog_number', 'organism_id'),
+                       ('guid', ),
+                       ('other_catalog_numbers', 'nickname'),
                        ('description',),
                        ('short_description',),
-                       ('nickname', 'other_catalog_numbers'),
                        ('lifestage', 'sex'),
                        ('is_type_specimen',),
                        ('type_status',),
@@ -296,25 +299,12 @@ class FossilAdmin(admin.ModelAdmin):
         ('Taxon', {
             'fields': [('ttaxon',)]
         }),
-        ('Verbatim', {
-            'fields': [('verbatim_PlaceName', 'verbatim_HomininElement'),
-                       ('verbatim_HomininElementNotes',),
-                       ('verbatim_SkeletalElement', 'verbatim_SkeletalElementSubUnit',
-                        'verbatim_SkeletalElementSubUnitDescriptor'),
-                       ('verbatim_SkeletalElementSide',
-                        'verbatim_SkeletalElementPosition', 'verbatim_SkeletalElementComplete',
-                        'verbatim_SkeletalElementClass'),
-                       ('verbatim_Locality', 'verbatim_Country'),
-                       ('verbatim_turkana_fossil',),
-                       ],
-            'classes': ['collapse'],
-        }),
         ('Location', {
             'fields': [
                 ('continent', ),
                 ('country', ),
                 ('site', 'locality'),
-                ('context')
+                ('context',)
             ]
         }),
         ('Remarks', {
@@ -327,6 +317,18 @@ class FossilAdmin(admin.ModelAdmin):
                 ('problem',),
                 ('problem_comment',),
             ],
+        }),
+        ('Verbatim', {
+            'fields': [('verbatim_PlaceName', 'verbatim_HomininElement'),
+                       ('verbatim_HomininElementNotes',),
+                       ('verbatim_SkeletalElement', 'verbatim_SkeletalElementSubUnit',
+                        'verbatim_SkeletalElementSubUnitDescriptor'),
+                       ('verbatim_SkeletalElementSide',
+                        'verbatim_SkeletalElementPosition', 'verbatim_SkeletalElementComplete',
+                        'verbatim_SkeletalElementClass'),
+                       ('verbatim_Locality', 'verbatim_Country'),
+                       ],
+            'classes': ['collapse'],
         }),
     ]
 
@@ -498,17 +500,26 @@ class TTaxonPublicationsInline(admin.TabularInline):
 
 
 class TTaxonAdmin(MPTTModelAdmin, TaxonomyAdmin):
-    readonly_fields = ['id', 'biology_usages', 'fossil_usages', 'scientific_name', '_synonyms']
-    list_display = ['name', 'scientific_name', 'rank', 'classification_status', 'bc_status',
+    readonly_fields = ['id', 'scientific_name', '_synonyms',
+                       'nomenclatural_status', 'nomenclatural_code', 'taxon_epithet',
+                       'biology_usages', 'fossil_usages', 'year', 'nomen_link' ]
+    list_display = ['name','nomen_link', 'scientific_name', 'rank', 'classification_status', 'nomenclatural_status',
                     'fossil_usages', '_synonyms']
-    fields = ['id', 'zoobank_id', 'epithet', 'name', 'verbatim_name', 'abbreviation', 'authorship', 'year',
-              'name_reference',
-              'type_specimen', 'type_status', 'parent', 'classification_status', 'junior_to', 'rank',
-              'nomenclatural_code', 'bc_status', 'remarks']
+    fields = ['id', 'name','nomen', 'abbreviation', 'rank', 'parent', 'classification_status', 'junior_to',
+              'nomenclatural_status', 'nomenclatural_code',
+              'biology_usages','fossil_usages',
+              'scientific_name', '_synonyms', 'year',
+              'remarks',]
     inlines = [TTaxonPublicationsInline]
-    list_filter = ['bc_status', 'classification_status', 'rank']
+    list_filter = ['classification_status', 'rank']
     save_as = True
 
+    def nomen_link(self, obj):
+        if obj.nomen:
+            nomen_url = reverse('admin:origins_nomen_change', args=(obj.nomen.id,))
+            return format_html('<a href={}>{}</a>'.format(nomen_url, obj.nomen))
+        else:
+            return None
 
 class NomenPublicationsInline(admin.TabularInline):
     model = origins.models.Nomen.references.through
@@ -523,13 +534,14 @@ class NomenAdmin(admin.ModelAdmin):
     list_display = ['name', 'authorship', 'year', 'authorship_reference_obj', 'type_specimen',
                     'taxon_rank_obj', 'is_objective_synonym', 'is_subjective_synonym', 'is_available', 'is_established',
                     'is_potentially_valid', 'nomenclatural_status', 'status_remark',
-                    'bc_status', 'problem',
+                    'problem', 'is_inquirenda',
                     'assigned_to', 'verified_by', 'verified_date']
-    list_editable = ['status_remark']
+    list_editable = ['status_remark', 'is_inquirenda']
     list_filter = ['nomenclatural_status', 'status_remark', 'taxon_rank_obj', 'assigned_to', 'verified_by',
                    'verified_date',
                    'is_available', 'is_potentially_valid', 'is_established',
-                   'is_objective_synonym', 'is_subjective_synonym', 'bc_status', 'problem']
+                   'is_objective_synonym', 'is_subjective_synonym', 'bc_status', 'problem', 'is_inquirenda',
+                   'is_chibanian']
     inlines = [NomenPublicationsInline]
     search_fields = ['name', 'authorship', 'year', 'remarks', 'usage_remarks', 'problem_comment']
     fieldsets = [
@@ -570,6 +582,7 @@ class NomenAdmin(admin.ModelAdmin):
                 ('is_objective_synonym',),
                 ('is_subjective_synonym',),
                 ('is_inquirenda',),
+                ('is_chibanian',),
                 ('status_remark',),
             ]
         }),
@@ -614,35 +627,58 @@ class ActiveNomenAdmin(NomenAdmin):
         return qs
 
 
-class TurkFossilAdmin(admin.ModelAdmin):
-    list_display = ['catalog_number', 'verbatim_suffix', 'region',
-                    'suffix_assigned', 'in_origins', 'verbatim_zone', 'verbatim_area', 'verbatim_locality',
-                    'verbatim_age_g1', 'verbatim_age_g2', 'origins_fossil']
-    list_filter = ['region', 'verbatim_zone', 'suffix_assigned', 'in_origins']
-    search_fields = ['verbatim_inventory_number', 'verbatim_suffix', 'catalog_number']
-    readonly_fields = ['origins_fossil']
+class TurkFossilAdmin(FossilAdmin):
+    def get_fieldsets(self, request, obj=None):
+        """
+        Dynamically revise verbatim section of admin form for Turkana Fossils.
+        :param request:
+        :param obj:
+        :return: updated list of field sets
+        """
+        # Define a new verbatim fieldset for Turkana Fossils
+        turkana_verbatim_fieldset = ['Verbatim', {
+            'fields': [('verbatim_inventory_number', 'verbatim_suffix'),
+                       ('verbatim_year_discovered', 'verbatim_year_mentioned', 'verbatim_year_published'),
+                       ('verbatim_country',),
+                       ('verbatim_zone', 'verbatim_area', 'verbatim_locality'),
+                       ('verbatim_formation', 'verbatim_member', 'verbatim_level'),
+                       ('verbatim_age_g1', 'verbatim_age_g2'),
+                       ('verbatim_anatomical_part',),
+                       ('verbatim_anatomical_description',),
+                       ('verbatim_taxonomy1', 'verbatim_taxonomy2'),
+                       ('verbatim_robusticity',),
+                       ('verbatim_finder',),
+                       ('verbatim_reference_first_mention',),
+                       ('verbatim_reference_description',),
+                       ('verbatim_reference_identification',),
+                       ('verbatim_reference_dating',),
+                       ('region',),
+                       ('suffix_assigned',),
+                       ('in_origins',),
+                       ('to_add',),
+                       ('to_divide',),
+                       ],
+            'classes': ['collapse'],
+        }],
+        fieldsets = super(TurkFossilAdmin, self).get_fieldsets(request, obj)
+        # Check that the final fieldset is called Verbatim and if so replace it.
+        if fieldsets[-1][0]=='Verbatim':
+            fieldsets = list(fieldsets[:-1])+list(turkana_verbatim_fieldset)
+        return fieldsets
+    list_display = ['id', 'catalog_number', 'is_type_specimen', 'site_link', 'context_link', 'taxon_link',
+                    'country', 'context__best_age','verbatim_age_g1', 'verbatim_age_g2', 'region',
+                    'verbatim_zone', 'verbatim_area', 'verbatim_locality','default_image', 'vif', 'problem'
+                    ]
+    list_filter = ['problem','vif', 'is_type_specimen','region', 'verbatim_zone', 'suffix_assigned', 'in_origins']
     change_list_template = "admin/top_pagination_change_list.html"
     list_per_page = 100
 
-    def origins_fossil(self, obj):
-        """
-        Function to search fossil information in origins. Returns a link to the origins fossil list page.
-        :param obj:
-        :return:
-        """
-        if obj.catalog_number:
-            site_url = reverse('admin:origins_fossil_changelist')
-            if obj.collection_code and obj.specimen_number:
-                query_string = f"{obj.collection_code}+{obj.specimen_number}"
-            else:
-                if obj.catalog_number[-1].isalpha():
-                    query_string = f"{obj.catalog_number[:-2].replace(' ','+')}"
-                else:
-                    query_string = f"{obj.catalog_number.replace(' ','+')}"
-            return format_html(f'<a href={site_url}?q={query_string}>{site_url}?q={query_string}</a>')
-        else:
-            return None
 
+class SkeletalElementAdmin(admin.ModelAdmin):
+    list_display = ['id', 'name', 'uberon_id', 'anatomical_region']
+    list_filter = ['anatomical_region',]
+    search_fields = ['name', 'uberon_id', 'anatomical_region']
+    list_per_page = 300
 
 # Register your models here.
 admin.site.register(origins.models.Context, ContextAdmin)
@@ -654,3 +690,4 @@ admin.site.register(origins.models.TaxonRank)
 admin.site.register(origins.models.Nomen, NomenAdmin)
 admin.site.register(origins.models.ActiveNomen, ActiveNomenAdmin)
 admin.site.register(origins.models.TurkFossil, TurkFossilAdmin)
+admin.site.register(origins.models.SkeletalElement, SkeletalElementAdmin)

@@ -50,7 +50,7 @@
       - initial_data
 
 - name: Copy the initial_data.sql up to host
-  copy: src=files/initial_data.sql dest="{{ sites_dir }}/{{ project_name }}/database_backup/initial_data.sql"
+  copy: src=files/pc_initial_data.sql dest="{{ sites_dir }}/{{ project_name }}/database_backup/initial_data.sql"
   tags:
       - initial_data
 

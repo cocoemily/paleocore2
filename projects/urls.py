@@ -2,6 +2,7 @@ from django.conf.urls import url, include
 from projects import views
 from projects.models import ProjectPage
 from djgeojson.views import GeoJSONLayerView
+from paleocore.urls import add_installed_apps_urls
 
 urlpatterns = [
                #                        # Projects list view
@@ -57,3 +58,6 @@ urlpatterns = [
                #                        url(r'^gdb/', include('gdb.urls', namespace='gdb')),
                #
                ]
+
+additional_apps = ['hrp']
+urlpatterns = add_installed_apps_urls(additional_apps, urlpatterns)

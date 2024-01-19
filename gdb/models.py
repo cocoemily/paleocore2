@@ -10,7 +10,7 @@ class Occurrence(projects.models.PaleoCoreOccurrenceBaseClass):
     Occurrence <- PaleoCoreOccurrenceBaseClass <- PaleoCoreGeomBaseClass <- PaleoCoreBaseClass
     """
     catalog_number = models.AutoField(primary_key=True)  # NOT NULL
-    cm_catalog_number = models.IntegerField(null=True, blank=True)  # CM SPec #
+    cm_catalog_number = models.IntegerField(null=True, blank=True, unique=True)  # CM SPec #
     locality = models.ForeignKey("Locality", to_field="locality_number", null=True, blank=True,
                                  on_delete=models.SET_NULL)
     date_time_collected = models.DateTimeField(null=True, blank=True)
@@ -157,7 +157,7 @@ class Locality(projects.models.PaleoCoreLocalityBaseClass):
     gps_date = models.DateField(null=True, blank=True, editable=True)
     resource_area = models.CharField(null=True, blank=True, max_length=50)
     notes = CKRichTextField(null=True, blank=True)
-    cm_locality_number = models.IntegerField(null=True, blank=True)  # CM Loc #
+    cm_locality_number = models.IntegerField(null=True, blank=True, unique=True)  # CM Loc #
     region = models.CharField(null=True, blank=True, max_length=50)
     blm_district = models.CharField(null=True, blank=True, max_length=50)
     county = models.CharField(null=True, blank=True, max_length=50)

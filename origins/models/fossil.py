@@ -78,17 +78,17 @@ class Fossil(projects.models.PaleoCoreGeomBaseClass):
     site = models.ForeignKey('Site', on_delete=models.SET_NULL, null=True, blank=True)
     country = CountryField('Country', blank=True, null=True)
     continent = models.CharField(max_length=20, null=True, blank=True, choices=CONTINENT_CHOICES)
-    geom = models.PointField(null=True, blank=True)
+    # geom inherited from PC_Geom_Base class
 
     # Media Fields
     image = models.ImageField(max_length=255, blank=True, upload_to="uploads/images/origins", null=True)
 
     # Record Fields
     source = models.CharField(max_length=100, null=True, blank=True)
-    created_by = models.CharField(max_length=100, null=True, blank=True)
-    created = models.DateTimeField('Modified', auto_now_add=True)
-    modified = models.DateTimeField('Modified', auto_now=True,
-                                    help_text='The date and time this resource was last altered.')
+    #created_by = models.CharField(max_length=100, null=True, blank=True)
+    #created = models.DateTimeField('Modified', auto_now_add=True)
+    #modified = models.DateTimeField('Modified', auto_now=True,
+    #                               help_text='The date and time this resource was last altered.')
 
     # Search and Filter Fields
     origins = models.BooleanField(default=False)  # in scope for origins project
@@ -108,9 +108,6 @@ class Fossil(projects.models.PaleoCoreGeomBaseClass):
     verbatim_Locality = models.CharField(max_length=40, null=True, blank=True)
     verbatim_Country = models.CharField(max_length=20, null=True, blank=True)
     verbatim_provenience = models.TextField(null=True, blank=True)
-
-    # Original data from Turkana Fossils Project - Marchal_Pratt
-    verbatim_turkana_fossil = models.TextField(null=True, blank=True)
 
     # References
     references = models.ManyToManyField(publications.models.Publication, blank=True)
@@ -270,3 +267,26 @@ class TurkFossil(Fossil):
     to_add = models.BooleanField(null=True)
     to_divide = models.BooleanField(null=True)
 
+
+class SkeletalElement(projects.models.PaleoCoreBaseClass):
+    """
+    From projects.models.PaleoCoreBaseClass inherits:
+    attributes: name, date_created, date_last_modified, problem, problem_comment, remarks, last_import
+    methods: get_app_label, get_concrete_field_names, get_all_field_names, get_foreign_key_field_names, photo, thumbnail
+    """
+    # name = anatomical name of each skeletal item
+    entire = "Entire"
+    dental = "Dental"
+    cranial = "Cranial"
+    axial = "Axial"
+    appendicular = "Appendicular"
+    REGION_CHOICES = (
+        (entire, entire),
+        (dental, dental),
+        (cranial, cranial),
+        (axial, axial),
+        (appendicular, appendicular),
+    )
+
+    uberon_id = models.CharField(max_length=100, null=True, blank=True)
+    anatomical_region =  models.CharField(max_length=100, null=True, blank=True, choices=REGION_CHOICES)

@@ -111,6 +111,7 @@ class Nomen(projects.models.PaleoCoreBaseClass):
     is_subjective_synonym = models.BooleanField('Subjective Synonym', default=False)
     is_established = models.BooleanField('Established', default=False)
     is_inquirenda = models.BooleanField('Inquirenda', default=False, help_text=INQUIRENDA_HELP)
+    is_chibanian = models.BooleanField('Chibanian', default=False)
 
     usage_remarks = CKRichTextField("Usage Remarks", null=True, blank=True,
                                     help_text='Remarks about frequency of usage of the name in the literature.')
@@ -292,27 +293,28 @@ class TTaxon(MPTTModel, projects.models.Taxon):
     Modified Preordered Tree Traversal Taxon class
     Inherits name, parent, rank, references from projects.models.Taxon
     """
-    verbatim_name = models.CharField(max_length=255, null=True, blank=True)  # name as it appears in 1st publication
-    zoobank_id = models.CharField(max_length=255, null=True, blank=True)
-    epithet = models.CharField(max_length=255, null=True, blank=True)
-    abbreviation = models.CharField(max_length=255, null=True, blank=True)
-    authorship = models.CharField(max_length=255, null=True, blank=True)
-    year = models.CharField(max_length=255, null=True, blank=True)
-    type_specimen = models.CharField(max_length=255, null=True, blank=True)
-    type_status = models.CharField(max_length=255, null=True, blank=True, choices=TYPE_CHOICES)
-    paratypes = models.CharField(max_length=255, null=True, blank=True)
-    nomenclatural_code = models.CharField(max_length=255, null=True, blank=True, default='ICZN',
-                                          choices=NOMENCLATURAL_CODE_CHOICES)
-    bc_status = models.CharField('Nom. Status', max_length=255, null=True, blank=True,
-                                 choices=BC_STATUS_CHOICES)
+    nomen = models.ForeignKey(Nomen, null=True, blank=True, on_delete=models.SET_NULL)
+    # verbatim_name = models.CharField(max_length=255, null=True, blank=True)  # name as it appears in 1st publication DEPRECATED
+    # zoobank_id = models.CharField(max_length=255, null=True, blank=True) # DEPRECATED -- from nomen
+    # epithet = models.CharField(max_length=255, null=True, blank=True) # DEPRECATED -- from nomen
+    abbreviation = models.CharField(max_length=255, null=True, blank=True) # DEPRECATED -- make method
+    # authorship = models.CharField(max_length=255, null=True, blank=True) # DEPRECATED -- from nomen
+    # year = models.CharField(max_length=255, null=True, blank=True) # DEPRECATED -- from nomen
+    # type_specimen = models.CharField(max_length=255, null=True, blank=True) # DEPRECATED -- from nomen
+    # type_status = models.CharField(max_length=255, null=True, blank=True, choices=TYPE_CHOICES) # DEPRECATED -- from nomen
+    # paratypes = models.CharField(max_length=255, null=True, blank=True) # DEPRECATED -- from nommen
+    # nomenclatural_code = models.CharField(max_length=255, null=True, blank=True, default='ICZN',
+    #                                     choices=NOMENCLATURAL_CODE_CHOICES) # DEPRECATED -- from nomen
+    # bc_status = models.CharField('Nom. Status', max_length=255, null=True, blank=True,
+    #                             choices=BC_STATUS_CHOICES) # DEPRECATED -- from nomen
     parent = TreeForeignKey('self', null=True, blank=True, on_delete=models.CASCADE, related_name='children')
     classification_status = models.CharField('Classif. Status', max_length=255, null=True, blank=True, default='ICZN',
                                              choices=CLASSIFICATION_STATUS_CHOICES)
     junior_to = TreeForeignKey('self', null=True, blank=True, on_delete=models.CASCADE, related_name='synonyms')
     rank = models.ForeignKey('TaxonRank', null=True, blank=True, on_delete=models.SET_NULL)
     name_reference = models.ForeignKey(publications.models.Publication, null=True, blank=True,
-                                       on_delete=models.SET_NULL, related_name='name_references')
-    references = models.ManyToManyField(publications.models.Publication, blank=True)
+                                       on_delete=models.SET_NULL, related_name='name_references') # DEPRECATED -- from nomen
+    references = models.ManyToManyField(publications.models.Publication, blank=True) # DEPRECATED -- from nomen
 
     def _synonyms(self):
         """
@@ -346,20 +348,82 @@ class TTaxon(MPTTModel, projects.models.Taxon):
 
     def scientific_name(self):
         """
-        Generate pretty format html with full scientific name
+        Generate pretty format html with full scientific name.
+        Add parentheses around authorship if current genus is different from original genus.
         :return:
         """
-
-        name_string = "{otag}{name}{ctag} {auth}".format(otag='<i>' if self.rank.ordinal >= 60 else "",
-                                                         name=self.name,
-                                                         ctag='</i>' if self.rank.ordinal >= 60 else "",
-                                                         auth=self.authorship if self.authorship else "")
+        open_tag = '<i>'
+        close_tag = '</i>'
+        authorship = self.authorship()
+        if self.rank:
+            if self.rank.ordinal >= 70: # if a species
+                species_epithet = self.taxon_epithet()
+                genus_name = self.parent.name
+                if self.nomen:
+                    nomen_genus = self.nomen.generic_name
+                    if genus_name != nomen_genus:
+                        # if current genus differs from nomen genus place authorship in parentheses
+                        name_string = f"{open_tag}{genus_name} {species_epithet}{close_tag} ({authorship})"
+                    else:
+                        name_string = f"{open_tag}{genus_name} {species_epithet}{close_tag} {authorship}"
+                else: # If nomen not linked assume same genus and remove authorship
+                    name_string = f"{open_tag}{self.name} {species_epithet}{close_tag}"
+            elif self.rank.ordinal >= 60: # if a genus or subgenus
+                name_string = f"{open_tag}{self.name}{close_tag} {authorship}"
+            else: # if a higher taxon
+                name_string = self.name
+        # if self.rank:
+        #     name_string = "{otag}{name}{ctag} {auth}".format(otag='<i>' if self.rank.ordinal >= 60 else "",
+        #                                                  name=self.name,
+        #                                                  ctag='</i>' if self.rank.ordinal >= 60 else "",
+        #                                                  auth=self.authorship() if self.authorship() else "")
+        else: # if taxon rank is missing, then assume higher taxon and use name field
+            name_string = self.name
         return format_html(name_string)
+
+    def nomenclatural_status(self):
+        """
+        Get the nomenclatural status from the Nomen object
+        :return:
+        """
+        if self.nomen:
+            status = self.nomen.nomenclatural_status
+        else:
+            status = None
+        return status
+
+    def nomenclatural_code(self):
+        if self.nomen:
+            code = self.nomen.nomenclatural_code
+        else:
+            code = None
+        return code
+
+    def taxon_epithet(self):
+        if self.nomen:
+            epithet = self.nomen.specific_epithet
+        else:
+            epithet = None
+        return epithet
+
+    def authorship(self):
+        if self.nomen:
+            authorship = self.nomen.authorship
+        else:
+            authorship = None
+        return authorship
+
+    def year(self):
+        if self.nomen:
+            year = self.nomen.year
+        else:
+            year = None
+        return year
 
     class Meta:
         verbose_name = "TTaxon"
         verbose_name_plural = "TTaxa"
-        ordering = ['rank__ordinal', 'name']
+        # ordering = ['rank__ordinal', 'name']
 
     class MPTTMeta:
         order_insertion_by = ['name']

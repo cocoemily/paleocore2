@@ -1,15 +1,19 @@
+import datetime
+
 import unicodecsv
 from origins.models import *
 from difflib import SequenceMatcher
 from lxml import etree
 from django.db.models import Q
-from django.core.exceptions import ObjectDoesNotExist
+from django.core.exceptions import ObjectDoesNotExist, FieldError
 from django.contrib.gis.geos import Point
 from django.utils.text import slugify
+from django.utils import timezone
 import pandas
 import re
 from wagtail.core.models import Page
-from origins.models.fossil import TurkFossil
+from origins.models.fossil import TurkFossil, Fossil
+from collections import Counter
 # import shapefile
 
 # pbdb_file_path = "/Users/reedd/Documents/projects/ete/pbdb/pbdb_test_no_header.csv"
@@ -672,5 +676,290 @@ def add_fossil():
     turk2add = []
     et = Site.objects.get(name='East Turkana')
     for f in turk2add:
-        Fossil.objects.create(catalog_number=f.catalog_number, site=wt, country='KE', continent='Africa', origins=True)
+        Fossil.objects.create(catalog_number=f.catalog_number, site=et, country='KE', continent='Africa', origins=True)
 
+
+def merge_turk_fossils(turkfossil):
+    """
+    A helper procedure to merge data from duplicate records then delete one of the duplicates.
+    TurkFossil is a subclass of Fossil. When the Marchal-Pratt Turkana hominid data were imported a new
+    TurkFossil was created and the Marchal-Pratt data were written to new fields in the TurkFossil model, while the
+    original Fossil fields were unpopulated. Most of the important TurkFossils duplicated existing Fossils. As a
+    result for each fossil there is a Fossil instance containing original Origins data and another Fossil instance
+    that is mostly empty but connected to a TurkFossil table with verbatim data from Marchal-Pratt.
+    This procedure combines the Marchal-Pratt data with the existing Origins data by redirecting the
+    Turkfossil.fossil_ptr_id to the original Origins Fossil then deletes the empty Fossil instance associated with the
+    TurkFossil import, effectively merging their data with the Origins data. The trick to accomplishing this is using
+    the update method to revise the table pointer.
+
+    The procedure, iterates through all the TurkFossil instances,
+    fetch the matching Fossil instances, there should be two, one for the Origins instance and another that is the
+    parent instance for the TurkFossil instance.
+    Merge data from the two records by copying data from the Origins Fossil instance to TurkFossil instance
+    then delete the original Origins Fossil instance to remove duplicate catalog numbers
+    :return:
+    """
+    # Find the matching Fossil objects, then exclude the one currently associated with the TurkFossil object.
+    alter_ego_qs = Fossil.objects.filter(catalog_number=turkfossil.catalog_number).exclude(id=turkfossil.id)
+    # Normally, there should be only a single result in the alter_ego_qs. If the record has already been
+    if alter_ego_qs:
+        # Get a handle on the associated Fossil object that we want the TurkFossil to point to.
+        alter_ego = alter_ego_qs[0]
+    else:
+        # If for some reason there is no matching fossil object then we just skip any changes.
+        alter_ego = None
+    if alter_ego:
+        # clearly designate the Fossil object we want to delete. This is the one currently linked to the TurkFossil object.
+        old_id = turkfossil.id
+        # designate the id for the Fossil object we want to connect the TurkFossil to.
+        new_id = alter_ego.id
+        # Update the pointer. Assign the fossil_ptr_id the value of new_id
+        # We first get the queryset with only the TurkFossil to be updated. We need the queryset as opposed to the
+        # object because in order to use the update method. Using the save method on the object cause a SQL INSERT,
+        # whereas using the update method on the queryset forces an SQL UPDATE, which preserves the existing data in
+        # the Fossil object.
+        update_qs = TurkFossil.objects.filter(id=old_id)
+        if update_qs.count() > 1:  # If the queryset as more than 1 result, bail!
+            pass
+        else:
+            # update
+            update_qs.update(fossil_ptr_id=new_id)
+            try:  # If we run procedure on a TurkFossil that is already fixed then old_id is already deleted.
+                Fossil.objects.get(id=old_id).delete() # delete the Fossil object originally assigned to the TurkFossil
+            except Fossil.DoesNotExist:
+                pass
+            updated_fossil = TurkFossil.objects.get(id=new_id) # fetch the updated Fossil object
+            updated_fossil.date_last_modified = timezone.now() # update date_last_modified
+            updated_fossil.save() # save
+
+
+def find_duplicate_turkana_catalog_numbers():
+    """
+    Get a list of turkana fossils (TurkFossil instances) with duplicate catalog_numbers
+     :return:list of catalog duplicate catalog numbers
+    """
+    duplicates = []
+    catalog_numbers = TurkFossil.objects.values_list('catalog_number', flat=True)
+    count = Counter(catalog_numbers)
+
+    for number, occurrences in count.items():
+        if occurrences > 1:
+            duplicates.append(number)
+
+    return duplicates
+
+def find_duplicate_fossil_catalog_numbers():
+    """
+    Get a list of fossils with duplicate catalog_numbers
+     :return:list of catalog duplicate catalog numbers
+    """
+    duplicates = []
+    catalog_numbers = Fossil.objects.values_list('catalog_number', flat=True)
+    count = Counter(catalog_numbers)
+
+    for number, occurrences in count.items():
+        if occurrences > 1:
+            duplicates.append(number)
+
+    return duplicates
+
+# dictionary of TurkFossil verbatim references and matching publication citekeys
+citekey_lookup = {
+        'Leakey, 1973a': 'Leakey1973a',
+        'Leakey et al., 1998': 'Leakey1998',
+        'Leakey, 1974': 'Leakey1974-gv',
+        'Howell and Coppens, 1974': 'Howell1974',
+        'Brown et al., 1985': 'Brown1985',
+        'Leakey, 1972': 'Leakey1972-hu',
+        'Leakey and Walker, 1985': 'Leakey1985',
+        'Leakey et Walker, 1985': 'Leakey1985',
+        'Leakey et al., 2001': 'Leakey2001-hq',
+        'Leakey, 1971': 'Leakey1971-gw',
+        'Leakey et al., 1971': 'Leakey1971b',
+        'Wood and Leakey, 2011': 'Wood2011',
+        'Leakey and Wood, 1973':'Leakey1973-ne',
+        'Leakey and Wood 1974b':'Leakey1974b',
+        'Leakey and Wood 1974a':'Leakey1974c',
+        'Leakey and Wood, 1974a':'Leakey1974c',
+        'Ward et al., 2001': 'Ward2001',
+        'Howell, 1969': 'Howell1969',
+        'Leakey, 1976': 'Leakey1976-dj',
+        'Leakey et al., 1995': 'Leakey1995-ya',
+        'Leakey 1972': 'Leakey1972-hu',
+        'Leakey et al., 1972': 'Leakey1972',
+        'Ward et al., 2013': 'Ward2013',
+        'Ward et al., 2020': 'Ward2020',
+        'Feibel et al., 1989': 'Feibel1989-ks',
+        'Grine et al., 2019': 'Grine2019-dy',
+        'Coppens, 1970': 'Coppens1970',
+        'Coppens 1970': 'Coppens1970',
+        'Howell et al., 1987': 'Howell1987',
+        'Coppens, 1973a': 'Coppens1973a',
+        'Coppens, 1973b': 'Coppens1973b',
+        'Ward et al., 1999': 'Ward1999',
+        'Coppens, 1971': 'Coppens1971',
+        'Coppens 1971': 'Coppens1971',
+        'Coppens, 1980': 'Coppens1980',
+        'Day et al., 1975': 'Day1975',
+        'Day et al., 1976': 'Day1976',
+        'Leakey and Walker, 1988': 'Leakey1988-fw',
+        'Coffing et al., 1994': 'Coffing1994',
+        'Brown et al., 2001': 'Brown2001',
+        'Coppens et al., 1973': 'Coppens1973c',
+        'Fleagle et al., 1991': 'Fleagle1991',
+        'Hammond et al., 2021': 'Hammond2021-tw',
+        'Richmond et al., 2020': 'Richmond2020-cz',
+        'Leakey and Walker, 2003': 'Leakey2003',
+        'Howell, 1968': 'Howell1968-pm',
+        'Hunt and Vitzthum, 1986': 'Hunt1986',
+        'Prat et al., 2003': 'Prat2003',
+        'White, 1986': 'White1986b',
+        'White, 1988': 'White1988',
+        'Boisserie et al., 2008': 'Boisserie2008',
+        'Day and Leakey, 1973':  'Day1973',
+        'Day and Leakey, 1974': 'Day1974',
+        'de Lumley and Marchal, 2004': 'Lumley2004',
+        'Leakey, 1973 a, b': 'Leakey1973a',
+        'Cerling et al., 2013': 'Cerling2013',
+        ' Brown et al., 2001': 'Brown2001',
+        'Leakey et al., 2012': 'Leakey2012-nf',
+        'Green et al., 2018': 'Green2018-sc',
+        'Skinner et al, 2020': 'Skinner2020',
+        'Skinner et al., 2020': 'Skinner2020',
+        'Leakey, 1970': 'Leakey1970',
+        'Wood, 1991': 'Wood1991',
+        'Wood 1991': 'Wood1991',
+        'Ward et al., 2015': 'Ward2015',
+        'Spoor et al., 2007': 'Spoor2007',
+        'Walker et al., 1986': 'Walker1986',
+        'Howell and Coppens, 1976': 'Howell1976',
+        'Daver et al., 2018': 'Daver2018',
+        'Leakey and Walker, 1976': 'Leakey1976-lt',
+        'Heinrich et al., 1993': 'Heinrich1993',
+        'Brown et al., 1993': 'Brown1993-xk',
+        'Patterson & Howells, 1967': 'Patterson1967-nw',
+        'Lague et al., 2019': 'Lague2019',
+        'Patterson et al., 1970': 'Patterson1970',
+        'Prat et al., 2005': 'Prat2005-ai',
+        'Maddux et al., 2015': 'Maddux2015',
+        'Deloison, 1986': 'Deloison1986',
+        'Arambourg and Coppens, 1967': 'Arambourg1967',
+        'Suwa 1990': 'Suwa1990',
+        'Suwa, 1990': 'Suwa1990',
+        'Suwa,1990': 'Suwa1990',
+        'Deloison, 1997': 'Deloison1997',
+        'Wynn et al., 2020': 'Wynn2020-fc',
+        'McHenry, 1994': 'McHenry1994',
+        'Walker and Leakey, 1993': 'Walker1993-cg',
+        'Leakey and Walker, 1973': 'Leakey1973',
+        'Howell and Coppens, 1973': 'Howell1973',
+        'Rose, 1984': 'Rose1984',
+        'Senut, 1981': 'Senut1981',
+        'Howell & Wood, 1974': 'Howell1974b',
+        'Boaz and Howell, 1977': 'Boaz1977',
+        'Rak and Howell, 1978': 'Rak1978-rn',
+        'Alemseged et al., 2002': 'Alemseged2002',
+        'Kramer, 1986': 'Kramer1986'
+    }
+
+
+def get_turkana_deciduous():
+    """
+    Get a queryset of Turkana fossils that preserve deciduous teeth
+    :return:
+    """
+    deciduous_fossil_ids = [f.fossil.id for f in FossilElement.objects.filter(skeletal_element_class='deciduous')]
+    turkana_fossil_ids = [f.id for f in TurkFossil.objects.all()]
+    turkana_deciduous_ids = set(turkana_fossil_ids).intersection(deciduous_fossil_ids)
+    return TurkFossil.objects.filter(id__in=turkana_deciduous_ids)
+
+def get_turkana_no_fossil_element():
+    """
+    Get Turkana Fossils that lack fossil elements
+    :return:
+    """
+    fossil_object_list = []
+    for f in TurkFossil.objects.all():
+        if not f.fossil_element.all():
+            fossil_object_list.append(f)
+    return fossil_object_list
+
+def validate_catalog_number_formatting():
+    """
+    Validate the formatting of all catalog numbers.
+    KNM-CC-Number-A Where CC is the collection code, e.g. ER, WT, KP and Number is the numeric specimen number
+    OMO NN/N-YEAR-Number
+    B N-Number-A
+    FJN-
+    :return:
+    """
+    print("Validating catalog_number")
+    # regular expression to test proper format of catalog numbers
+    knm_re = re.compile(r'KNM-[A-Z]{2} [0-9]{1,5}(-[a-zA-Z]{1,2})*$')
+    omo_re = re.compile(r'OMO [0-9]{2,3}-[0-9]{4}-[0-9]{1,5}(-[a-zA-Z]{1,2})*$')
+    omo2_re = re.compile(r'[A-Z] [0-9]{1,3}-[0-9]{1,4}(-[a-zA-Z]{1,2})*$')
+    fj_re = re.compile(r'FJ[1-9]-[SBHd]{2}[0-9](-[a-zA-Z]{1,2})*$')
+    # Matches KNM-ER 1470, KNM-WT 15000, KNM-WT 15000-A
+    # but not KNM-WTT 1470, KNM-WT 15000-
+
+    # list of catalog_number column in db. The values_list function is built into django
+    catalog_list = list(TurkFossil.objects.values_list('catalog_number', flat=True))
+    # Test catalog numbers against re
+
+    re_errors_list = []
+    for item in catalog_list:
+        if knm_re.match(item):
+            pass
+            # print(f'{item}...check')
+        elif omo_re.match(item):
+            pass
+            # print(f'{item}...check')
+        elif omo2_re.match(item):
+            pass
+            # print(f'{item}...check')
+        elif fj_re.match(item):
+            pass
+            # print(f'{item}...check')
+        else:
+            re_errors_list.append(item)
+            # print(f'{item}...ERROR')
+
+    #re_errors_list = [item for item in catalog_list if knm_re.match(item)]
+
+    duplicate_list = [item for item, count in Counter(catalog_list).items() if count > 1]
+
+    # Pretty print format errors
+
+    if re_errors_list:
+        print("\nFormat Errors\n---------------------")
+        for f in re_errors_list:
+            print("Format error in catalog number {}".format(f))
+
+def summarize_turkfossil_field(field_name, report=True):
+    """
+    Get the unique values for a field in the Fossil table
+    :return:
+    """
+    res_list = []
+    try:
+        dl = TurkFossil.objects.distinct(field_name)
+        for f in dl:
+            n = getattr(f, field_name)
+            kwargs = {
+                '{0}__{1}'.format(field_name, 'exact'): n
+            }
+            c = TurkFossil.objects.filter(**kwargs).count()
+            if field_name == 'tspecies':
+                g = getattr(f, 'tgenus')
+                if g:
+                    n = g + ' ' + n
+            t = (n, c)
+            res_list.append(t)
+        if report:
+            for i in res_list:
+                print("{}\t{}".format(*i))  # use * to unpack tuple
+    except FieldError:  # because field_name is a method not an attribute
+        res_list = list(set([getattr(f, field_name)() for f in TurkFossil.objects.all()]))
+        res_list = sorted(res_list)
+
+    return res_list

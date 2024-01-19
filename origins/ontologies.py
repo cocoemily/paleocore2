@@ -183,18 +183,25 @@ ashlynn = 'Ashlynn Arzola'
 nick = 'Nicholas Hartman'
 jorge = 'Jorge Ramirez Salinas'
 hayden = 'Hayden Post'
+mackenzie = 'Mackenzie Murray'
+neena = 'Neena Landis'
+madeleine = 'Madeleine Armstrong'
+
 
 VERIFIER_CHOICES = (
-    (denne, 'DR'),
-    (emily, 'ER'),
-    (jyhreh, 'JJ'),
-    (harper, 'HJ'),
-    (kennedy, 'KK'),
-    (nida, 'NV'),
-    (ashlynn, 'AA'),
-    (nick, 'NH'),
-    (jorge, 'JRS'),
-    (hayden, 'HP')
+    (denne, denne),
+    (emily, emily),
+    (jyhreh, jyhreh),
+    (harper, 'Leo Jackson'),
+    (kennedy, kennedy),
+    (nida, nida),
+    (ashlynn, ashlynn),
+    (nick, nick),
+    (jorge, jorge),
+    (hayden, hayden),
+    (mackenzie, mackenzie),
+    (neena, neena),
+    (madeleine, madeleine)
 )
 
 

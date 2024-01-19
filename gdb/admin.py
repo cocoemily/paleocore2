@@ -159,10 +159,10 @@ class BiologyAdmin(admin.ModelAdmin):
     # biology_fieldsets.insert(4, chronology_fieldsets)
     fieldsets = biology_fieldsets
     list_display = ['catalog_number', 'cm_catalog_number', 'taxon', 'item_description',
-                    'locality', 'date_collected', 'nalma', 'on_loan', 'problem']
+                    'locality', 'date_collected', 'year_collected', 'nalma', 'on_loan', 'problem']
     list_per_page = 1000
     list_filter = ['problem', 'on_loan', 'year_collected', 'taxon', 'locality', 'locality__NALMA']
-    search_fields = default_search_fields + biology_search_fields
+    search_fields = default_search_fields # + biology_search_fields
     actions = ['create_data_csv', 'generate_specimen_labels']
     list_select_related = ['locality', 'taxon', 'occurrence_ptr']
 

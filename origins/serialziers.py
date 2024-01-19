@@ -1,4 +1,4 @@
-from origins.models import Nomen, TaxonRank
+from origins.models import Nomen, TaxonRank, TurkFossil, Fossil, FossilElement, SkeletalElement
 from rest_framework import serializers
 
 
@@ -12,7 +12,7 @@ class TaxonRankSerializer(serializers.ModelSerializer):
 class NomenSerializer(serializers.ModelSerializer):
     """
     JSON serializer for Nomen class in origins.models.taxon.py.
-    This class controls whata data are exposed through the API endpoint at
+    This class controls what data are exposed through the API endpoint at
     https://paleocore.org/origins/api/nomina
     """
 
@@ -36,4 +36,68 @@ class NomenSerializer(serializers.ModelSerializer):
                   'type_specimen', 'type_specimen_status', 'paratypes', 'type_taxon',
                   'is_available',
                   'verified_date', 'date_last_modified'
+                  ]
+
+class TurkFossilSerializer(serializers.ModelSerializer):
+    """
+    JSON serializer for the TurkFossil class in origins.models.taxon.py.
+    This class controls what data are exposed through the API endpoint at
+    https://paleocore.org/origins/api/nomina
+    """
+    class Meta:
+        model = TurkFossil
+        # The fields listed here include all the documented fields of the Nomen class plus a few others.
+        fields = ['catalog_number', 'is_type_specimen','year_collected','short_description'
+                  ]
+
+class FossilSerializer(serializers.ModelSerializer):
+    """
+    JSON serializer for the Fossil class in origins.models.taxon.py.
+    This class controls what data are exposed through the API endpoint at
+    https://paleocore.org/origins/api/fossils
+    """
+    class Meta:
+        model = Fossil
+        # The fields listed here include ...
+        fields = ['id',
+                  'catalog_number',
+                  'is_type_specimen',
+                  'year_collected',
+                  'short_description'
+                  ]
+
+class FossilElementSerializer(serializers.ModelSerializer):
+    """
+    JSON serializer for the FossilElement class in origins.models.fossil.py.
+    This class controls what data are exposed through the API endpoint at
+    https://paleocore.org/origins/api/fossilelements
+    """
+    fossil = serializers.StringRelatedField()
+    class Meta:
+        model = FossilElement
+        # The fields listed here include ...
+        fields = ['id',
+                  'uberon_id',
+                  'fossil',
+                  'anatomical_region',
+                  'side',
+                  'dental',
+                  'completeness',
+                  'preserved_part'
+                  ]
+
+class SkeletalElementSerializer(serializers.ModelSerializer):
+    """
+        JSON serializer for the SkeletalElement class in origins.models.fossil.py.
+        This class controls what data are exposed through the API endpoint at
+        https://paleocore.org/origins/api/skeletalelements
+        """
+
+    class Meta:
+        model = SkeletalElement
+        # The fields listed here include ...
+        fields = ['id',
+                  'name',
+                  'uberon_id',
+                  'anatomical_region',
                   ]

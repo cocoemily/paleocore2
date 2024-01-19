@@ -4,6 +4,8 @@ from projects.models import PaleoCoreLocalityBaseClass, PaleoCoreOccurrenceBaseC
 from ckeditor.fields import RichTextField
 from projects import ontologies as projects_ontologies
 from .otnologies import ACCUMULATOR_CHOICES, PARK_CHOICES
+from django.utils.html import mark_safe
+import os
 
 # Choices
 tyto_alba = 'Tyto alba'
@@ -89,7 +91,7 @@ class Collection(PaleoCoreBaseClass):
     Class for collections made at localities. Many locations at each locality
     inherits from PaleoCoreBaseClass
     name
-    date_create, date_last_modified
+    date_created, date_last_modified
     problem, problem_comment
     remarks, last_import
     """
@@ -111,46 +113,37 @@ class Collection(PaleoCoreBaseClass):
     accumulating_agent = models.CharField(max_length=255, null=True, blank=True, choices=ACCUMULATOR_CHOICES)
 
     def __str__(self):
-        return f'{self.collection_code}'
+        # return f'{self.collection_code}'
+        return self.label()
+
+    def label(self):
+        # return f'C{self.collection_code}_R{self.roost_id}_D{self.date.year}{self.date.month}{self.date.day}'
+        return 'C{:3d}-R{}-D{}'.format(self.collection_code, self.roost_id, self.date.strftime("%Y%b%d"))
 
 
 class Occurrence(PaleoCoreOccurrenceBaseClass):
     # date_last_modified = models.DateTimeField("Date Last Modified", auto_now=True)
     basis_of_record = models.CharField("Basis of Record", max_length=50, blank=True, null=False,
-                                       choices=projects_ontologies.BASIS_OF_RECORD_VOCABULARY)  # NOT NULL
+                                       choices=projects_ontologies.BASIS_OF_RECORD_VOCABULARY)  # NOT NULL Preserved Specimen
     item_type = models.CharField("Item Type", max_length=255, blank=True, null=False,
-                                 choices=projects_ontologies.ITEM_TYPE_VOCABULARY)  # NOT NULL
-    collection_code = models.CharField("Collection Code", max_length=20, blank=True, null=True)
-    item_number = models.IntegerField("Item #", null=True, blank=True)
-    item_part = models.CharField("Item Part", max_length=10, null=True, blank=True)
-    catalog_number = models.CharField("Catalog #", max_length=255, blank=True, null=True)
-    item_scientific_name = models.CharField("Sci Name", max_length=255, null=True, blank=True)
-    item_description = models.CharField("Description", max_length=255, blank=True, null=True)
-    collecting_method = models.CharField("Collecting Method", max_length=50,
+                                 choices=projects_ontologies.ITEM_TYPE_VOCABULARY)  # NOT NULL, Faunal
+    collection_code = models.CharField("Collection Code", max_length=20, blank=True, null=True) # populated with numerical collection codes
+    item_number = models.IntegerField("Item #", null=True, blank=True) # unique specimen number by collection
+    item_part = models.CharField("Item Part", max_length=10, null=True, blank=True) # empty, delete field
+    item_scientific_name = models.CharField("Sci Name", max_length=255, null=True, blank=True) # Scientific names
+    item_description = models.CharField("Description", max_length=255, blank=True, null=True) # Anatomical description
+    collecting_method = models.CharField("Collecting Method", max_length=50, # surface standard
                                          choices=projects_ontologies.COLLECTING_METHOD_VOCABULARY, null=False)
     related_catalog_items = models.CharField("Related Catalog Items", max_length=50, null=True, blank=True)
-    collector = models.CharField(max_length=50, blank=True, null=True, default='Denné Reed')
-    finder = models.CharField(null=True, blank=True, max_length=50, default='Denné Reed')
-    loan = models.CharField(max_length=255, blank=True, null=True)
-    loan_date = models.DateTimeField(blank=True, null=True)
-    disposition = models.CharField(max_length=255, blank=True, null=True)
-    field_number_orig = models.DateTimeField(blank=True, null=True, editable=True)
-    individual_count = models.IntegerField(blank=True, null=True, default=1)
-    preparation_status = models.CharField(max_length=50, blank=True, null=True)
-    # stratigraphic_marker_upper = models.CharField(max_length=255, blank=True, null=True)
-    # distance_from_upper = models.DecimalField(max_digits=38, decimal_places=8, blank=True, null=True)
-    # stratigraphic_marker_lower = models.CharField(max_length=255, blank=True, null=True)
-    # distance_from_lower = models.DecimalField(max_digits=38, decimal_places=8, blank=True, null=True)
-    # stratigraphic_marker_found = models.CharField(max_length=255, blank=True, null=True)
-    # distance_from_found = models.DecimalField(max_digits=38, decimal_places=8, blank=True, null=True)
-    # stratigraphic_marker_likely = models.CharField(max_length=255, blank=True, null=True)
-    # distance_from_likely = models.DecimalField(max_digits=38, decimal_places=8, blank=True, null=True)
-    # stratigraphic_member = models.CharField(max_length=255, blank=True, null=True)
-    # analytical_unit = models.CharField(max_length=255, blank=True, null=True)
-    # analytical_unit_2 = models.CharField(max_length=255, blank=True, null=True)
-    # analytical_unit_3 = models.CharField(max_length=255, blank=True, null=True)
+    collector = models.CharField(max_length=50, blank=True, null=True, default='Denné Reed') # Denne Reed
+    finder = models.CharField(null=True, blank=True, max_length=50, default='Denné Reed') # Denne Reed
+    loan = models.CharField(max_length=255, blank=True, null=True) # Scott Bluementhal
+    loan_date = models.DateTimeField(blank=True, null=True) # date of loan
+    disposition = models.CharField(max_length=255, blank=True, null=True) # current storage location
+    field_number_orig = models.DateTimeField(blank=True, null=True, editable=True) # datetime of collection
+    individual_count = models.IntegerField(blank=True, null=True, default=1) # number of individual represented by specimen
+    preparation_status = models.CharField(max_length=50, blank=True, null=True) #
     in_situ = models.BooleanField(default=False)
-    ranked = models.BooleanField(default=False)
     image = models.FileField(max_length=255, blank=True, upload_to="uploads/images/drp", null=True)
     weathering = models.SmallIntegerField(blank=True, null=True)
     surface_modification = models.CharField(max_length=255, blank=True, null=True)
@@ -246,7 +239,8 @@ class Biology(Occurrence):
     lrm1 = models.BooleanField(default=False)
     lrm2 = models.BooleanField(default=False)
     lrm3 = models.BooleanField(default=False)
-    morphotype_id = models.IntegerField(null=True, blank=True)
+    verbatim_morphotype_id = models.IntegerField(null=True, blank=True)
+    morphotype = models.ForeignKey('Morphotype', null=True, blank=True, on_delete=models.SET_NULL)
     # taxon = models.ForeignKey(Taxon,
     #                           default=0, on_delete=models.SET_DEFAULT,  # prevent deletion when taxa deleted
     #                           related_name='drp_biology_occurrences')
@@ -259,4 +253,59 @@ class Biology(Occurrence):
         verbose_name_plural = "Biology Occurrences"
 
     def __str__(self):
-        return str(self.catalog_number)
+        return str(self.barcode)
+
+    def default_image(self):
+        """
+        Function to fetch a default thumbnail image for a fossil
+        :return:
+        """
+        images = self.specimenphoto_set.filter(default_image=True)
+        if images.count() >= 1:
+            return images[0].thumbnail()
+        else:
+            return None
+class Morphotype(PaleoCoreBaseClass):
+    """
+    Class model for morphotypes. Many biology occurrences for each morphotype
+    inherits from PaleoCoreBaseClass
+    name
+    date_created, date_last_modified
+    problem, problem_comment
+    remarks, last_import
+    """
+    # name is used for morph_name
+    # remarks is used for comments
+    morph_id = models.IntegerField(null=True, blank=True)
+    order_id = models.IntegerField(null=True, blank=True)
+    species1_id = models.IntegerField(null=True, blank=True)
+    species2_id = models.IntegerField(null=True, blank=True)
+    species3_id = models.IntegerField(null=True, blank=True)
+    species4_id = models.IntegerField(null=True, blank=True)
+    analysis_id = models.IntegerField(null=True, blank=True)
+
+    def __str__(self):
+        return f'[{self.morph_id}]{self.name}'
+
+
+class SpecimenPhoto(models.Model):
+    image = models.ImageField('Image', upload_to='uploads/images/sermar', null=True, blank=True)
+    occurrence = models.ForeignKey('Occurrence', on_delete=models.CASCADE, null=True, blank=False)
+    description = models.TextField(null=True, blank=True)
+    default_image = models.BooleanField(default=False)
+
+    def thumbnail(self):
+        if self.image:  # test that the photo has an image.
+            image_url = os.path.join(self.image.url)
+            return mark_safe('<a href="{}"><img src="{}" style="width:300px" /></a>'.format(image_url, image_url))
+        else:
+            return None
+
+    thumbnail.short_description = 'Image'
+    thumbnail.allow_tags = True
+    thumbnail.mark_safe = True
+
+    class Meta:
+        managed = True
+        verbose_name = 'Image'
+        verbose_name_plural = 'Images'

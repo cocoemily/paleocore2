@@ -1,13 +1,13 @@
-Django==3.2.15
-wagtail==2.15.2
+Django==3.2.23
+wagtail==2.16.1
 celery==5.2.3
 django-compressor==2.4.1
 django-environ==0.4.5
 django-foundation-formtags==0.1.0
 django-wagtail-feeds==0.1.0
 django-libsass==0.9
-django-redis==5.0.0
-libsass==0.21.0
+django-redis==5.2.0
+libsass==0.22.0
 psycopg2-binary==2.9.1
 Wand==0.6.6
 bleach==3.3.0
@@ -16,7 +16,7 @@ django-allauth==0.45.0
 django-braces==1.14.0
 django-mptt==0.12.0
 django-leaflet==0.28.1
--e git+https://github.com/paleocore/django-publications@b240e699b6ab6a1959951e12bfc26402fc66ea7c#egg=django_publications
+-e git+https://github.com/paleocore/django-publications#egg=django_publications
 idigbio==0.8.5
 xlrd==2.0.1
 django-import-export==2.5.0
@@ -24,7 +24,7 @@ django-ckeditor==6.1.0
 django-map-widgets==0.3.2
 unicodecsv==0.14.1
 wagtailgeowidget==5.0.2
-lxml==4.6.3
+lxml==4.9.2
 pygeoif==0.7
 dateutils==0.6.7
 Pyzotero==1.4.21
@@ -32,3 +32,5 @@ pyshp==2.1.3
 mdb-parser==0.0.2
 six==1.16.0
 djangorestframework==3.12.4
+pandas==1.4
+python-dateutil==2.8.2

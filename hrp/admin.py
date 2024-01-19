@@ -1,38 +1,32 @@
+from django.contrib.gis import admin
 from django.core.exceptions import ObjectDoesNotExist
 from django.http import HttpResponse
-from django.contrib.gis import admin
+from django.urls import path
 
-
-from import_export import resources
+from .models import *
+from .views import ImportKMZ
 import unicodecsv
-
-from .models import *  # import database models from models.py
 import projects.admin
 from projects.admin import TaxonomyAdmin, TaxonRankAdmin
+from import_export import resources
+from import_export.fields import Field
+from import_export.admin import ImportExportActionModelAdmin
+
+
 ###############
 # Media Admin #
 ###############
-
-
 class ImagesInline(admin.TabularInline):
     model = Image
+    readonly_fields = ['id', 'thumbnail']
+    fields = ['id', 'image', 'thumbnail', 'description']
     extra = 0
-    readonly_fields = ("id",)
 
 
 class FilesInline(admin.TabularInline):
     model = File
     extra = 0
     readonly_fields = ("id",)
-
-
-# class DGGeoAdmin(OSMGeoAdmin):
-#     """
-#     Modified Geographic Admin Class using Digital Globe basemaps
-#     GeoModelAdmin -> OSMGeoAdmin -> DGGeoAdmin
-#     """
-#     # turban - removed for now till this can be comprehensively added back in.
-#     map_template = 'hrp/digital_globe.html'
 
 
 ###################
@@ -89,42 +83,99 @@ class LocalityAdmin(projects.admin.PaleoCoreLocalityAdminGoogle):
 ####################
 # Occurrence Admin #
 ####################
-geological_context_fieldset = ('Geological Context', {
-        'fields': [
-            ('analytical_unit_1', 'analytical_unit_2', 'analytical_unit_3'),
-            ('analytical_unit_found', 'analytical_unit_likely', 'analytical_unit_simplified'),
-            ('in_situ', 'ranked'),
-            ('stratigraphic_member',),
-            ('drainage_region')]
-    })
-
-occurrence_fieldsets = (
-    ('Record Details', {
-        'fields': [('id', 'date_last_modified',)]
-    }),
-    ('Occurrence Details', {
-        'fields': [('barcode', 'catalog_number',),
-                   ('date_recorded', 'year_collected',),
-                   ('basis_of_record', 'item_type', 'disposition', 'preparation_status'),
-                   ("collection_code", "locality", "item_number", "item_part"),
-                   ('collecting_method', 'finder', 'collector',),
-                   ('item_description', 'item_scientific_name', 'image'),
-                   ('problem', 'problem_comment'),
-                   ('remarks',)]
-    }),
-    geological_context_fieldset,
-
-    ('Location Details', {
-        'fields': [('longitude', 'latitude'),
-                   ('easting', 'northing',),
-                   ('geom',)]
-    }),
-)
+hrp_list_display = ('catalog_number',
+                    'barcode',
+                    'basis_of_record',
+                    'item_type',
+                    'collecting_method',
+                    'collector',
+                    'year_collected',
+                    'thumbnail',
+                    )
 
 default_list_display = ('barcode', 'field_number', 'catalog_number', 'basis_of_record', 'item_type',
                         'collecting_method', 'collector', 'item_scientific_name', 'item_description',
                         'year_collected',
-                        'in_situ', 'problem', 'disposition', 'easting', 'northing')
+                        'problem', 'disposition', 'easting', 'northing')
+
+hrp_default_list_select_related = ['collector_person', 'finder_person', 'locality']
+hrp_occurrence_list_select_related = hrp_default_list_select_related + ['archaeology', 'biology', 'geology']
+hrp_biology_list_select_related = hrp_default_list_select_related + ['taxon']
+
+hrp_list_filter = ['basis_of_record', 'item_type', 'collecting_method', 'collector',
+                   'analytical_unit_found', 'drainage_region',
+                   'finder_person', 'year_collected', 'field_number', 'problem', 'disposition',
+                   'date_created', 'date_last_modified']
+
+hrp_readonly_fields = ['id', 'catalog_number', 'date_created', 'date_last_modified',
+                       'easting', 'northing', 'latitude', 'longitude', 'photo']
+
+hrp_search_fields = ('id',
+                     'basis_of_record',
+                     'item_type',
+                     'barcode',
+                     'locality__name', 'locality__collection_code',
+                     'locality__locality_number',
+                     'item_scientific_name',
+                     'item_description',
+                     'analytical_unit_found',
+                     'analytical_unit_likely',
+                     'finder_person',
+                     'collector',
+                     'finder_person__name',
+                     'collector_person__name',
+                     'cat_number',
+                     'analytical_unit_found',
+                     'analytical_unit_likely',
+                     'analytical_unit_simplified'
+                     )
+
+hrp_occurrence_fieldsets = (
+    ('Record Details', {  # occurrence_details[0]
+        'fields': [('id', 'date_created', 'date_last_modified',),
+                   ('basis_of_record',),
+                   ('remarks',)]
+    }),
+    ('Occurrence Details', {  # occurrence_fieldsets[1]
+        'fields': [('date_recorded', 'year_collected',),
+                   ('barcode', 'catalog_number', 'cat_number', 'field_number'),
+                   ('item_type', 'item_count'),
+                   # ('collector', 'finder', 'collecting_method'), # deprecated fixed choices for people
+                   ('collector_person', 'finder_person', 'collecting_method'), # use lookup table choice for people
+                   ("locality", "item_number", "item_part"),
+                   ('disposition', 'preparation_status'),
+                   ('item_description', 'item_scientific_name'),
+                   ('collection_remarks',),
+                   ('verbatim_kml_data',),
+                   ]
+    }),
+    ('Photos', {  # occurrence_fieldsets[2]
+        'fields': [('photo', 'image')],
+        # 'classes': ['collapse'],
+    }),
+    ('Geological Context', {  # occurrence_fieldsets[3]
+        'fields': [
+            ('analytical_unit_1', 'analytical_unit_2', 'analytical_unit_3'),
+            ('analytical_unit_found', 'analytical_unit_likely', 'analytical_unit_simplified'),
+            ('in_situ', 'ranked'),
+            ('stratigraphic_formation', 'stratigraphic_member',),
+            ('drainage_region',),
+            ('geology_remarks',),
+        ]
+    }),
+    ('Location Details', {  # occurrence_fieldsets[4]
+        'fields': [('collection_code',),
+                   ('georeference_remarks',),
+                   ('longitude', 'latitude'),
+                   ('easting', 'northing',),
+                   ('geom',)]
+    }),
+    ('Problems', {  # occurrence_fieldsets[5]
+        'fields': [('problem', 'problem_comment'),
+                   ],
+        'classes': ['collapse']
+    }),
+)
 
 
 class OccurrenceResource(resources.ModelResource):
@@ -133,89 +184,88 @@ class OccurrenceResource(resources.ModelResource):
 
 
 class OccurrenceAdmin(projects.admin.PaleoCoreOccurrenceAdmin):
+    """
+    OccurrenceAdmin <- PaleoCoreOccurrenceAdmin <- BingGeoAdmin <- OSMGeoAdmin <- GeoModelAdmin
+    """
     resource_class = OccurrenceResource
-    default_read_only_fields = ('id', 'point_x', 'point_y', 'easting', 'northing', 'date_last_modified')
-    readonly_fields = default_read_only_fields + ('photo', 'catalog_number', 'longitude', 'latitude')
-    list_display = list(default_list_display + ('thumbnail',))
-    default_list_filter = ['basis_of_record', 'item_type',
-                           'field_number', 'collector', 'problem', 'disposition']
-    list_index = list_display.index('field_number')
-    list_display.pop(list_index)
-    list_display.insert(1, 'locality')
-    list_display.insert(2, 'item_number')
-    list_display.insert(3, 'item_part')
-    fieldsets = occurrence_fieldsets
-    list_filter = default_list_filter
-    #default_search_fields = ('id', 'item_scientific_name', 'item_description', 'barcode', 'catalog_number')
-    search_fields = ['id', 'item_scientific_name', 'item_description', 'barcode', 'cat_number']
+    list_display = hrp_list_display
+    list_select_related = hrp_occurrence_list_select_related
+    list_display_links = ['catalog_number', 'barcode', 'basis_of_record']
+    list_filter = hrp_list_filter
+    readonly_fields = hrp_readonly_fields
+    fieldsets = hrp_occurrence_fieldsets
+    search_fields = hrp_search_fields
+    inlines = [ImagesInline, FilesInline]
+    # Use a custom admin changelist page template that includes a button for "Import KMZ"
+    # This changelist requires the get_urls() method below to inject the tool_item_url to point to the ImportKMZ view.
+    change_list_template = 'admin/projects/projects_change_list.html'
     list_per_page = 500
     options = {
         'layers': ['google.terrain'], 'editable': False, 'default_lat': -122.00, 'default_lon': 38.00,
     }
 
+    def get_urls(self):
+        tool_item_urls = [
+            path(r'import_kmz/', ImportKMZ.as_view()),
+            # path(r'^summary/$',permission_required('mlp.change_occurrence',
+            #                         login_url='login/')(self.views.Summary.as_view()),
+            #     name="summary"),
+        ]
+        return tool_item_urls + super(OccurrenceAdmin, self).get_urls()
+
 
 #################
 # Biology Admin #
 #################
-
+hrp_biology_list_display = ('catalog_number',
+                             'barcode',
+                             'basis_of_record',
+                             'item_type',
+                             'collecting_method',
+                             'collector',
+                             'taxon',
+                             'element',
+                             'year_collected',
+                             'thumbnail')
 
 biology_inline_fieldsets = (
     ('Taxonomy', {'fields': (('taxon',), 'id')}),
 )
 
-biology_element_fieldsets = (
-    ('Elements', {'fields': (
+hrp_additional_biology_fieldsets = (
+    ('Elements', {'fields': [ # hrp_biology_fieldsets[0]
         ('element', 'element_modifier'),
         ('uli1', 'uli2', 'ulc', 'ulp3', 'ulp4', 'ulm1', 'ulm2', 'ulm3'),
         ('uri1', 'uri2', 'urc', 'urp3', 'urp4', 'urm1', 'urm2', 'urm3'),
         ('lri1', 'lri2', 'lrc', 'lrp3', 'lrp4', 'lrm1', 'lrm2', 'lrm3'),
         ('lli1', 'lli2', 'llc', 'llp3', 'llp4', 'llm1', 'llm2', 'llm3'),
         ('indet_incisor', 'indet_canine', 'indet_premolar', 'indet_molar', 'indet_tooth'),
-        'deciduous'
-    )}),
-)
-
-
-biology_fieldsets = (
-    ('Record Details', {
-        'fields': [('id', 'date_last_modified',)]
+        ('deciduous',),
+        ('element_remarks',), ]
     }),
-    ('Item Details', {
-        'fields': [('barcode', 'catalog_number',),
-                   ('date_recorded', 'year_collected',),
-                   ("collection_code", "locality", "item_number", "item_part")]
-    }),
-
-    ('Occurrence Details', {
-        'fields': [('basis_of_record', 'item_type', 'disposition', 'preparation_status'),
-                   ('collecting_method', 'finder', 'collector', 'item_count'),
-                   ('item_description', 'item_scientific_name', 'image'),
-                   ('problem', 'problem_comment'),
-                   ('remarks',)]
-    }),
-    biology_element_fieldsets[0],
-    geological_context_fieldset,
-
-    ('Location Details', {
-        'fields': [('longitude', 'latitude'),
-                   ('easting', 'northing',),
-                   ('geom',)]
+    ('Taxonomy', { # hrp_biology_fieldsets[1]
+        'fields': [
+            ('taxon', 'identification_qualifier'),
+            ('identified_by', 'year_identified', 'type_status'),
+            ('taxonomy_remarks',)]
+    }),  # biology_additional_fieldsets[1]
+    ('Taphonomy', {  # hrp_biology_fieldsets[2]
+        'fields': [('weathering', 'surface_modification')],
+        # 'classes': ['collapse'],
     }),
 )
 
-
-class BiologyInline(admin.TabularInline):
-    model = Biology
-    extra = 0
-    readonly_fields = ("id",)
-    fieldsets = biology_inline_fieldsets
-
-
-class ElementInLine(admin.StackedInline):
-    model = Biology
-    extra = 0
-    fieldsets = biology_element_fieldsets
-
+hrp_biology_fieldsets = (
+    hrp_occurrence_fieldsets[0],  # Record Details
+    hrp_occurrence_fieldsets[1],  # Details
+    hrp_occurrence_fieldsets[2],  # Photos
+    hrp_additional_biology_fieldsets[0],  # Elements
+    hrp_additional_biology_fieldsets[1],  # Taxonomy
+    hrp_additional_biology_fieldsets[2],  # Taphonomy
+    hrp_occurrence_fieldsets[3],  # Context
+    hrp_occurrence_fieldsets[4],  # Location
+    hrp_occurrence_fieldsets[5],  # Problems
+)
 
 def get_biology_field_names_for_export():
     """
@@ -237,12 +287,11 @@ class BiologyResource(resources.ModelResource):
 
 class BiologyAdmin(OccurrenceAdmin):
     resource_class = BiologyResource
-    inlines = (BiologyInline, ImagesInline, FilesInline)
-    list_display = list(default_list_display) + ['thumbnail', 'element']
-    list_display.pop(list_display.index('item_type'))
-    list_display.pop(list_display.index('field_number'))
-
-    list_filter = ['basis_of_record', 'year_collected', 'collector', 'problem', 'element']
+    list_display = list(hrp_biology_list_display)
+    list_select_related = hrp_biology_list_select_related
+    fieldsets = hrp_biology_fieldsets
+    search_fields = hrp_search_fields + ('taxon__name',)
+    actions = ['create_data_csv']
 
     def create_data_csv(self, request, queryset):
         response = HttpResponse(content_type='text/csv')  # declare the response type
@@ -309,22 +358,52 @@ class BiologyAdmin(OccurrenceAdmin):
 
 
 class ArchaeologyAdmin(OccurrenceAdmin):
-    pass
+    list_select_related = hrp_default_list_select_related
 
 
 class GeologyAdmin(OccurrenceAdmin):
-    pass
+    list_select_related = hrp_default_list_select_related
+
+
+class PersonResource(resources.ModelResource):
+
+    class Meta:
+        model = Person
+
+
+class PersonAdmin(ImportExportActionModelAdmin):
+    resource_class = PersonResource
+    list_display = ['id', 'name']
+    ordering = ['name']
+
+
+class TaxonomyResource(resources.ModelResource):
+    taxon_path = Field(attribute='full_name', column_name='taxon_path')
+    family_name = Field()
+
+    def dehydrate_family_name(self, taxon):
+        family = TaxonRank.objects.get(name='Family')
+
+    class Meta:
+        model = Taxon
+        fields = ['id', 'label', 'taxon_path']
+
+
+class TaxonAdmin(TaxonomyAdmin):
+    # list_display = ['rank', 'name']
+    resource_class = TaxonomyResource
+    # list_select_related = ['rank', 'parent']
 
 
 ##########################
 # Register Admin Classes #
 ##########################
-
 admin.site.register(Biology, BiologyAdmin)
 admin.site.register(Archaeology, ArchaeologyAdmin)
 admin.site.register(Geology, GeologyAdmin)
 admin.site.register(Hydrology, HydrologyAdmin)
 admin.site.register(Locality, LocalityAdmin)
 admin.site.register(Occurrence, OccurrenceAdmin)
-admin.site.register(Taxon, TaxonomyAdmin)
+admin.site.register(Taxon, TaxonAdmin)
 admin.site.register(TaxonRank, TaxonRankAdmin)
+admin.site.register(Person, PersonAdmin)

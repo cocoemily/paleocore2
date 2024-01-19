@@ -1,14 +1,9 @@
-import os
-from django.db.models import Manager as GeoManager
 from django.contrib.gis.db import models
-
-from hrp.ontologies import *
-# from hrp.ontologies import ITEM_TYPE_VOCABULARY, HRP_COLLECTOR_CHOICES, \
-#     HRP_COLLECTING_METHOD_VOCABULARY, HRP_BASIS_OF_RECORD_VOCABULARY, HRP_COLLECTION_CODES
-
-from django.contrib.gis.geos import Point
+from django.db.models import Manager as GeoManager
 import projects.models
-
+from hrp.ontologies import *
+import os
+from django.utils.html import mark_safe
 
 class TaxonRank(projects.models.TaxonRank):
     class Meta:
@@ -67,18 +62,22 @@ class Person(projects.models.Person):
         ordering = ["last_name", "first_name"]
 
     def __str__(self):
-        if self.last_name and self.first_name:
+        if self.name:
+            name = self.name
+        elif self.last_name and self.first_name:
             name = self.last_name+', '+self.first_name
-        else:
+        elif self.last_name:
             name = self.last_name
-        return name
+        else:
+            name = ""
+        return name.replace("None", "")
 
 
 # Occurrence Class and Subclasses
 class Occurrence(projects.models.PaleoCoreOccurrenceBaseClass):
     """
         Occurrence == Specimen, a general class for things discovered in the field.
-        Find's have three subtypes: Archaeology, Biology, Geology
+        Specimens have three subtypes: Archaeology, Biology, Geology
         Fields are grouped by comments into logical sets (i.e. ontological classes)
         """
     basis_of_record = models.CharField("Basis of Record", max_length=50, blank=True, null=False,
@@ -92,11 +91,15 @@ class Occurrence(projects.models.PaleoCoreOccurrenceBaseClass):
     # TODO merge with element
     item_description = models.CharField("Description", max_length=255, blank=True, null=True)
     item_count = models.IntegerField("Item Count", blank=True, null=True, default=1)
+    # collector records a string value with the name of the person collecting and recording the specimen.
     collector = models.CharField("Collector", max_length=50, blank=True, null=True, choices=HRP_COLLECTOR_CHOICES)
-    recorded_by = models.ForeignKey("Person", null=True, blank=True, related_name="occurrence_recorded_by",
+    # collector_person links to a Person instance. The KMZ import script uses the collector string to match to a Person.
+    collector_person = models.ForeignKey("Person", null=True, blank=True, related_name="occurrence_recorded_by",
                                     on_delete=models.SET_NULL)
+    # finder records a string value with the name of the person who found or first discovered the specimen.
     finder = models.CharField("Finder", null=True, blank=True, max_length=50, choices=HRP_COLLECTOR_CHOICES)
-    found_by = models.ForeignKey("Person", null=True, blank=True, related_name="occurrence_found_by",
+    # finder_person links to a Person instance. The KMZ import script uses the finder string to match to a Person.
+    finder_person = models.ForeignKey("Person", null=True, blank=True, related_name="occurrence_found_by",
                                  on_delete=models.SET_NULL)
     collecting_method = models.CharField("Collecting Method", max_length=50,
                                          choices=HRP_COLLECTING_METHOD_VOCABULARY,
@@ -131,6 +134,24 @@ class Occurrence(projects.models.PaleoCoreOccurrenceBaseClass):
 
     # Media
     image = models.FileField(max_length=255, blank=True, upload_to="uploads/images/hrp", null=True)
+
+    # Verbatim
+    verbatim_kml_data = models.TextField(null=True, blank=True)
+    related_catalog_items = models.CharField("Related Catalog Items", max_length=50, null=True, blank=True)
+
+    def locality_geom(self):
+        """
+        Get the spatial geometry object for the fossil from its locality.
+        :return: geom object or None
+        In the HRP design pattern, occurrences such as fossils do not have individual coordinates. The best spatial
+        location is based on the location of the locality from which the fossil was collected. This method provides
+        an easy way to access the location from the locality. It is useful for providing the spatial data to the
+        occurrence, and biology, API interfaces.
+        """
+        geom = None
+        if self.locality:
+            geom = self.locality.geom
+        return geom
 
     class Meta:
         verbose_name = "HRP Occurrence"
@@ -323,8 +344,13 @@ class Biology(Occurrence):
     preparations = models.CharField(null=True, blank=True, max_length=50)
     morphobank_number = models.IntegerField(null=True, blank=True)  # empty, ok to delete
 
+    # def __str__(self):
+    #     return str(self.id)
+    #     return str(self.taxon.__str__())
     def __str__(self):
-        return str(self.taxon.__str__())
+        nice_name = str(self.catalog_number()) + ' ' + '[' + str(self.item_scientific_name) + ' ' \
+                    + str(self.item_description) + "]"
+        return nice_name.replace("None", "").replace("--", "")
 
     class Meta:
         verbose_name = "HRP Biology"
@@ -375,6 +401,14 @@ class Image(models.Model):
     occurrence = models.ForeignKey("Occurrence", related_name='hrp_occurrences', on_delete=models.CASCADE)
     image = models.ImageField(upload_to="uploads/images", null=True, blank=True)
     description = models.TextField(null=True, blank=True)
+
+    def thumbnail(self):
+        try:
+            return mark_safe('<a href="%s"><img src="%s" style="width:100px" /></a>' \
+                   % (os.path.join(self.image.url), os.path.join(self.image.url)))
+        except:
+            return None
+    thumbnail.short_description = 'Thumb'
 
 
 class File(models.Model):

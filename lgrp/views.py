@@ -6,14 +6,13 @@ from django.conf import settings
 from django.views import generic
 from django.http import HttpResponse
 from django.shortcuts import render, redirect
-from django.template import RequestContext, loader, response
+from django.template import RequestContext
 from django.contrib import messages
 from django.contrib.gis.geos import GEOSGeometry, Point
 from django.core.files.base import ContentFile
 from .models import Occurrence, Biology, Archaeology, Geology, Person, Taxon, IdentificationQualifier, StratigraphicUnit
 from .forms import UploadKMLForm, DownloadKMLForm, ChangeXYForm, Occurrence2Biology
 from .utilities import match_taxon, match_element
-
 
 from fastkml import kml
 from fastkml import Placemark, Folder, Document
@@ -22,6 +21,8 @@ from datetime import datetime
 from dateutil.parser import parse
 # import utm
 from zipfile import ZipFile
+
+
 # from shapely.geometry import Point
 
 
@@ -85,7 +86,7 @@ class DownloadKMLView(generic.FormView):
 
 
 class ImportKMZ(generic.FormView):
-    template_name = 'admin/lgrp/occurrence/import_kmz.html'
+    template_name = 'admin/projects/import_kmz.html'
     form_class = UploadKMLForm
     context_object_name = 'upload'
     success_url = '../?last_import__exact=1'
@@ -99,7 +100,7 @@ class ImportKMZ(generic.FormView):
 
         kml_file_upload_name = self.request.FILES['kmlfileUpload'].name  # get the file name
         # kml_file_name = kml_file_upload_name[:kml_file_upload_name.rfind('.')]  # get the file name no extension
-        kml_file_extension = kml_file_upload_name[kml_file_upload_name.rfind('.')+1:]  # get the file extension
+        kml_file_extension = kml_file_upload_name[kml_file_upload_name.rfind('.') + 1:]  # get the file extension
 
         kml_file_path = os.path.join(settings.MEDIA_ROOT)
 
@@ -110,7 +111,7 @@ class ImportKMZ(generic.FormView):
             :param kml_placemark_list:
             :return:
             """
-            occurrence_count, archaeology_count, biology_count, geology_count = [0,0,0,0]
+            occurrence_count, archaeology_count, biology_count, geology_count = [0, 0, 0, 0]
             Occurrence.objects.all().update(last_import=False)  # Toggle off all last imports
             for o in kml_placemark_list:
 
@@ -140,7 +141,7 @@ class ImportKMZ(generic.FormView):
                         archaeology_count += 1
                     elif item_type in ("Faunal", "Fauna", "Floral", "Flora"):
                         lgrp_occ = Biology()
-                        biology_count +=1
+                        biology_count += 1
                     elif item_type in ("Geological", "Geology"):
                         lgrp_occ = Geology()
                         geology_count += 1
@@ -201,7 +202,7 @@ class ImportKMZ(generic.FormView):
                     lgrp_occ.item_description = attributes_dict.get("Description")
                     if lgrp_occ.item_description:
                         match, match_count, match_list = match_element(lgrp_occ)
-                        if match and match_count ==1:
+                        if match and match_count == 1:
                             lgrp_occ.element = lgrp_occ.item_description.lower()
 
                     #######################
@@ -268,7 +269,7 @@ class ImportKMZ(generic.FormView):
                                 upload_dir = Biology._meta.get_field('image').upload_to
                                 # update image name to include upload path and occurrence id
                                 # e.g. /uploads/images/lgrp/14775_188.jpg
-                                new_image_name = os.path.join(upload_dir, str(lgrp_occ.id)+'_'+image_name)
+                                new_image_name = os.path.join(upload_dir, str(lgrp_occ.id) + '_' + image_name)
                                 # Save the image
                                 lgrp_occ.image.save(new_image_name, ContentFile(kmz_file.read(image_file_obj)))
 
@@ -320,7 +321,7 @@ class ImportKMZ(generic.FormView):
 
 class ChangeCoordinates(generic.FormView):
     template_name = 'admin/lgrp/occurrence/changeXY.html'
-    form_class= ChangeXYForm
+    form_class = ChangeXYForm
     current_id = None
 
     def get_success_url(self):
@@ -340,7 +341,7 @@ class ChangeCoordinates(generic.FormView):
                 else:
                     return redirect('../')
             else:
-              return super(ChangeCoordinates, self).get(self, request, args=args, kwargs=kwargs)
+                return super(ChangeCoordinates, self).get(self, request, args=args, kwargs=kwargs)
 
     def get_initial(self):
         initial = {}
@@ -360,7 +361,8 @@ class ChangeCoordinates(generic.FormView):
             obs = Occurrence.objects.get(pk=form.cleaned_data['DB_id'])
             self.current_id = obs.id
             if form.cleaned_data['new_easting'] and form.cleaned_data['new_northing']:
-                utm_pnt = Point(float(form.cleaned_data['new_easting']), float(form.cleaned_data['new_northing']), srid=32637)
+                utm_pnt = Point(float(form.cleaned_data['new_easting']), float(form.cleaned_data['new_northing']),
+                                srid=32637)
                 gcs_pnt = utm_pnt.transform(4326, clone=True)
             obs.geom = gcs_pnt
             obs.save()
@@ -398,56 +400,3 @@ def change_coordinates_view(request):
         the_form = ChangeXYForm(initial=initial_data)
         context = {"theForm": the_form}
         return render(request, 'admin/lgrp/occurrence/changeXY.html', context)
-
-
-def occurrence2biology_view(request):
-    if request.method == "POST":
-        form = Occurrence2Biology(request.POST)
-        if form.is_valid():
-            occurrence_object = Occurrence.objects.get(barcode__exact=request.POST["barcode"])
-            if occurrence_object.item_type in ('Faunal', 'Floral'):
-                taxon = Taxon.objects.get(pk=request.POST["taxon"])
-                id_qual = IdentificationQualifier.objects.get(pk=request.POST["identification_qualifier"])
-                new_biology = Biology(barcode=occurrence_object.barcode,
-                                      item_type=occurrence_object.item_type,
-                                      basis_of_record=occurrence_object.basis_of_record,
-                                      collecting_method=occurrence_object.collecting_method,
-                                      date_recorded=occurrence_object.date_recorded,
-                                      taxon=taxon,
-                                      identification_qualifier=id_qual,
-                                      geom=occurrence_object.geom
-                                      )
-                for key in occurrence_object.__dict__.keys():
-                    new_biology.__dict__[key] = occurrence_object.__dict__[key]
-
-                occurrence_object.delete()
-                new_biology.save()
-                messages.add_message(request, messages.INFO,
-                                     'Successfully converted occurrence to biology.')
-            else:
-                pass
-                messages.error(request, "Can only convert items of type Faunal or Floral")
-            return redirect("/admin/lgrp/occurrence")
-    else:
-        selected = list(request.GET.get("ids", "").split(","))
-        if len(selected) > 1:
-            messages.add_message(request, messages.INFO, "Do you wish to update all the following occurrences?")
-            return redirect("/admin/lgrp/occurrence")
-        selected_object = Occurrence.objects.get(pk=int(selected[0]))
-        initial_data = {
-                        "barcode": selected_object.barcode,
-                        "catalog_number": selected_object.catalog_number,
-                        "basis_of_record": selected_object.basis_of_record,
-                        "item_type": selected_object.item_type,
-                        "collector": selected_object.collector,
-                        "collecting_method": selected_object.collecting_method,
-                        "date_recorded": selected_object.date_recorded,
-                        "year_collected": selected_object.year_collected,
-                        "item_scientific_name": selected_object.item_scientific_name,
-                        "item_description": selected_object.item_description
-                        }
-        the_form = Occurrence2Biology(initial=initial_data)
-        return render_to_response('projects/occurrence2biology.html', {"theForm": the_form, "initial_data": initial_data}, RequestContext(request))
-
-
-
